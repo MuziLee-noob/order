@@ -19,9 +19,9 @@
       >
         <div class="layout-logo">
           <router-link to="/">
-            <!-- <span class="oneFusion">OneFusion</span>global-layout__logo -->
-            <!-- <img class="layout-logo__img" src="~@/assets/images/logo.svg" /> -->
-            <!-- <h1 v-show="!isCollapsed" class="layout-logo__title">{{ shortSiteName }}</h1> -->
+            <!-- <span class="oneFusion">武分派单系统</span> -->
+            <!-- <img src="../assets/images/编组2.png" /> -->
+            <!-- <h1 v-show="!isCollapsed" class="layout-logo__title">11</h1> -->
           </router-link>
         </div>
         <!-- <div class="global-layout-title">
