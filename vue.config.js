@@ -5,14 +5,14 @@ module.exports = {
   // publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   devServer: {
     port: 9000,
-    open: true,
-    proxy: {
-      '/gateway': {
-        // 接口
-        target: 'http://ofwebequipmentsvc.onefusion-30232.p.onecode.ict.cmcc',
-        changeOrigin: true // 是否跨域
-      }
-    }
+    open: true
+    // proxy: {
+    //   '/gateway': {
+    //     // 接口
+    //     target: 'http://ofwebequipmentsvc.onefusion-30232.p.onecode.ict.cmcc',
+    //     changeOrigin: true // 是否跨域
+    //   }
+    // }
   },
   productionSourceMap: process.env.NODE_ENV !== 'production',
   css: {
