@@ -5,14 +5,17 @@ module.exports = {
   // publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   devServer: {
     port: 9000,
-    open: true
-    // proxy: {
-    //   '/gateway': {
-    //     // 接口
-    //     target: 'http://ofwebequipmentsvc.onefusion-30232.p.onecode.ict.cmcc',
-    //     changeOrigin: true // 是否跨域
-    //   }
-    // }
+    open: true,
+    proxy: {
+      '/': {
+        // 接口
+        target: 'http://192.168.31.201:8080',
+        changeOrigin: true, // 是否跨域
+        pathRewrite: {
+          '^/': '' //请求的时候使用这个api就可以
+        }
+      }
+    }
   },
   productionSourceMap: process.env.NODE_ENV !== 'production',
   css: {

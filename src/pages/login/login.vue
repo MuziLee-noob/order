@@ -49,6 +49,7 @@ export default {
       return encrypted.toString()
     },
     login() {
+      this.$router.push('/pedding')
       var account = this.encryptByDES(this.phoneNumber, key)
       var pwdMd5 = cryptoJS.MD5(this.password).toString()
       var pwd = this.encryptByDES(pwdMd5, key)
@@ -77,9 +78,9 @@ export default {
         localStorage.setItem('token', this.token)
         if (role == 2) {
           console.log(role)
-          this.$router.push('/creat')
+          this.$router.push('/pedding')
         } else {
-          this.$router.push('/creat')
+          this.$router.push('/pedding')
         }
       })
       //   axios
