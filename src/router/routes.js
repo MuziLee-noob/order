@@ -51,8 +51,8 @@ export const asyncRoutes = [
     },
     children: [
       {
-        path: '/creat',
-        name: 'creat',
+        path: '/pedding',
+        name: 'pedding',
         meta: {
           icon: 'control',
           title: '待办工单'
@@ -60,8 +60,8 @@ export const asyncRoutes = [
         component: () => import('@/pages/policy/control/user/index.vue')
       },
       {
-        path: '/pedding',
-        name: 'pedding',
+        path: '/finish',
+        name: 'finish',
         meta: {
           icon: 'control',
           title: '已办工单'
@@ -69,8 +69,8 @@ export const asyncRoutes = [
         component: () => import('@/pages/policy/control/index.vue')
       },
       {
-        path: '/finish',
-        name: 'finish',
+        path: '/create',
+        name: 'create',
         meta: {
           icon: 'deploy',
           title: '创建工单'
