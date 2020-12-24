@@ -5,7 +5,7 @@
   <div class="fusion-manage">
     <div class="fusion-header serve">
       <div class="btnsCreate">
-        <Button @click="userList(1)" class="create">新建公司</Button>
+        <Button @click="addCompany" class="create">新建公司</Button>
         <Poptip trigger="hover" content="批量导入数据">
           <Button icon="ios-open-outline" class="exportButton" @click="leadIn" />
         </Poptip>
@@ -181,6 +181,10 @@ export default {
       this.userRole = ''
       this.ip = ''
       this.userList(1)
+    },
+    // 新增公司
+    addCompany() {
+      this.$router.push({ name: 'commanyAdd', query: { id: '1' } })
     }
   }
 }

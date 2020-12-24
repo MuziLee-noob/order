@@ -99,6 +99,16 @@ export const asyncRoutes = [
         component: () => import('@/pages/system/company/index.vue')
       },
       {
+        path: '/commanyAdd',
+        name: 'commanyAdd',
+        hidden: true,
+        meta: {
+          title: '新增公司',
+          hideInBread: false
+        },
+        component: () => import('@/pages/system/company/companyAdd.vue')
+      },
+      {
         path: '/user',
         name: 'user',
         meta: {
