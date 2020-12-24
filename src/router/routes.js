@@ -96,7 +96,7 @@ export const asyncRoutes = [
           icon: 'audit',
           title: '公司管理'
         },
-        component: () => import('@/pages/log/audit/index.vue')
+        component: () => import('@/pages/system/company/index.vue')
       },
       {
         path: '/user',
@@ -105,7 +105,7 @@ export const asyncRoutes = [
           icon: 'config',
           title: '用户管理'
         },
-        component: () => import('@/pages/log/config/index.vue')
+        component: () => import('@/pages/system/user/index.vue')
       },
       {
         path: '/role',
@@ -114,7 +114,7 @@ export const asyncRoutes = [
           icon: 'config',
           title: '角色管理'
         },
-        component: () => import('@/pages/log/config/index.vue')
+        component: () => import('@/pages/system/role/index.vue')
       }
     ]
   },
@@ -135,7 +135,7 @@ export const asyncRoutes = [
           icon: 'audit',
           title: '工单统计'
         },
-        component: () => import('@/pages/log/audit/index.vue')
+        component: () => import('@/pages/data/order/index.vue')
       },
       {
         path: '/degree',
@@ -144,7 +144,7 @@ export const asyncRoutes = [
           icon: 'config',
           title: '满意度统计'
         },
-        component: () => import('@/pages/log/config/index.vue')
+        component: () => import('@/pages/data/degree/index.vue')
       },
       {
         path: '/area',
@@ -153,7 +153,7 @@ export const asyncRoutes = [
           icon: 'config',
           title: '区域统计'
         },
-        component: () => import('@/pages/log/config/index.vue')
+        component: () => import('@/pages/data/area/index.vue')
       },
       {
         path: '/support',
@@ -162,7 +162,7 @@ export const asyncRoutes = [
           icon: 'config',
           title: '支撑单位统计'
         },
-        component: () => import('@/pages/log/config/index.vue')
+        component: () => import('@/pages/data/support/index.vue')
       }
     ]
   },

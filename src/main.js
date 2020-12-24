@@ -38,6 +38,9 @@ Vue.prototype.$utils = utils
 Vue.prototype.$http = request
 Vue.prototype.$permission = permissionHelper
 
+// 引入echarts
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
 /* permission control */
 
 /* Config */

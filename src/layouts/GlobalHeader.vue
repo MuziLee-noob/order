@@ -1,7 +1,7 @@
 <template>
   <div class="global-header">
-    <!-- <span class="headerLine"></span> -->
-    <!-- <span class="headerNew" @click="reback">管理控制台</span> -->
+    <span class="headerLine"></span>
+    <span class="headerNew" @click="reback">武分派单系统</span>
     <div class="global-header__custom-content">
       <HeaderUser />
     </div>

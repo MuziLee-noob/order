@@ -1,26 +1,25 @@
 <template>
   <div class="header-user">
     <i-dropdown @on-click="handleClick">
-      <!-- <i-avatar :src="avatar" /> -->
-      <span>
-        <img class="span-img" src="../assets/images/user.png" />
-      </span>
-      <div class="header-user__text">{{ realName }}</div>
-      <i-dropdown-menu slot="list">
-        <!-- <i-dropdown-item name="user">
-          <i-icon class="header-user__icon" size="16" type="ios-person-outline" />
-          <span>个人中心</span>
-        </i-dropdown-item>
-        <i-dropdown-item name="setting">
-          <i-icon class="header-user__icon" size="16" type="ios-settings-outline" />
-          <span>个人设置</span>
-        </i-dropdown-item> -->
-        <i-dropdown-item divided name="logout">
-          <i-icon class="header-user__icon" size="16" type="ios-power-outline" />
-          <span>退出登录</span>
-        </i-dropdown-item>
-      </i-dropdown-menu>
+      <ul name="user" style="float: left;margin-right: 50px;">
+        <i-icon class="header-user__icon" size="18" style="color:#fff" type="ios-person-outline" />
+        <!-- <span>个人中心</span> -->
+      </ul>
+      <ul name="setting" style="float: left;margin-right: 50px;">
+        <i-icon
+          class="header-user__icon"
+          size="18"
+          style="color:#fff"
+          type="ios-settings-outline"
+        />
+        <!-- <span>个人设置</span> -->
+      </ul>
+      <ul name="logout" style="float: left;margin-right: 50px;" @click="delModel === true">
+        <i-icon class="header-user__icon" size="18" style="color:#fff" type="ios-power-outline" />
+        <!-- <span>退出登录</span> -->
+      </ul>
     </i-dropdown>
+
     <!-- 退出登录 -->
     <Modal
       id="fusion-del"
@@ -101,8 +100,9 @@ export default {
             this.delModel = false
             localStorage.clear()
             sessionStorage.clear()
-            const url = process.env.NODE_ENV === 'demo' ? window.demo.admin : window.g.admin
-            window.location.href = url + '/login?redirectUrl=' + window.location.origin
+            this.$router.push('/login')
+            // const url = process.env.NODE_ENV === 'demo' ? window.demo.admin : window.g.admin
+            // window.location.href = url + '/login?redirectUrl=' + window.location.origin
           }
         })
       })
