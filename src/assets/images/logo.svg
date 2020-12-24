@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="235px" height="44px" viewBox="0 0 235 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 5备份 9</title>
+    <defs>
+        <text id="text-1" font-family="MicrosoftYaHei-Bold, Microsoft YaHei" font-size="20" font-weight="bold" fill="#FFFFFF">
+            <tspan x="43" y="24">OneCity</tspan>
+        </text>
+        <filter x="-8.6%" y="-19.2%" width="117.3%" height="157.7%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <text id="text-3" font-family="MicrosoftYaHei-Bold, Microsoft YaHei" font-size="20" font-weight="bold" fill="#FFFFFF">
+            <tspan x="142" y="25">集成平台</tspan>
+        </text>
+        <filter x="-8.8%" y="-19.2%" width="117.5%" height="153.8%" filterUnits="objectBoundingBox" id="filter-4">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <filter x="-35.3%" y="-46.2%" width="170.6%" height="192.3%" filterUnits="objectBoundingBox" id="filter-5">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="logo" transform="translate(-469.000000, -54.000000)" fill="#FFFFFF">
+            <g id="编组-5备份-9" transform="translate(478.000000, 60.000000)">
+                <g id="OneCity" fill-opacity="1">
+                    <use filter="url(#filter-2)" xlink:href="#text-1"></use>
+                    <use xlink:href="#text-1"></use>
+                </g>
+                <g id="集成平台" fill-opacity="1">
+                    <use filter="url(#filter-4)" xlink:href="#text-3"></use>
+                    <use xlink:href="#text-3"></use>
+                </g>
+                <rect id="矩形" x="132" y="7" width="2" height="20"></rect>
+                <g id="logo" filter="url(#filter-5)" transform="translate(0.000000, 3.000000)">
+                    <path d="M2.4591195,20.3063379 C2.4591195,22.1820181 9.01716238,23.7025574 17.1069182,23.7025574 C25.1966741,23.7025574 31.754717,22.1820181 31.754717,20.3063379 C31.754717,19.5607834 30.7185842,18.8713392 28.9619738,18.3111925 C32.0729678,19.1257285 34,20.2558626 34,21.5050036 C34,23.9875216 26.3888407,26 17,26 C7.61115925,26 0,23.9875216 0,21.5050036 C0,20.0851419 2.4897637,18.8190395 6.37787959,17.9952784 C3.94656879,18.6003073 2.4591195,19.4130473 2.4591195,20.3063379 Z" id="形状结合"></path>
+                    <path d="M18,8 L28,11.9758065 L27.978801,25 L18,25 L18,8 Z M19.6304348,15.6134969 L19.6304348,17.8127796 L26.3695652,20.202454 L26.3695652,18.18533 L19.6304348,15.6134969 Z M19.6304348,11.3374233 L19.6304348,13.5367059 L26.3695652,15.9263804 L26.3695652,13.9092564 L19.6304348,11.3374233 Z" id="形状结合" fill-rule="nonzero"></path>
+                    <path d="M19,0 L19,6.257 L16.504,5.25619835 L16.504,24 L6,24 L6,4.99531172 L19,0 Z M14.775,13.5517241 L7.625,16.408867 L7.625,18.7241379 L14.775,15.8669951 L14.775,13.5517241 Z M14.775,8.89655172 L7.625,11.7536946 L7.625,14.0689655 L14.775,11.2118227 L14.775,8.89655172 Z M14.775,4.65517241 L7.625,7.51231527 L7.625,9.82758621 L14.775,6.97044335 L14.775,4.65517241 Z" id="形状结合" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

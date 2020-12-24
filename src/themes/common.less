@@ -1,0 +1,471 @@
+.size {
+  width: 100%;
+  height: 100%;
+}
+
+html, body {
+  .size;
+  margin: 0;
+  padding: 0;
+}
+
+/**hack name by shen**/
+.icon-add:before {
+  content: "\e600";
+}
+
+.icon-edit:before {
+  content: "\e606";
+}
+
+.icon-refresh:before {
+  content: "\e603";
+}
+
+.ivu-icon-policy:before {
+  font-family: "iconfont" !important;
+  font-size: 18px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e659";
+  vertical-align: 0;
+}
+
+.ivu-icon-control:before {
+  font-family: "iconfont" !important;
+  font-size: 15px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e658";
+  vertical-align: 0;
+}
+
+.ivu-icon-deploy:before {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e96f";
+  vertical-align: 0;
+}
+
+.ivu-icon-log:before {
+  font-family: "iconfont" !important;
+  font-size: 18px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e656";
+  vertical-align: 0;
+}
+
+.ivu-icon-audit:before {
+  font-family: "iconfont" !important;
+  font-size: 15px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e65a";
+  vertical-align: 0;
+}
+
+.ivu-icon-config:before {
+  font-family: "iconfont" !important;
+  font-size: 15px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e65b";
+  vertical-align: 0;
+}
+
+.ivu-icon-dictionary:before {
+  font-family: "iconfont" !important;
+  font-size: 19px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\e654";
+  vertical-align: 0;
+}
+
+/*menu hack*/
+
+.ivu-menu-item-selected {
+  background: #337FF7 !important;
+  color: #fff !important;
+}
+
+.ivu-menu-vertical .ivu-menu-item, .ivu-menu-vertical .ivu-menu-submenu-title {
+  height: 46px;
+  line-height: 46px;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 40px !important;
+  font-size: 18px;
+  margin: 10px 0;
+
+  span {
+    padding-left: 15px;
+  }
+}
+
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened {
+  background: #002144 !important;
+}
+
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item {
+  padding-left: 60px !important;
+  margin: 0;
+
+  span {
+    font-size: 14px;
+    padding-left: 10px;
+
+  }
+}
+
+/**tab hack**/
+.ivu-tabs-nav .ivu-tabs-tab {
+  font-size: 16px !important;
+  color: #515151 !important;
+
+  &.ivu-tabs-tab-active {
+    color: #347FF7 !important;
+  }
+}
+
+.ivu-tabs-ink-bar {
+  bottom: 5px !important;
+}
+
+/**input ,select ,data border hack**/
+.ivu-select-single .ivu-select-selection {
+  height: 42px !important;
+  line-height: 42px !important;
+  border-color: #AFB1B8;
+  border-radius: 2px;
+}
+
+.ivu-select-single .ivu-select-selection .ivu-select-placeholder, .ivu-select-single .ivu-select-selection .ivu-select-selected-value {
+  height: 40px !important;
+  line-height: 40px !important;
+  color: #737373 !important;
+}
+
+.ivu-input {
+  height: 42px !important;
+  line-height: 42px !important;
+  border-color: #AFB1B8 !important;
+  border-radius: 2px !important;
+}
+
+.ivu-icon-ios-calendar-outline::before {
+  font-family: "iconfont" !important;
+  font-size: 18px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  vertical-align: 0;
+  line-height: 42px;
+  font-weight: bold;
+  content: "\e64d" !important;
+}
+
+.ivu-icon-ios-close-circle::before {
+  line-height: 38px;
+}
+
+.ivu-table-header thead tr th{
+  line-height:40px;
+}
+.global-layout__header{
+  z-index: 1000;
+}
+/**查询部分**/
+.serve{
+  margin:0 20px 20px 21px;
+  padding: 0 0 10px;
+  background:#fff;
+  .check-condition{
+    &.clearfix:after{
+      content: "";
+      display: block;
+      height: 0;
+      clear: both;
+      visibility: hidden;
+    }
+    &.clearfix{
+      zoom:1;
+    }
+    .btns{
+      display:inline-block;
+      float: right;
+      margin-top: 20px;
+      .search {
+          width: 114px;
+          height: 36px;
+          padding: 0;
+          line-height: 36px;
+          text-align: center;
+          border-radius: 7px;
+          border: none;
+          background: #347ff7;
+          color: #fff;
+        }
+      }
+    /deep/.ivu-form{
+      .ivu-form-item-label{
+        line-height: 24px;
+      }
+      .ivu-form-item{
+        display: inline-block;
+        width:21.5%;
+        margin:20px 0 0 0;
+        .ivu-form-item-content{
+          height:42px;
+          .ivu-select-single .ivu-select-selection{
+            line-height: 42px;
+            height:42px;
+            .ivu-select-placeholder, .ivu-select-selected-value{
+              line-height: 42px;
+            }
+          }
+          .ivu-date-picker{
+            width:100%;
+          }
+          .ivu-input{
+            border: 1px solid #AFB1B8;
+          }
+        }
+      }
+    }
+    /deep/ .distpicker-address-wrapper select {
+      border: 1px solid #afb1bb;
+      width:100%;
+      font-size: 14px;
+    }
+  }
+  /deep/.ivu-row:before,/deep/.ivu-row:after{
+    display: none;
+  }
+}
+.btns{
+  margin-bottom:20px;
+  .search {
+    width: 80px;
+    height: 25px;
+    padding:0;
+    text-align: center;
+    border-radius: 0;
+    border: 1px solid #077AF0;
+    background: #fff;
+    color: #077AF0; 
+    margin-right: 20px;
+  }
+  .reset {
+    width: 80px;
+    height: 25px;
+    border-radius: 0;
+    border: 1px solid #D2D2D7;
+    color:#2D2D2D;
+  }
+  .ivu-col{
+    display: inline-block;
+  }
+}
+@media (min-width:1540px) and (max-width:1639px){
+  .serve{
+    .check-condition{
+      /deep/.ivu-form{
+        .ivu-form-item{
+          width:22.5%;
+        }
+      }
+    }
+  }
+}
+@media (min-width:1440px) and (max-width:1539px){
+  .serve{
+    .check-condition{
+      /deep/.ivu-form{
+        .ivu-form-item{
+          width:23.5%;
+        }
+      }
+    }
+  }
+}
+@media screen and (max-width:1439px){
+  .serve{
+    .check-condition{
+      /deep/.ivu-form{
+        .ivu-form-item{
+          width:25%;
+        }
+      }
+    }
+  }
+}
+.middle {
+  width: 100%;
+  height: 16px;
+  background: #F5F5F5;
+  margin-bottom: 20px;
+  border-top: 1px solid #EAEFF3;
+  border-bottom: 1px solid #EAEFF3;
+}
+/*弹框modal*/
+.pop-up{
+  //title
+  .ivu-modal-content{
+    .ivu-modal-header{
+      padding:19px 0 17px 46px;
+    }
+  }
+  //close
+  .ivu-modal-close .ivu-icon-ios-close{
+    top:7px;
+  }
+  //body
+  .ivu-modal-body{
+    padding:0;
+    //form
+    .ivu-form{
+      padding: 34px 47px 0 45px;
+      .ivu-form-item{
+        margin-bottom: 34px;
+        //label
+        .ivu-form-item-label{
+          font-size:14px;
+          color:#333;
+        }
+        //input
+        .ivu-input-wrapper{
+          .ivu-input{
+            height: 36px !important;
+            padding-left:20px;
+            line-height: 36px !important;
+            border-color: #c9c9c9 !important;
+            border-radius: 2px !important;
+            color:#333;
+            font-size:12px;
+          }
+          &.ivu-input-type-textarea{
+            height: 108px;
+            .ivu-input{
+              height: 108px!important;
+            }
+          }
+        }
+      }
+
+    }
+  }
+  // footer
+  .add-footer{
+    padding:16px 27px 20px 0;
+    border-top:1px solid #ebebeb;
+    text-align: right;
+    .ivu-btn{
+      width: 114px;
+      height: 36px;
+      border: 1px solid #347FF7;
+      border-radius: 7px;
+      &.fusion-add-cancel{
+        color:#347FF7;
+      }
+      &.fusion-add-ok{
+        margin-right:17px;
+        border:1px solid transparent;
+        background: #347FF7;
+        color:#fff;
+      }
+    }
+  }
+  &.delete{
+    //close
+    .ivu-modal-close .ivu-icon-ios-close{
+      top:10px;
+    }
+    //title
+    .ivu-modal-content{
+      .ivu-modal-header{
+        border-bottom:none;
+        padding:0;
+        p{
+          line-height: 20px;
+          height:59px;
+          padding: 32px 0 0 40px;
+          span{
+            font-size:18px;
+          }
+        }
+        i{
+          font-size:28px;
+          color:#f90;
+          margin-right:12px;
+          vertical-align: middle;
+        }
+      }
+    }
+    .content{
+      padding:18px 0 18px 46px;
+      .new-icon-del {
+        color: #FF3D3D;
+      }
+      .close-left {
+        margin-left: 10px;
+      }
+    }
+    .add-footer{
+      border-top:none;
+      .ivu-btn{
+        width:91px;
+        height:29px;
+        &.fusion-del-cancel{
+          color:#347FF7;
+        }
+        &.fusion-del-ok{
+          margin-right:16px;
+          border:1px solid transparent;
+          background: #347FF7;
+          color:#fff;
+        }
+      }
+    }
+  }
+  //日志管理-高级配置
+  &.param{
+    .ivu-input-wrapper{
+      width:289px;
+      margin-right:12px;
+    }
+    .ivu-select{
+      width:95px;
+    }
+    .ivu-select-single .ivu-select-selection{
+      height: 36px !important;
+      line-height: 36px !important;
+      .ivu-select-placeholder,.ivu-select-selected-value{
+        height: 34px !important;
+        line-height: 34px !important;
+      }
+    }
+  }
+  //查看
+  .search {
+    padding: 10px 25px;
+    .serch-row {
+      margin-bottom: 20px;
+    }
+    .search-span {
+      display: inline-block;
+      width: 80px;
+      text-align: right;
+    }
+  }
+}
