@@ -22,7 +22,7 @@ export const constantRoutes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import(/* webpackChunkName: "login" */ '@/pages/login/index'),
+    component: () => import(/* webpackChunkName: "login" */ '@/pages/login/login'),
     meta: { title: '登录' },
     hidden: true
   },
@@ -55,7 +55,7 @@ export const asyncRoutes = [
         name: 'creat',
         meta: {
           icon: 'control',
-          title: '创建工单'
+          title: '待办工单'
         },
         component: () => import('@/pages/policy/control/user/index.vue')
       },
@@ -64,7 +64,7 @@ export const asyncRoutes = [
         name: 'pedding',
         meta: {
           icon: 'control',
-          title: '待办工单'
+          title: '已办工单'
         },
         component: () => import('@/pages/policy/control/index.vue')
       },
@@ -73,7 +73,7 @@ export const asyncRoutes = [
         name: 'finish',
         meta: {
           icon: 'deploy',
-          title: '已办工单'
+          title: '创建工单'
         },
         component: () => import('@/pages/policy/deploy/index.vue')
       }
