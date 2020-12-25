@@ -96,8 +96,8 @@ export default {
     },
 
     theme: {
-      type: String,
-      default: 'dark'
+      type: String
+      // default: 'dark'
     },
 
     rootIconSize: {

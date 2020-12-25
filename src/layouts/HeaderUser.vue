@@ -1,11 +1,7 @@
 <template>
   <div class="header-user">
-    <i-dropdown @on-click="handleClick">
-      <ul name="user" style="float: left;margin-right: 50px;">
-        <i-icon class="header-user__icon" size="18" style="color:#fff" type="ios-person-outline" />
-        <!-- <span>个人中心</span> -->
-      </ul>
-      <ul name="setting" style="float: left;margin-right: 50px;">
+    <i-dropdown>
+      <ul name="setting" style="float: left;margin-right: 20px;" @click="userSet">
         <i-icon
           class="header-user__icon"
           size="18"
@@ -14,7 +10,11 @@
         />
         <!-- <span>个人设置</span> -->
       </ul>
-      <ul name="logout" style="float: left;margin-right: 50px;" @click="delModel === true">
+      <ul name="user" style="float: left;margin-right: 20px;" @click="info">
+        <i-icon class="header-user__icon" size="18" style="color:#fff" type="ios-person-outline" />
+        <!-- <span>消息</span> -->
+      </ul>
+      <ul name="logout" style="float: left;margin-right: 20px;" @click="isOut">
         <i-icon class="header-user__icon" size="18" style="color:#fff" type="ios-power-outline" />
         <!-- <span>退出登录</span> -->
       </ul>
@@ -75,37 +75,48 @@ export default {
   methods: {
     ...mapActions('user', ['userLogOut']),
 
-    handleClick(name) {
-      switch (name) {
-        case 'user':
-          this.$router.push({ name: 'UserCenter' })
-          break
-        case 'setting':
-          this.$router.push({ name: 'UserSet' })
-          break
-        case 'logout':
-          this.delModel = true
-          break
-      }
+    // handleClick(name) {
+    //   switch (name) {
+    //     case 'user':
+    //       this.$router.push({ name: 'UserCenter' })
+    //       break
+    //     case 'setting':
+    //       this.$router.push({ name: 'UserSet' })
+    //       break
+    //     case 'logout':
+    //       this.delModel = true
+    //       break
+    //   }
+    // },
+    userSet() {
+      this.$router.push('/setting')
+    },
+    info() {
+      this.$router.push('/info')
+    },
+    isOut() {
+      this.delModel = true
     },
     cancel_del() {
       this.delModel = false
     },
     //退出登录确定
     delOk() {
-      this.userLogOut().then(_ => {
-        this.$Message.success({
-          content: '退出登录成功~',
-          onClose: () => {
-            this.delModel = false
-            localStorage.clear()
-            sessionStorage.clear()
-            this.$router.push('/login')
-            // const url = process.env.NODE_ENV === 'demo' ? window.demo.admin : window.g.admin
-            // window.location.href = url + '/login?redirectUrl=' + window.location.origin
-          }
-        })
-      })
+      this.delModel = false
+      this.$router.push('/login')
+      // this.userLogOut().then(_ => {
+      //   this.$Message.success({
+      //     content: '退出登录成功~',
+      //     onClose: () => {
+      //       this.delModel = false
+      //       localStorage.clear()
+      //       sessionStorage.clear()
+      //       this.$router.push('/login')
+      //       // const url = process.env.NODE_ENV === 'demo' ? window.demo.admin : window.g.admin
+      //       // window.location.href = url + '/login?redirectUrl=' + window.location.origin
+      //     }
+      //   })
+      // })
     }
     // getUser() {
     //   this.token = getUrlQuery('p') ? getUrlQuery('p') : localStorage.getItem('tokenVal')

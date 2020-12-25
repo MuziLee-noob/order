@@ -16,7 +16,7 @@
             <Input v-model="companySearch" placeholder="公司名称" />
           </FormItem>
           <div class="btns">
-            <Button @click="userList(1)" class="search">筛选</Button>
+            <Button @click="userList(1)" class="search">查询</Button>
           </div>
         </Form>
       </Row>
