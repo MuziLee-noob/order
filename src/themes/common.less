@@ -95,8 +95,8 @@ html, body {
 /*menu hack*/
 
 .ivu-menu-item-selected {
-  background: #337FF7 !important;
-  color: #fff !important;
+  background: #337FF7;
+  color: #fff;
 }
 
 .ivu-menu-vertical .ivu-menu-item, .ivu-menu-vertical .ivu-menu-submenu-title {
@@ -114,7 +114,8 @@ html, body {
 }
 
 .ivu-menu-dark.ivu-menu-vertical .ivu-menu-opened {
-  background: #002144 !important;
+  // background: #002144 !important;
+  background: #fff !important;
 }
 
 .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu .ivu-menu-item {
@@ -256,8 +257,8 @@ html, body {
 .btns{
   margin-bottom:20px;
   .search {
-    width: 80px;
-    height: 25px;
+    width: 100px;
+    height: 37px;
     padding:0;
     text-align: center;
     border-radius: 0;
@@ -267,8 +268,8 @@ html, body {
     margin-right: 20px;
   }
   .reset {
-    width: 80px;
-    height: 25px;
+    width: 100px;
+    height: 37px;
     border-radius: 0;
     border: 1px solid #D2D2D7;
     color:#2D2D2D;
@@ -296,9 +297,61 @@ html, body {
       margin-left: 20px;
     }
   }
+  .policy-table {
+    margin: 0 20px;
+    padding: 10px;
+    background: #fff;
+  }
+
+  .ivu-table th {
+    background: #F3F5FC !important;
+  }
+
+  .ivu-table-stripe .ivu-table-body tr:nth-child(2n) td {
+    background: #F3F5FC !important;
+  }
+
+  .row-right {
+    text-align: right;
+  }
+
+  #date {
+    /deep/ .ivu-select-dropdown {
+      left: initial !important;
+    }
+  }
+  .companyOperate {
+    padding: 20px;
+  }
   .addInfo {
     width: 100%;
-    padding: 0 300px;
+    padding: 70px 300px;
+  }
+  // 工单详情页样式
+  .detailsHead {
+    padding: 25px 550px;
+  }
+  .detailsTab {
+    border-radius: 8px;
+    border: 1px dashed #077AF0;
+    padding: 3px 10px;
+    color: #077af0;
+    margin-right: 15px;
+    background: rgba(7,122,240,0.1);
+  }
+  .title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 30px;
+  }
+  .formDetails {
+    padding: 50px 527px;
+    box-shadow: 0px 1px 2px 0px #c7c7c7, 0px 0px 4px 0px rgba(158,158,158,0.5);
+    .formRow {
+      margin-bottom: 10px;
+    }
   }
 @media (min-width:1540px) and (max-width:1639px){
   .serve{

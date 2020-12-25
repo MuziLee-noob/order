@@ -1,48 +1,49 @@
 <template>
   <i-layout class="global-layout">
-    <i-sider
-      :collapsed-width="64"
-      :width="213"
-      class="global-layout__sider"
-      collapsible
-      hide-trigger
-      v-model="isCollapsed"
+    <i-header
+      :class="[
+        'global-layout__header',
+        this.isCollapsed ? 'global-layout__header_expand-width' : ''
+      ]"
     >
-      <SideMenu
-        :accordion="true"
-        :active-name="$route.name"
-        :collapsed="isCollapsed"
-        :menu-list="menuList"
-        @on-select="turnToPage"
-        theme="dark"
-        v-if="reFresh"
-      >
-        <div class="layout-logo">
-          <router-link to="/">
-            <!-- <span class="oneFusion">武分派单系统</span> -->
-            <!-- <img src="../assets/images/编组2.png" /> -->
-            <!-- <h1 v-show="!isCollapsed" class="layout-logo__title">11</h1> -->
-          </router-link>
-        </div>
-        <!-- <div class="global-layout-title">
-          工单系统
-        </div> -->
-      </SideMenu>
-    </i-sider>
+      <GlobalHeader :is-collapsed="isCollapsed" @toggleCollapse="toggleCollapse" />
+    </i-header>
     <i-layout
       :class="[
         'global-layout__containers',
-        this.isCollapsed ? 'global-layout__containers_expand-width' : ''
+        this.isCollapsed ? 'global-layout__containers_expand-width' : '',
+        { 'hide-frame': $route.meta && $route.meta.hideFrame }
       ]"
     >
-      <i-header
-        :class="[
-          'global-layout__header',
-          this.isCollapsed ? 'global-layout__header_expand-width' : ''
-        ]"
+      <i-sider
+        v-if="!($route.meta && $route.meta.hideFrame)"
+        :collapsed-width="64"
+        :width="213"
+        class="global-layout__sider"
+        collapsible
+        hide-trigger
+        v-model="isCollapsed"
       >
-        <GlobalHeader :is-collapsed="isCollapsed" @toggleCollapse="toggleCollapse" />
-      </i-header>
+        <SideMenu
+          :accordion="true"
+          :active-name="$route.name"
+          :collapsed="isCollapsed"
+          :menu-list="menuList"
+          @on-select="turnToPage"
+          v-if="reFresh"
+        >
+          <div class="layout-logo">
+            <router-link to="/">
+              <!-- <span class="oneFusion">武分派单系统</span> -->
+              <!-- <img src="../assets/images/编组2.png" /> -->
+              <!-- <h1 v-show="!isCollapsed" class="layout-logo__title">11</h1> -->
+            </router-link>
+          </div>
+          <!-- <div class="global-layout-title">
+          工单系统
+        </div> -->
+        </SideMenu>
+      </i-sider>
       <i-content class="global-layout__content" style="background: #f5f5f5">
         <slot></slot>
       </i-content>
@@ -212,40 +213,33 @@ export default {
 </script>
 
 <style lang="less">
+@header-h: 59px;
 .global-layout {
   &__sider {
     &.ivu-layout-sider {
       position: fixed;
-      min-height: 100%;
+      min-height: 100vh;
       z-index: 9;
+      margin-top: @header-h;
     }
   }
-
-  &__logo {
-    height: 59px;
-    line-height: 59px;
-    text-align: center;
-    background-color: #192b6f;
-    background-image: url('../assets/icons/logo.svg');
-    background-repeat: no-repeat;
-    background-size: 30px auto;
-    background-position: 30px 15px;
-    text-indent: 45px;
+  .ivu-layout-header {
+    height: @header-h;
+    line-height: @header-h;
   }
-
   &__containers {
     min-height: 100vh;
-    padding-left: 214px;
+    // padding-left: 231px;
+    // padding-left: 214px;
     background: #fff;
-
-    .ivu-layout-header {
-      height: 59px;
-      background: #077af0 !important;
-      // line-height: 59px;
-    }
 
     &_expand-width {
       padding-left: 64px;
+    }
+    &.hide-frame {
+      .global-layout__content {
+        margin-left: 0;
+      }
     }
   }
 
@@ -254,8 +248,8 @@ export default {
     position: fixed;
     top: 0;
     right: 0;
-    width: calc(100% - 213px);
-    z-index: 1024;
+    // width: calc(100% - 213px);
+    z-index: 999;
     box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
     transition: width 0.2s ease-in-out;
 
@@ -266,7 +260,7 @@ export default {
 
   &__content {
     // margin: 88px 24px 0px;
-    margin: 59px 0 0 0;
+    margin: @header-h 0 0 213px;
   }
 
   &__footer {
@@ -274,43 +268,21 @@ export default {
   }
 }
 
-.layout-logo {
-  height: 59px;
-  background: #077af0;
-  line-height: 59px;
-  padding-left: 22px;
-  &__title {
-    padding-left: 20px;
-    box-sizing: border-box;
-    font-size: 19px;
-    font-weight: 600;
-    display: inline-block;
-    height: 32px;
-    line-height: 32px;
-    vertical-align: middle;
-    text-transform: uppercase;
-    color: #1890ff;
-  }
-
-  &__img {
-    height: 33px;
-    vertical-align: middle;
-  }
-}
-
 .global-layout-title {
   font-size: 18px;
   color: #fff;
-  height: 56px;
-  margin: 0 10px 21px 12px;
-  padding-top: 18px;
+  height: 68px;
+  line-height: 60px;
   position: relative;
   text-align: center;
-  border-bottom: 1px solid #25405c;
-}
-.oneFusion {
-  font-size: 21px;
-  font-weight: bold;
-  color: #fff;
+
+  i {
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    width: 190px;
+    height: 1px;
+    border-bottom: 1px solid #25405c;
+  }
 }
 </style>

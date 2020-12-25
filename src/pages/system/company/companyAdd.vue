@@ -149,9 +149,3 @@ export default {
   }
 }
 </script>
-
-<style lang="less" scoped>
-.companyOperate {
-  padding: 16px;
-}
-</style>

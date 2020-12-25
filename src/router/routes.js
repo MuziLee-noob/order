@@ -40,6 +40,45 @@ export const constantRoutes = [
 ]
 
 export const asyncRoutes = [
+  // {
+  //   path: '/',
+  //   name: 'set',
+  //   component: MainView,
+  //   meta: {
+  //     hideInBread: true,
+  //     title: '个人设置',
+  //     hideFrame: true
+  //   },
+  //   children: [
+  //     {
+  //       path: '/setting',
+  //       name: 'setting',
+  //       meta: {
+  //         title: '设置',
+  //         hideFrame: true,
+  //         hideInBread: false
+  //       },
+  //       component: () => import('@/pages/setting/index')
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/',
+  //   name: 'infomation',
+  //   component: MainView,
+  //   children: [
+  //     {
+  //       path: '/info',
+  //       name: 'info',
+  //       meta: {
+  //         title: '消息',
+  //         hideFrame: true,
+  //         hideInBread: false
+  //       },
+  //       component: () => import('@/pages/setting/info.vue')
+  //     }
+  //   ]
+  // },
   {
     path: '/',
     name: 'order',
@@ -54,28 +93,59 @@ export const asyncRoutes = [
         path: '/pedding',
         name: 'pedding',
         meta: {
-          icon: 'control',
           title: '待办工单'
         },
-        component: () => import('@/pages/policy/control/user/index.vue')
+        component: () => import('@/pages/order/peddingOrder.vue')
+      },
+      {
+        path: '/details',
+        name: 'details',
+        hidden: true,
+        meta: {
+          title: '工单详情',
+          hideInBread: false
+        },
+        component: () => import('@/pages/order/details.vue')
+      },
+      {
+        path: '/setting',
+        name: 'setting',
+        hideInBread: true,
+        hidden: true,
+        meta: {
+          title: '设置',
+          hideFrame: true,
+          hideInBread: false
+        },
+        component: () => import('@/pages/setting/index')
+      },
+      {
+        path: '/info',
+        name: 'info',
+        hideInBread: true,
+        hidden: true,
+        meta: {
+          title: '消息',
+          hideFrame: true,
+          hideInBread: false
+        },
+        component: () => import('@/pages/setting/info.vue')
       },
       {
         path: '/finish',
         name: 'finish',
         meta: {
-          icon: 'control',
           title: '已办工单'
         },
-        component: () => import('@/pages/policy/control/index.vue')
+        component: () => import('@/pages/order/doneOrder.vue')
       },
       {
         path: '/create',
         name: 'create',
         meta: {
-          icon: 'deploy',
           title: '创建工单'
         },
-        component: () => import('@/pages/policy/deploy/index.vue')
+        component: () => import('@/pages/order/createOrder.vue')
       }
     ]
   },
@@ -93,7 +163,6 @@ export const asyncRoutes = [
         path: '/commany',
         name: 'commany',
         meta: {
-          icon: 'audit',
           title: '公司管理'
         },
         component: () => import('@/pages/system/company/index.vue')
@@ -112,7 +181,6 @@ export const asyncRoutes = [
         path: '/user',
         name: 'user',
         meta: {
-          icon: 'config',
           title: '用户管理'
         },
         component: () => import('@/pages/system/user/index.vue')
@@ -121,7 +189,6 @@ export const asyncRoutes = [
         path: '/role',
         name: 'role',
         meta: {
-          icon: 'config',
           title: '角色管理'
         },
         component: () => import('@/pages/system/role/index.vue')
@@ -142,7 +209,6 @@ export const asyncRoutes = [
         path: '/order',
         name: 'orderStatic',
         meta: {
-          icon: 'audit',
           title: '工单统计'
         },
         component: () => import('@/pages/data/order/index.vue')
@@ -151,7 +217,6 @@ export const asyncRoutes = [
         path: '/degree',
         name: 'degree',
         meta: {
-          icon: 'config',
           title: '满意度统计'
         },
         component: () => import('@/pages/data/degree/index.vue')
@@ -160,7 +225,6 @@ export const asyncRoutes = [
         path: '/area',
         name: 'area',
         meta: {
-          icon: 'config',
           title: '区域统计'
         },
         component: () => import('@/pages/data/area/index.vue')
@@ -169,7 +233,6 @@ export const asyncRoutes = [
         path: '/support',
         name: 'support',
         meta: {
-          icon: 'config',
           title: '支撑单位统计'
         },
         component: () => import('@/pages/data/support/index.vue')
