@@ -93,11 +93,12 @@
       <Table
         :data="data"
         :columns="columns"
+        highlight-row
         @on-select="handleSelect"
         @on-select-all="handleSelectAll"
         @on-select-all-cancel="handleCancelSelectAll"
         @on-select-cancel="handleCancel"
-        @on-row-cilck="goto"
+        @on-current-change="goto"
         ref="selection"
       ></Table>
       <pagination
@@ -212,19 +213,19 @@ export default {
   methods: {
     goto(data) {
       console.log(data)
-      var uuid = data.uuid
-      console.log(this.uuid)
+      var uuid = data.orderUuid
+      console.log(uuid)
       this.$router.push({
         path: '/details',
         query: { uuid: uuid }
       })
     },
-    demo() {
-      this.$router.push({
-        path: '/details',
-        query: { uuid: '111' }
-      })
-    },
+    // demo() {
+    //   this.$router.push({
+    //     path: '/details',
+    //     query: { uuid: '111' }
+    //   })
+    // },
     getData(page) {
       var startTime = moment(this.startTime).format('yyyy/MM/DD HH:mm')
       var endTime = moment(this.finishTime).format('yyyy/MM/DD HH:mm')
@@ -237,7 +238,7 @@ export default {
       axios
         .axios({
           method: 'post',
-          url: 'task/todoList',
+          url: '/api/task/todoList',
           data: {
             pageSize: this.pageSize,
             currentPage: page,
