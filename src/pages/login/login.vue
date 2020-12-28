@@ -22,7 +22,7 @@
 </template>
 
 <script>
-// import axios from '../api/axios'
+import axios from '../../api/axios'
 import { loginAuth } from '../../api/login'
 const cryptoJS = require('crypto-js')
 const key = 'njxtqgjyptfromonlinedisp'
@@ -49,7 +49,7 @@ export default {
       return encrypted.toString()
     },
     login() {
-      this.$router.push('/pedding')
+      //this.$router.push('/pedding')
       var account = this.encryptByDES(this.phoneNumber, key)
       var pwdMd5 = cryptoJS.MD5(this.password).toString()
       var pwd = this.encryptByDES(pwdMd5, key)
@@ -60,62 +60,64 @@ export default {
         account: account,
         pwd: pwd
       }
-      loginAuth(params).then(res => {
-        this.uid = res.data.data.uuid
-        this.token = res.data.token
-        if (res.data.data.roleUuid === 'fea98ada6624476aa960c02a13e771fb') {
-          role = 2 //需求发起人
-        }
-        if (res.data.data.roleUuid === '7ce7b05588154db694a1383bc515fa92') {
-          role = 1 //审核人
-        }
-        if (res.data.data.roleUuid === 'abafab65e99345898cdc9ec66225e59d') {
-          role = 3 //支撑接口人
-        }
-        this.$store.commit('setRole', role)
-        this.$store.commit('setUserUuid', this.uid)
-        console.log(this.uid, this.token, role)
-        localStorage.setItem('token', this.token)
-        if (role == 2) {
-          console.log(role)
-          this.$router.push('/pedding')
-        } else {
-          this.$router.push('/pedding')
-        }
-      })
-      //   axios
-      //     .axios({
-      //       method: 'get',
-      //       url: 'login/manageuserlogin',
-      //       params: {
-      //         account: account,
-      //         pwd: pwd
-      //       }
-      //     })
-      //     .then(data => {
-      //       console.log(data)
-      //       this.uid = data.data.data.uuid
-      //       this.token = data.data.token
-      //       if (data.data.data.roleUuid === 'fea98ada6624476aa960c02a13e771fb') {
-      //         role = 2 //需求发起人
-      //       }
-      //       if (data.data.data.roleUuid === '7ce7b05588154db694a1383bc515fa92') {
-      //         role = 1 //审核人
-      //       }
-      //       if (data.data.data.roleUuid === 'abafab65e99345898cdc9ec66225e59d') {
-      //         role = 3 //支撑接口人
-      //       }
-      //       this.$store.commit('setRole', role)
-      //       this.$store.commit('setUserUuid', this.uid)
-      //       console.log(this.uid, this.token, role)
-      //       localStorage.setItem('token', this.token)
-      //       if (role == 2) {
-      //         console.log(role)
-      //         this.$router.push('/allList')
-      //       } else {
-      //         this.$router.push('/todoList')
-      //       }
-      //     })
+      console.log(account, pwd)
+      // loginAuth(params).then(res => {
+      //   console.log(res)
+      //   this.uid = res.data.data.uuid
+      //   this.token = res.data.token
+      //   if (res.data.data.roleUuid === 'fea98ada6624476aa960c02a13e771fb') {
+      //     role = 2 //需求发起人
+      //   }
+      //   if (res.data.data.roleUuid === '7ce7b05588154db694a1383bc515fa92') {
+      //     role = 1 //审核人
+      //   }
+      //   if (res.data.data.roleUuid === 'abafab65e99345898cdc9ec66225e59d') {
+      //     role = 3 //支撑接口人
+      //   }
+      //   this.$store.commit('setRole', role)
+      //   this.$store.commit('setUserUuid', this.uid)
+      //   console.log(this.uid, this.token, role)
+      //   localStorage.setItem('token', this.token)
+      //   if (role == 2) {
+      //     console.log(role)
+      //     this.$router.push('/pedding')
+      //   } else {
+      //     this.$router.push('/pedding')
+      //   }
+      // })
+      axios
+        .axios({
+          method: 'get',
+          url: 'login/manageuserlogin',
+          params: {
+            account: account,
+            pwd: pwd
+          }
+        })
+        .then(data => {
+          console.log(data)
+          this.uid = data.data.data.uuid
+          this.token = data.data.token
+          if (data.data.data.roleUuid === 'fea98ada6624476aa960c02a13e771fb') {
+            role = 2 //需求发起人
+          }
+          if (data.data.data.roleUuid === '7ce7b05588154db694a1383bc515fa92') {
+            role = 1 //审核人
+          }
+          if (data.data.data.roleUuid === 'abafab65e99345898cdc9ec66225e59d') {
+            role = 3 //支撑接口人
+          }
+          this.$store.commit('setRole', role)
+          this.$store.commit('setUserUuid', this.uid)
+          console.log(this.uid, this.token, role)
+          localStorage.setItem('token', this.token)
+          if (role == 2) {
+            console.log(role)
+            this.$router.push('/allList')
+          } else {
+            this.$router.push('/todoList')
+          }
+        })
     }
   }
 }
@@ -182,3 +184,4 @@ li {
   }
 }
 </style>
+
