@@ -5,7 +5,7 @@
   <div class="fusion-manage">
     <div class="fusion-header serve">
       <div class="btnsCreate">
-        <Button @click="addCompany" class="create">新建公司</Button>
+        <Button @click="newCompany" class="create">新建公司</Button>
         <Poptip trigger="hover" content="批量导入数据">
           <Button icon="ios-open-outline" class="exportButton" @click="leadIn" />
         </Poptip>
@@ -16,7 +16,7 @@
             <Input v-model="companySearch" placeholder="公司名称" />
           </FormItem>
           <div class="btns">
-            <Button @click="userList(1)" class="search">查询</Button>
+            <Button @click="search" class="search">查询</Button>
           </div>
         </Form>
       </Row>
@@ -26,16 +26,26 @@
         <Button @click="userList(1)" class="search">下载</Button>
         <Button @click="reset(1)" class="reset">删除</Button>
       </div> -->
-      <Table :columns="companyColums" :data="companyData" stripe></Table>
+      <Table :columns="companyColums" :data="companyData" stripe>
+        <template slot-scope="{ row, index }" slot="action">
+          <Button type="text" size="small" @click="show(row, index)">查看</Button>
+          <Button type="text" size="small" @click="change(row, index)">修改</Button>
+        </template>
+      </Table>
       <pagination
-        :page-size="size"
+        :page-size="10"
         :show-info="true"
-        :currentPage="current"
-        :total="userTotal"
-        @on-change="userList"
-        @on-page-size-change="userSize"
+        :currentPage="page"
+        :total="total"
+        @on-change="pageChange"
       />
     </div>
+    <Modal v-model="delFlag" title="提示" @on-ok="delOk">
+      <p>此操作将永久删除用户相关数据，是否确认删除？</p>
+    </Modal>
+    <Modal v-model="resetFlag" title="提示" @on-ok="resetOk">
+      <p>确认重置密码？（默认密码为123456）</p>
+    </Modal>
   </div>
 </template>
 <style lang="less" scoped></style>
@@ -44,148 +54,101 @@
 // import { dateFormat } from '../../../../libs/tools'
 
 export default {
-  data() {
-    return {
-      userdate: [],
-      userTotal: 0,
-      size: 10,
-      current: 1,
-      companyColums: [
-        {
-          title: '公司名称',
-          key: 'eventName',
-          tooltip: true
-        },
-        {
-          title: '支撑接口人',
-          key: 'ip',
-          tooltip: true
-        },
-        {
-          title: '状态',
-          key: 'userAccount',
-          tooltip: true
-        },
-        {
-          title: '操作',
-          slot: 'opeare'
+    components:{
+        above,
+        menuCheck,
+    },
+    data(){
+        return{
+            srow:'',
+            index:'',
+            total:'',
+            page: 1,//默认为第一页
+            companySearch:'',//搜索公司的字段
+            data:[],//后台来的数据
+            columns: [//Todo写成和后台一样的
+                {
+                    title: '公司名称',
+                    key: 'comName'
+                },
+                {
+                    title: '地区',
+                    key: 'region'
+                },
+                {
+                    title: '状态',
+                    key: 'flag',
+                    render:(h,params)=>{
+                        let tmpStr = "";
+                        if(params.row.flag==1){
+                            tmpStr="启用";
+                        }else if(params.row.flag==2){
+                            tmpStr="禁用";
+                        }
+                        return h('span',tmpStr)
+                    }
+                },
+                {
+                    title:'操作',
+                    slot:'action',
+                    align:'center'
+                }
+            ],
         }
-      ],
-      companyData: []
-    }
-  },
-  created() {
-    this.userList(1)
-  },
-  methods: {
-    // 获取当天的时间
-    getToday: function() {
-      var nowdate = new Date()
-      var y = nowdate.getFullYear()
-      var m = nowdate.getMonth() + 1
-      var d = nowdate.getDate()
-      if (m < 10) {
-        m = '0' + m
-      }
-      if (d < 10) {
-        d = '0' + d
-      }
-      this.today = y + '-' + m + '-' + d
-      this.getPrevMonth()
-      this.userdate = [this.prevMonth, this.today]
     },
-    // 获取前一个月的时间
-    getPrevMonth: function() {
-      const nowdates = new Date()
-      nowdates.setMonth(nowdates.getMonth() - 1)
-      var y = nowdates.getFullYear()
-      var m = nowdates.getMonth() + 1
-      var d = nowdates.getDate()
-      if (m < 10) {
-        m = '0' + m
-      }
-      if (d < 10) {
-        d = '0' + d
-      }
-      this.prevMonth = y + '-' + m + '-' + d
+    created(){
+        this.getData(1);
     },
-    sel(data) {
-      this.coAddressPcdCode = data.province.code
-      this.coAddressPcdName = data.province.value
-      this.placeholders.province = data.province.value
-      this.userList(1) //使用value值
+    methods: {
+        newCompany(){
+            this.$router.push('/companyOperate')
+        },
+        show(row,index){
+            this.srow=row;
+            this.index=index;
+            console.log(this.srow,this.index)
+            this.$router.push(
+                {
+                    path:'/companyOperate',
+                    query:{data:this.srow,flag:true}
+                }
+            )
+        },
+        change(row,index){
+            this.srow=row;
+            this.index=index;
+            console.log(this.srow,this.index)
+            this.$router.push(
+                {
+                    path:'/companyOperate',
+                    query:{data:this.srow,flag:false}
+                }
+            )
+        },
+        search(){
+            this.getData(1);
+            this.page=1;
+        },
+        leadIn(){
+            //Todo批量导入的方法
+        },
+        getData(page){
+            axios.axios({
+                method:'post',
+                url:'userinfo/companyList',
+                data:{pageSize:10,currentPage:page,condition:{comName:this.companySearch}},
+                headers:{'token':localStorage.getItem("token")}
+            }).then((data)=>{
+                this.total=data.data.total;
+                this.data=data.data.data;
+                console.log(data)
+            });
+        },
+        pageChange(page) {
+            this.page = page ;
+            this.getData(page);
+            console.log(this.page);
+        },
     },
-    // // 获取用户角色
-    // initSearch() {
-    //   let params = {
-    //     dictCode: 'zy_enterprise_role'
-    //   }
-    //   commenSelect(params).then(res => {
-    //     if (res.status === 0) {
-    //       this.userSelect = res.results
-    //     }
-    //   })
-    // },
-    // 获取列表
-    // userList: function(current) {
-    //   if (current) this.current = current
-    //   if (typeof this.userdate[0] === 'object') {
-    //     this.userdate[0] = dateFormat('YYYY-mm-dd', this.userdate[0])
-    //   }
-    //   if (typeof this.userdate[1] === 'object') {
-    //     this.userdate[1] = dateFormat('YYYY-mm-dd', this.userdate[1])
-    //   }
-    //   if (this.coAddressPcdCode === undefined) {
-    //     this.coAddressPcdCode = ''
-    //   }
-    //   if (this.coAddressPcdName === undefined || this.coAddressPcdName === '请选择') {
-    //     this.coAddressPcdName = ''
-    //   }
-    //   let params = {
-    //     eventStartTime: this.userdate[0],
-    //     eventEndTime: this.userdate[1],
-    //     userAccount: this.userAccount,
-    //     userName: this.userName,
-    //     userRole: this.userRole,
-    //     coName: this.coName,
-    //     coAddressPcdCode: this.coAddressPcdCode,
-    //     coAddressPcdName: this.coAddressPcdName,
-    //     ip: this.ip,
-    //     size: this.size,
-    //     current: this.current
-    //   }
-    //   userPolicyList(params).then(res => {
-    //     if (res.status === 0) {
-    //       this.datauser = res.results.records
-    //       this.userTotal = res.results.total
-    //     }
-    //   })
-    // },
-    userSize: function(limit) {
-      this.size = limit
-      this.current = 1
-      this.userList()
-    },
-    userCurrent: function(limit) {
-      this.current = limit
-      this.userList()
-    },
-    reset: function() {
-      this.userdate = [this.prevMonth, this.today]
-      this.userAccount = ''
-      this.userName = ''
-      this.coName = ''
-      this.coAddressPcdCode = ''
-      this.coAddressPcdName = ''
-      this.placeholders.province = '请选择'
-      this.userRole = ''
-      this.ip = ''
-      this.userList(1)
-    },
-    // 新增公司
-    addCompany() {
-      this.$router.push({ name: 'commanyAdd', query: { id: '1' } })
-    }
-  }
 }
 </script>
