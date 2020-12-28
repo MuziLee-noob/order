@@ -33,7 +33,7 @@
               近一年
             </div>
           </div>
-          <div class="year">
+          <!-- <div class="year">
             <RadioGroup v-model="state" @on-change="change(state)" style="margin-top: -26px;">
               <Radio label="inside">
                 <span>对内</span>
@@ -42,17 +42,77 @@
                 <span>对外</span>
               </Radio>
             </RadioGroup>
-          </div>
+          </div> -->
           <div class="btns">
             <Button @click="userList(1)" class="search">导出数据</Button>
           </div>
         </Form>
       </Row>
     </div>
-    <div class="policy-table">
-      <div id="main" style="width:1720px; height:450px"></div>
-    </div>
-    <div class="policy-table" style="margin-top: 10px;">
+    <Tabs type="card" :animated="false" style="margin: 0 20px;">
+      <TabPane label="打分统计">
+        <div class="policy-table" style="margin: 0;">
+          <div id="main" style="width:1720px; height:450px;padding-top:30px;"></div>
+          <Table :columns="degreeColums" :data="degreerData" stripe></Table>
+          <pagination
+            :page-size="size"
+            :show-info="true"
+            :currentPage="current"
+            :total="userTotal"
+            @on-change="userList"
+            @on-page-size-change="userSize"
+          />
+        </div>
+      </TabPane>
+      <TabPane label="对内打分">
+        <div class="policy-table" style="margin: 0;">
+          <Form>
+            <FormItem label="" class="mgr">
+              <Select class="degreeSelect">
+                <Option v-for="item in arealist" :value="item.value" :key="item.value">
+                  {{ item.lable }}
+                </Option>
+              </Select>
+            </FormItem>
+          </Form>
+          <div id="inside" style="width:1720px; height:450px"></div>
+          <Table :columns="degreeColums" :data="degreerData" stripe></Table>
+          <pagination
+            :page-size="size"
+            :show-info="true"
+            :currentPage="current"
+            :total="userTotal"
+            @on-change="userList"
+            @on-page-size-change="userSize"
+          />
+        </div>
+      </TabPane>
+      <TabPane label="对外打分">
+        <div class="policy-table" style="margin: 0;">
+          <Form>
+            <FormItem label="" class="mgr">
+              <Select class="degreeSelect">
+                <Option v-for="item in arealist" :value="item.value" :key="item.value">
+                  {{ item.lable }}
+                </Option>
+              </Select>
+            </FormItem>
+          </Form>
+          <div id="outside" style="width:1720px; height:450px"></div>
+          <Table :columns="degreeColums" :data="degreerData" stripe></Table>
+          <pagination
+            :page-size="size"
+            :show-info="true"
+            :currentPage="current"
+            :total="userTotal"
+            @on-change="userList"
+            @on-page-size-change="userSize"
+          />
+        </div>
+      </TabPane>
+    </Tabs>
+
+    <!-- <div class="policy-table" style="margin-top: 10px;">
       <Table :columns="degreeColums" :data="degreerData" stripe></Table>
       <pagination
         :page-size="size"
@@ -62,7 +122,7 @@
         @on-change="userList"
         @on-page-size-change="userSize"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 <style lang="less" scoped></style>
@@ -85,6 +145,60 @@ export default {
       userTotal: 0,
       size: 10,
       current: 1,
+      arealist: [
+        {
+          value: '江岸区',
+          lable: '江岸区'
+        },
+        {
+          value: '江汉区',
+          lable: '江汉区'
+        },
+        {
+          value: '硚口区',
+          lable: '硚口区'
+        },
+        {
+          value: '汉阳区',
+          lable: '汉阳区'
+        },
+        {
+          value: '武昌区',
+          lable: '武昌区'
+        },
+        {
+          value: '青山区',
+          lable: '青山区'
+        },
+        {
+          value: '洪山区',
+          lable: '洪山区'
+        },
+        {
+          value: '东西湖区',
+          lable: '东西湖区'
+        },
+        {
+          value: '汉南区',
+          lable: '汉南区'
+        },
+        {
+          value: '蔡甸区',
+          lable: '蔡甸区'
+        },
+        {
+          value: '江夏区',
+          lable: '江夏区'
+        },
+        {
+          value: '黄陂区',
+          lable: '黄陂区'
+        },
+        {
+          value: '新洲区',
+          lable: '新洲区'
+        }
+      ],
       degreeColums: [
         {
           title: '支撑单位',
@@ -156,7 +270,59 @@ export default {
     },
     getEcharts() {
       var myChart = echarts.init(document.getElementById('main'))
+      var insideMyChart = echarts.init(document.getElementById('inside'))
+      var outsideMyChart = echarts.init(document.getElementById('outside'))
       myChart.setOption({
+        color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
+        legend: {},
+        tooltip: {},
+        dataset: {
+          source: [
+            ['product', '工单总数', '待办', '已办', '超时'],
+            ['2012', 41.1, 30.4, 65.1, 53.3],
+            ['2013', 86.5, 92.1, 85.7, 83.1],
+            ['2014', 24.1, 67.2, 79.5, 86.4],
+            ['2015', 24.1, 67.2, 79.5, 86.4]
+          ]
+        },
+        xAxis: { type: 'category' },
+        yAxis: {},
+        grid: {
+          height: 300
+        },
+        series: [
+          { type: 'bar', barWidth: '20' },
+          { type: 'bar', barWidth: '20' },
+          { type: 'bar', barWidth: '20' },
+          { type: 'bar', barWidth: '20' }
+        ]
+      })
+      insideMyChart.setOption({
+        color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
+        legend: {},
+        tooltip: {},
+        dataset: {
+          source: [
+            ['product', '工单总数', '待办', '已办', '超时'],
+            ['2012', 41.1, 30.4, 65.1, 53.3],
+            ['2013', 86.5, 92.1, 85.7, 83.1],
+            ['2014', 24.1, 67.2, 79.5, 86.4],
+            ['2015', 24.1, 67.2, 79.5, 86.4]
+          ]
+        },
+        xAxis: { type: 'category' },
+        yAxis: {},
+        grid: {
+          height: 300
+        },
+        series: [
+          { type: 'bar', barWidth: '20' },
+          { type: 'bar', barWidth: '20' },
+          { type: 'bar', barWidth: '20' },
+          { type: 'bar', barWidth: '20' }
+        ]
+      })
+      outsideMyChart.setOption({
         color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
         tooltip: {},
@@ -283,3 +449,17 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+/deep/ .ivu-tabs-bar {
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+/deep/ .ivu-tabs.ivu-tabs-card > .ivu-tabs-bar .ivu-tabs-tab {
+  border: none;
+}
+.degreeSelect {
+  margin-top: 20px;
+  width: 12%;
+  margin-left: 14px;
+}
+</style>

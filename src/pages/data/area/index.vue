@@ -33,6 +33,13 @@
               近一年
             </div>
           </div>
+          <FormItem label="武汉市" class="mgr">
+            <Select>
+              <Option v-for="item in arealist" :value="item.value" :key="item.value">
+                {{ item.lable }}
+              </Option>
+            </Select>
+          </FormItem>
           <div class="btns">
             <Button @click="userList(1)" class="search">导出数据</Button>
           </div>
@@ -75,6 +82,60 @@ export default {
       userTotal: 0,
       size: 10,
       current: 1,
+      arealist: [
+        {
+          value: '江岸区',
+          lable: '江岸区'
+        },
+        {
+          value: '江汉区',
+          lable: '江汉区'
+        },
+        {
+          value: '硚口区',
+          lable: '硚口区'
+        },
+        {
+          value: '汉阳区',
+          lable: '汉阳区'
+        },
+        {
+          value: '武昌区',
+          lable: '武昌区'
+        },
+        {
+          value: '青山区',
+          lable: '青山区'
+        },
+        {
+          value: '洪山区',
+          lable: '洪山区'
+        },
+        {
+          value: '东西湖区',
+          lable: '东西湖区'
+        },
+        {
+          value: '汉南区',
+          lable: '汉南区'
+        },
+        {
+          value: '蔡甸区',
+          lable: '蔡甸区'
+        },
+        {
+          value: '江夏区',
+          lable: '江夏区'
+        },
+        {
+          value: '黄陂区',
+          lable: '黄陂区'
+        },
+        {
+          value: '新洲区',
+          lable: '新洲区'
+        }
+      ],
       areaColums: [
         {
           title: '全部',

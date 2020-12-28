@@ -33,6 +33,13 @@
               近一年
             </div>
           </div>
+          <FormItem label="" class="mgr">
+            <Select>
+              <Option v-for="item in support" :value="item.value" :key="item.value">
+                {{ item.lable }}
+              </Option>
+            </Select>
+          </FormItem>
           <div class="btns">
             <Button @click="userList(1)" class="search">导出数据</Button>
           </div>
@@ -75,6 +82,24 @@ export default {
       userTotal: 0,
       size: 10,
       current: 1,
+      support: [
+        {
+          value: '全部单位',
+          lable: '全部单位'
+        },
+        {
+          value: '集成公司',
+          lable: '集成公司'
+        },
+        {
+          value: '研究院',
+          lable: '研究院'
+        },
+        {
+          value: '其他',
+          lable: '其他'
+        }
+      ],
       supportColums: [
         {
           title: '支撑单位',

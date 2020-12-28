@@ -52,103 +52,102 @@
 <script>
 // import { userPolicyList, commenSelect } from '../../../../api/policy/policy'
 // import { dateFormat } from '../../../../libs/tools'
-
+import axios from '../../../api/axios'
 export default {
-    components:{
-        above,
-        menuCheck,
-    },
-    data(){
-        return{
-            srow:'',
-            index:'',
-            total:'',
-            page: 1,//默认为第一页
-            companySearch:'',//搜索公司的字段
-            data:[],//后台来的数据
-            columns: [//Todo写成和后台一样的
-                {
-                    title: '公司名称',
-                    key: 'comName'
-                },
-                {
-                    title: '地区',
-                    key: 'region'
-                },
-                {
-                    title: '状态',
-                    key: 'flag',
-                    render:(h,params)=>{
-                        let tmpStr = "";
-                        if(params.row.flag==1){
-                            tmpStr="启用";
-                        }else if(params.row.flag==2){
-                            tmpStr="禁用";
-                        }
-                        return h('span',tmpStr)
-                    }
-                },
-                {
-                    title:'操作',
-                    slot:'action',
-                    align:'center'
-                }
-            ],
+  components: {
+    // above,
+    // menuCheck
+  },
+  data() {
+    return {
+      srow: '',
+      index: '',
+      total: '',
+      page: 1, //默认为第一页
+      companySearch: '', //搜索公司的字段
+      data: [], //后台来的数据
+      columns: [
+        //Todo写成和后台一样的
+        {
+          title: '公司名称',
+          key: 'comName'
+        },
+        {
+          title: '地区',
+          key: 'region'
+        },
+        {
+          title: '状态',
+          key: 'flag',
+          render: (h, params) => {
+            let tmpStr = ''
+            if (params.row.flag == 1) {
+              tmpStr = '启用'
+            } else if (params.row.flag == 2) {
+              tmpStr = '禁用'
+            }
+            return h('span', tmpStr)
+          }
+        },
+        {
+          title: '操作',
+          slot: 'action',
+          align: 'center'
         }
+      ]
+    }
+  },
+  created() {
+    this.getData(1)
+  },
+  methods: {
+    newCompany() {
+      this.$router.push('/companyOperate')
     },
-    created(){
-        this.getData(1);
+    show(row, index) {
+      this.srow = row
+      this.index = index
+      console.log(this.srow, this.index)
+      this.$router.push({
+        path: '/companyOperate',
+        query: { data: this.srow, flag: true }
+      })
     },
-    methods: {
-        newCompany(){
-            this.$router.push('/companyOperate')
-        },
-        show(row,index){
-            this.srow=row;
-            this.index=index;
-            console.log(this.srow,this.index)
-            this.$router.push(
-                {
-                    path:'/companyOperate',
-                    query:{data:this.srow,flag:true}
-                }
-            )
-        },
-        change(row,index){
-            this.srow=row;
-            this.index=index;
-            console.log(this.srow,this.index)
-            this.$router.push(
-                {
-                    path:'/companyOperate',
-                    query:{data:this.srow,flag:false}
-                }
-            )
-        },
-        search(){
-            this.getData(1);
-            this.page=1;
-        },
-        leadIn(){
-            //Todo批量导入的方法
-        },
-        getData(page){
-            axios.axios({
-                method:'post',
-                url:'userinfo/companyList',
-                data:{pageSize:10,currentPage:page,condition:{comName:this.companySearch}},
-                headers:{'token':localStorage.getItem("token")}
-            }).then((data)=>{
-                this.total=data.data.total;
-                this.data=data.data.data;
-                console.log(data)
-            });
-        },
-        pageChange(page) {
-            this.page = page ;
-            this.getData(page);
-            console.log(this.page);
-        },
+    change(row, index) {
+      this.srow = row
+      this.index = index
+      console.log(this.srow, this.index)
+      this.$router.push({
+        path: '/companyOperate',
+        query: { data: this.srow, flag: false }
+      })
     },
+    search() {
+      this.getData(1)
+      this.page = 1
+    },
+    leadIn() {
+      //Todo批量导入的方法
+    },
+    getData(page) {
+      axios
+        .axios({
+          method: 'post',
+          url: 'userinfo/companyList',
+          data: { pageSize: 10, currentPage: page, condition: { comName: this.companySearch } },
+          headers: { token: localStorage.getItem('token') }
+        })
+        .then(data => {
+          this.total = data.data.total
+          this.data = data.data.data
+          console.log(data)
+        })
+    },
+    pageChange(page) {
+      this.page = page
+      this.getData(page)
+      console.log(this.page)
+    }
+  }
 }
 </script>
