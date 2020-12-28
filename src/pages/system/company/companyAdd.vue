@@ -59,19 +59,29 @@
 </template>
 
 <script>
+import axios from '../../../api/axios'
 // import above from '../components/layout/above'
 // import menuCheck from '../components/layout/menuCheck'
 //Todo 从新建公司和修改公司进来时显示不同的方法没写
 export default {
+  components: {
+    // above,
+    // menuCheck
+  },
   data() {
     return {
+      flag: false,
+      auditflag: false,
+      data: '',
+      uuid: '',
       newData: {
         companyName: '',
         city: '',
         area: '',
         order: '',
-        companyClass: 'in',
+        companyClass: '',
         switch1: false,
+        state: '2',
         arealist: [
           {
             value: '江岸区',
@@ -130,21 +140,99 @@ export default {
       ruleValidate: {
         companyName: [{ required: true, message: '请输入公司名称', trigger: 'blur' }],
         city: [{ required: true, message: '请选择所在区域', trigger: 'change' }],
-        order: [{ required: true, message: '请输入排序', trigger: 'blur' }]
+        order: [{ required: false, message: '请输入排序', trigger: 'blur' }]
       }
     }
   },
+  created() {
+    this.data = ''
+    this.getdata()
+  },
   methods: {
-    submit(name) {
-      this.$refs[name].validate(valid => {
-        if (valid) {
-          //Todo 这里写新建公司的方法
-          this.flag1 = true
-        }
-      })
+    getdata() {
+      this.data = this.$route.query.data
+      this.flag = this.$route.query.flag === 'true' ? true : false
+      console.log(this.data)
+      console.log(this.flag)
+      if (this.data) {
+        this.aduitFlag = true
+        this.uuid = this.data.uuid
+        this.newData.companyName = this.data.comName
+        this.newData.area = this.data.region
+        this.newData.companyClass = this.data.flag
+        this.newData.switch1 = this.data.state == 1 ? true : false
+      }
+    },
+    new() {
+      axios
+        .axios({
+          method: 'post',
+          url: 'userinfo/addCompany',
+          data: {
+            comName: this.newData.companyName,
+            region: this.newData.area,
+            flag: this.newData.companyClass,
+            state: this.state
+          }
+        })
+        .then(data => {
+          console.log(data)
+          this.$Modal.success({
+            title: '提示',
+            content: '提交成功',
+            onOk: () => {
+              this.$router.push('/company')
+            }
+          })
+        })
+    },
+    auditCompany() {
+      if (this.data) {
+        axios
+          .axios({
+            method: 'post',
+            url: 'userinfo/editCompany',
+            data: {
+              comName: this.newData.companyName,
+              region: this.newData.area,
+              flag: this.newData.companyClass,
+              state: this.state,
+              uuid: this.uuid
+            }
+          })
+          .then(data => {
+            console.log(data)
+            this.$Modal.success({
+              title: '提示',
+              content: '更新成功',
+              onOk: () => {
+                this.$router.push('/company')
+              }
+            })
+          })
+      }
     },
     change(status) {
       this.newData.switch1 = status
+      if (this.newData.switch1) {
+        this.state = '1'
+      } else {
+        this.state = '2'
+      }
+    },
+    submit(name) {
+      var that = this
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          //Todo 这里写新建公司的方法
+          if (!that.aduitFlag) {
+            this.newUSer()
+          }
+          if (that.aduitFlag) {
+            this.auditCompany()
+          }
+        }
+      })
     }
   }
 }

@@ -5,7 +5,7 @@
   <div class="fusion-manage">
     <div class="fusion-header serve">
       <div class="btnsCreate">
-        <Button @click="addUser" class="create">新建用户</Button>
+        <Button @click="newUser" class="create">新建用户</Button>
         <Poptip trigger="hover" content="批量导入数据">
           <Button icon="ios-open-outline" class="exportButton" @click="leadIn" />
         </Poptip>
@@ -13,24 +13,34 @@
       <Row class="check-condition clearfix">
         <Form :label-width="10">
           <FormItem label="" class="mgr">
-            <Select clearable placeholder="选择公司">
-              <Option :key="item.id" :value="item.id" v-for="item in roleArray">
-                {{ item.name }}
+            <Select
+              v-model="userCompany"
+              placeholder="选择公司"
+              :label-in-value="true"
+              @on-change="
+                v => {
+                  enable(v, 'type')
+                }
+              "
+              clearable
+            >
+              <Option v-for="item in companyList" :value="item.value" :key="item.value">
+                {{ item.label }}
               </Option>
             </Select>
           </FormItem>
           <FormItem label="" class="mgr">
-            <Select clearable placeholder="选择角色">
-              <Option :key="item.id" :value="item.id" v-for="item in roleArray">
-                {{ item.name }}
-              </Option>
+            <Select v-model="userState" placeholder="选择角色">
+              <Option value="">全部</Option>
+              <Option value="需求发起人">需求发起人</Option>
+              <Option value="支撑接口人">支撑接口人</Option>
             </Select>
           </FormItem>
           <FormItem label="" class="mgr">
             <Input v-model="companySearch" placeholder="姓名/手机号" />
           </FormItem>
           <div class="btns">
-            <Button @click="userList(1)" class="search">查询</Button>
+            <Button @click="search" class="search">查询</Button>
           </div>
         </Form>
       </Row>
@@ -40,194 +50,219 @@
         <Button @click="userList(1)" class="search">下载</Button>
         <Button @click="reset(1)" class="reset">删除</Button>
       </div> -->
-      <Table :columns="userColums" :data="userData" stripe></Table>
+      <Table
+        :data="data"
+        :columns="columns"
+        @on-row-click="goto"
+        @on-select="select"
+        @on-select-cancel="selectCancel"
+        @on-select-all="selectAll"
+        @on-select-all-cancel="selectAllCancel"
+      >
+        <template slot-scope="{ row, index }" slot="action">
+          <Button type="text" size="small" @click="del(index)">删除</Button>
+          <Button type="text" size="small" @click="change(index)">修改</Button>
+          <Button type="text" size="small" @click="reset(index)">重置密码</Button>
+        </template>
+      </Table>
       <pagination
-        :page-size="size"
+        :page-size="10"
         :show-info="true"
-        :currentPage="current"
-        :total="userTotal"
-        @on-change="userList"
-        @on-page-size-change="userSize"
+        :currentPage="page"
+        :total="total"
+        @on-change="pageChange"
       />
     </div>
+    <Modal v-model="delFlag" title="提示" @on-ok="delOk">
+      <p>此操作将永久删除用户相关数据，是否确认删除？</p>
+    </Modal>
+    <Modal v-model="resetFlag" title="提示" @on-ok="resetOk">
+      <p>确认重置密码？（默认密码为123456）</p>
+    </Modal>
   </div>
 </template>
 <style lang="less" scoped></style>
 <script>
+import axios from '../../../api/axios'
+import qs from 'qs'
 // import { userPolicyList, commenSelect } from '../../../../api/policy/policy'
 // import { dateFormat } from '../../../../libs/tools'
 
 export default {
   data() {
     return {
-      companySearch: '',
-      userTotal: 0,
-      size: 10,
-      current: 1,
-      roleArray: [
+      selected: [], //存放选择到的选项
+      total: '',
+      progressData: [], //调用接口获取数据
+      page: 1, //默认为第一页
+      userCompany: '', //用户的公司
+      companySearch: '', //搜索公司的字段
+      data: [], //后台来的数据
+      companyList: '', //下拉菜单公司列表的
+      columns: [
+        //Todo写成和后台一样的
         {
-          id: '1',
-          name: '全部'
+          type: 'selection',
+          width: 60,
+          align: 'center'
         },
-        {
-          id: '2',
-          name: '需求发起人'
-        },
-        {
-          id: '3',
-          name: '支撑接口人'
-        }
-      ],
-      userColums: [
         {
           title: '登录账号',
-          key: 'eventName',
-          tooltip: true
+          key: 'userAcount'
         },
         {
           title: '用户姓名',
-          key: 'ip',
-          tooltip: true
+          key: 'userName'
         },
         {
           title: '手机',
-          key: 'userAccount',
-          tooltip: true
+          key: 'telphone'
         },
         {
           title: '所属公司',
-          key: 'eventName',
-          tooltip: true
+          key: 'companyName'
         },
         {
           title: '用户角色',
-          key: 'ip',
-          tooltip: true
+          key: 'roleName'
         },
         {
           title: '注册时间',
-          key: 'userAccount',
-          tooltip: true
+          key: 'createTime'
         },
         {
           title: '操作',
-          slot: 'opeare'
+          slot: 'action',
+          align: 'center'
         }
-      ],
-      userData: []
+      ]
     }
   },
   created() {
-    this.userList(1)
+    this.getData(1)
+    this.getCompany()
   },
   methods: {
-    // 获取当天的时间
-    getToday: function() {
-      var nowdate = new Date()
-      var y = nowdate.getFullYear()
-      var m = nowdate.getMonth() + 1
-      var d = nowdate.getDate()
-      if (m < 10) {
-        m = '0' + m
+    select(selection, row) {
+      console.log(selection, row)
+      for (var i = 0; i < selection.length; i++) {
+        this.selected[i] = selection[i].uuid
       }
-      if (d < 10) {
-        d = '0' + d
+      console.log(this.selected)
+    },
+    selectCancel(selection, row) {
+      console.log(selection, row)
+      for (var i = 0; i < selection.length; i++) {
+        this.selected[i] = selection[i].uuid
       }
-      this.today = y + '-' + m + '-' + d
-      this.getPrevMonth()
-      this.userdate = [this.prevMonth, this.today]
     },
-    // 获取前一个月的时间
-    getPrevMonth: function() {
-      const nowdates = new Date()
-      nowdates.setMonth(nowdates.getMonth() - 1)
-      var y = nowdates.getFullYear()
-      var m = nowdates.getMonth() + 1
-      var d = nowdates.getDate()
-      if (m < 10) {
-        m = '0' + m
+    selectAll(selection) {
+      console.log(selection)
+      for (var i = 0; i < selection.length; i++) {
+        this.selected[i] = selection[i].uuid
       }
-      if (d < 10) {
-        d = '0' + d
+    },
+    selectAllCancel(selection) {
+      console.log(selection)
+      for (var i = 0; i < selection.length; i++) {
+        this.selected[i] = selection[i].uuid
       }
-      this.prevMonth = y + '-' + m + '-' + d
     },
-    sel(data) {
-      this.coAddressPcdCode = data.province.code
-      this.coAddressPcdName = data.province.value
-      this.placeholders.province = data.province.value
-      this.userList(1) //使用value值
+    getCompany() {
+      axios
+        .axios({
+          method: 'get',
+          url: 'userinfo/getAllCompany'
+        })
+        .then(data => {
+          this.companyList = data.data.data
+          for (var i = 0; i < this.companyList.length; i++) {
+            this.companyList[i].value = this.companyList[i].comName
+            this.companyList[i].label = this.companyList[i].comName
+          }
+          console.log(this.companyList)
+        })
     },
-    // // 获取用户角色
-    // initSearch() {
-    //   let params = {
-    //     dictCode: 'zy_enterprise_role'
-    //   }
-    //   commenSelect(params).then(res => {
-    //     if (res.status === 0) {
-    //       this.userSelect = res.results
-    //     }
-    //   })
-    // },
-    // 获取列表
-    // userList: function(current) {
-    //   if (current) this.current = current
-    //   if (typeof this.userdate[0] === 'object') {
-    //     this.userdate[0] = dateFormat('YYYY-mm-dd', this.userdate[0])
-    //   }
-    //   if (typeof this.userdate[1] === 'object') {
-    //     this.userdate[1] = dateFormat('YYYY-mm-dd', this.userdate[1])
-    //   }
-    //   if (this.coAddressPcdCode === undefined) {
-    //     this.coAddressPcdCode = ''
-    //   }
-    //   if (this.coAddressPcdName === undefined || this.coAddressPcdName === '请选择') {
-    //     this.coAddressPcdName = ''
-    //   }
-    //   let params = {
-    //     eventStartTime: this.userdate[0],
-    //     eventEndTime: this.userdate[1],
-    //     userAccount: this.userAccount,
-    //     userName: this.userName,
-    //     userRole: this.userRole,
-    //     coName: this.coName,
-    //     coAddressPcdCode: this.coAddressPcdCode,
-    //     coAddressPcdName: this.coAddressPcdName,
-    //     ip: this.ip,
-    //     size: this.size,
-    //     current: this.current
-    //   }
-    //   userPolicyList(params).then(res => {
-    //     if (res.status === 0) {
-    //       this.datauser = res.results.records
-    //       this.userTotal = res.results.total
-    //     }
-    //   })
-    // },
-    userSize: function(limit) {
-      this.size = limit
-      this.current = 1
-      this.userList()
+    del1() {
+      var selected = qs.stringify(this.selected)
+      axios
+        .axios({
+          method: 'post',
+          url: 'userinfo/deleteUser',
+          data: { uuidList: selected }
+        })
+        .then(data => {
+          console.log(data)
+        })
     },
-    userCurrent: function(limit) {
-      this.current = limit
-      this.userList()
+    //Todo 这里写弹出确认删除对话框的方法
+    change() {
+      //Todo 这里写转到修改用户的方法
     },
-    reset: function() {
-      this.userdate = [this.prevMonth, this.today]
-      this.userAccount = ''
-      this.userName = ''
-      this.coName = ''
-      this.coAddressPcdCode = ''
-      this.coAddressPcdName = ''
-      this.placeholders.province = '请选择'
-      this.userRole = ''
-      this.ip = ''
-      this.userList(1)
+    reset() {
+      //Todo 这里写弹出确认重置密码对话框的方法
     },
-    // 新增公司
-    addUser() {
-      this.$router.push({ name: 'userAdd', query: { id: '1' } })
+    delOk() {
+      this.$Modal.success({
+        title: '提示',
+        content: '删除成功'
+      }) //这里是创建一个成功对话框
+      //Todo在这里写删除用户的方法
+    },
+    resetOk() {
+      this.$Modal.success({
+        title: '提示',
+        content: '更新成功'
+      }) //这里是创建一个成功对话框
+      //Todo 在这里写重置用户密码的方法
+    },
+    search() {
+      this.getData(1)
+      this.page = 1
+    },
+    leadIn() {
+      axios.axios({
+        method: 'get',
+        url: 'userinfo/companyDownload'
+      })
+      //Todo批量导入的方法
+    },
+    newUser() {
+      this.$router.push('/userOperate')
+      //Todo转到新建角色界面
+    },
+    getData(page) {
+      axios
+        .axios({
+          method: 'post',
+          url: 'userinfo/list',
+          data: {
+            pageSize: this.pageSize,
+            currentPage: page,
+            condition: {
+              roleName: this.userState,
+              company: this.userCompany,
+              key: this.companySearch
+            }
+          },
+          headers: { token: localStorage.getItem('token') }
+        })
+        .then(data => {
+          this.total = data.data.total
+          this.data = data.data.data
+          console.log(data)
+        })
+    },
+    goto(data) {
+      this.$router.push({
+        path: '/userOperate',
+        query: { data: data }
+      })
+    },
+    pageChange(page) {
+      this.page = page
+      this.getData(page)
+      console.log(this.page)
     }
   }
 }
