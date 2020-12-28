@@ -186,6 +186,16 @@ export const asyncRoutes = [
         component: () => import('@/pages/system/user/index.vue')
       },
       {
+        path: '/userAdd',
+        name: 'userAdd',
+        hidden: true,
+        meta: {
+          title: '新增用户',
+          hideInBread: false
+        },
+        component: () => import('@/pages/system/user/userAdd.vue')
+      },
+      {
         path: '/role',
         name: 'role',
         meta: {
