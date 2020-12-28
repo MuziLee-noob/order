@@ -56,11 +56,11 @@ export default {
       var role = 0
       console.log(account, pwd, pwdMd5)
       console.log(this.phoneNumber, this.password)
-      let params = {
-        account: account,
-        pwd: pwd
-      }
-      console.log(account, pwd)
+      // let params = {
+      //   account: account,
+      //   pwd: pwd
+      // }
+      // console.log(account, pwd)
       // loginAuth(params).then(res => {
       //   console.log(res)
       //   this.uid = res.data.data.uuid
@@ -88,7 +88,7 @@ export default {
       axios
         .axios({
           method: 'get',
-          url: 'login/manageuserlogin',
+          url: '/api/login/manageuserlogin',
           params: {
             account: account,
             pwd: pwd
@@ -113,9 +113,9 @@ export default {
           localStorage.setItem('token', this.token)
           if (role == 2) {
             console.log(role)
-            this.$router.push('/allList')
+            this.$router.push('/pedding')
           } else {
-            this.$router.push('/todoList')
+            this.$router.push('/pedding')
           }
         })
     }
@@ -184,4 +184,3 @@ li {
   }
 }
 </style>
-

@@ -7,13 +7,13 @@ module.exports = {
     port: 9000,
     open: true,
     proxy: {
-      '/': {
+      '/api': {
         // 接口
-        target: 'http://api.dispatch-32102.p.onecode.ict.cmcc/api',
-        changeOrigin: true, // 是否跨域
-        pathRewrite: {
-          '^/api': '' //请求的时候使用这个api就可以
-        }
+        target: 'http://api.dispatch-32102.p.onecode.ict.cmcc',
+        changeOrigin: true // 是否跨域
+        // pathRewrite: {
+        //   '^/api': '' //请求的时候使用这个api就可以
+        // }
       }
     }
   },
