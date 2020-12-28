@@ -34,10 +34,10 @@
       <div class="title">
         <span class="title-">湖北武汉移动政企信息化IT技术支撑服务项目</span>
         <i-col span="4">
-          <Button :disabled="isModify" @click="modify()" v-if="roll === 1">修改</Button>
-          <Button disabled v-if="roll === 1">打分</Button>
-          <Button :disabled="isCheck" @click="check()" v-if="roll === 2">审核</Button>
-          <Button disabled v-if="roll === 2">结算</Button>
+          <Button :disabled="isModify" @click="modify()" v-if="roll === 2">修改</Button>
+          <Button disabled v-if="roll === 2">打分</Button>
+          <Button :disabled="isCheck" @click="check()" v-if="roll === 1">审核</Button>
+          <Button disabled v-if="roll === 1">结算</Button>
           <Button @click="accept()" v-if="roll === 3">受理</Button>
           <Button @click="cooperate()" v-if="roll === 3">需协作</Button>
           <Button disabled v-if="roll === 3">结算</Button>
@@ -109,7 +109,7 @@
     </Content>
     <!-- </Layout>
     </Layout> -->
-    <check :checkFlag="checkFlag" @disable="change($event)" />
+    <check ref="check" :checkFlag="checkFlag" :data="data" @disable="change($event)" />
     <accept :acceptFlag="acceptFlag" @disable1="change1($event)" />
     <cooperate :cooperateFlag="cooperateFlag" @disable2="change2($event)" />
   </div>
@@ -155,6 +155,8 @@ export default {
           }
         })
         .then(data => {
+          console.log(data)
+          this.data = data.data.data
           this.aquireName = data.data.data.createName
           this.checkName = data.data.data.auditorName //审核人姓名
           this.phoneNumber = data.data.data.telphone //需求发起人手机号
@@ -175,8 +177,8 @@ export default {
           this.files = data.data.data.requireFile
           this.files = this.files.substring(1, this.files.length - 1)
           this.files = this.files.split(',')
-          console.log(this.files)
-          console.log(data)
+          //console.log(this.files)
+          //console.log(data)
         })
     },
     change(flag) {
@@ -196,6 +198,7 @@ export default {
     },
     check() {
       this.checkFlag = true
+      this.$refs.check.getData()
     },
     accept() {
       this.acceptFlag = true
@@ -208,6 +211,7 @@ export default {
   },
   data() {
     return {
+      data: '',
       checkFlag: false,
       cooperateFlag: false,
       acceptFlag: false,

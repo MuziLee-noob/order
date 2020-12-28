@@ -78,6 +78,7 @@ export default {
   methods: {
     getData() {
       this.uuid = this.data.uuid
+      this.orderName = this.data.orderName
       this.listNumber = this.data.orderCode
       this.createUuid = this.data.createUuid
       this.startTime = this.data.startTimeStr
@@ -137,8 +138,9 @@ export default {
       axios
         .axios({
           method: 'post',
-          url: '/workflow/handleWorkflow',
+          url: '/api/workflow/handleWorkflow',
           data: {
+            orderName: this.orderName,
             uuid: this.uuid,
             orderCode: this.listNumber,
             nodeFlag: 2,
