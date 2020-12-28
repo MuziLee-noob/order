@@ -109,7 +109,7 @@
     </Content>
     <!-- </Layout>
     </Layout> -->
-    <check ref="check" :checkFlag="checkFlag" :data="data" @disable="change($event)"/>
+    <check ref="check" :checkFlag="checkFlag" :data="data" @disable="change($event)" />
     <accept :acceptFlag="acceptFlag" @disable1="change1($event)" />
     <cooperate :cooperateFlag="cooperateFlag" @disable2="change2($event)" />
   </div>

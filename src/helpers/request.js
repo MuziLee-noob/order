@@ -51,8 +51,8 @@ request.interceptors.request.use(
   config => {
     // token
     // const token = store.state.user.token
-    // const token = getUrlQuery('p') ? getUrlQuery('p') : localStorage.getItem('tokenVal')
-    // token && (config.headers['token'] = token)
+    const token = localStorage.getItem('token')
+    token && (config.headers['token'] = token)
     // const userId = store.getters && store.getters.userId
     // userId && (config.headers['x-authenticated-userid'] = userId)
 

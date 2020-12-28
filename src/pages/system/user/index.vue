@@ -24,8 +24,8 @@
               "
               clearable
             >
-              <Option v-for="item in companyList" :value="item.value" :key="item.value">
-                {{ item.label }}
+              <Option v-for="item in companyList" :value="item.uuid" :key="item.uuid">
+                {{ item.comName }}
               </Option>
             </Select>
           </FormItem>
@@ -66,7 +66,7 @@
         </template>
       </Table>
       <pagination
-        :page-size="10"
+        :page-size="size"
         :show-info="true"
         :currentPage="page"
         :total="total"
@@ -85,6 +85,7 @@
 <script>
 import axios from '../../../api/axios'
 import qs from 'qs'
+import { userList, commanyAll } from '../../../api/login'
 // import { userPolicyList, commenSelect } from '../../../../api/policy/policy'
 // import { dateFormat } from '../../../../libs/tools'
 
@@ -93,12 +94,15 @@ export default {
     return {
       selected: [], //存放选择到的选项
       total: '',
+      resetFlag: false,
+      delFlag: false,
       progressData: [], //调用接口获取数据
-      page: 1, //默认为第一页
+      current: 1, //默认为第一页
+      size: 10,
       userCompany: '', //用户的公司
       companySearch: '', //搜索公司的字段
       data: [], //后台来的数据
-      companyList: '', //下拉菜单公司列表的
+      companyList: [], //下拉菜单公司列表的
       columns: [
         //Todo写成和后台一样的
         {
@@ -169,19 +173,22 @@ export default {
       }
     },
     getCompany() {
-      axios
-        .axios({
-          method: 'get',
-          url: 'userinfo/getAllCompany'
-        })
-        .then(data => {
-          this.companyList = data.data.data
-          for (var i = 0; i < this.companyList.length; i++) {
-            this.companyList[i].value = this.companyList[i].comName
-            this.companyList[i].label = this.companyList[i].comName
-          }
-          console.log(this.companyList)
-        })
+      commanyAll().then(res => {
+        this.companyList = res.data
+      })
+      // axios
+      //   .axios({
+      //     method: 'get',
+      //     url: 'userinfo/getAllCompany'
+      //   })
+      //   .then(data => {
+      //     this.companyList = data.data.data
+      //     for (var i = 0; i < this.companyList.length; i++) {
+      //       this.companyList[i].value = this.companyList[i].comName
+      //       this.companyList[i].label = this.companyList[i].comName
+      //     }
+      //     console.log(this.companyList)
+      //   })
     },
     del1() {
       var selected = qs.stringify(this.selected)
@@ -228,30 +235,55 @@ export default {
       //Todo批量导入的方法
     },
     newUser() {
-      this.$router.push('/userOperate')
+      this.$router.push('/userAdd')
       //Todo转到新建角色界面
     },
     getData(page) {
-      axios
-        .axios({
-          method: 'post',
-          url: 'userinfo/list',
-          data: {
-            pageSize: this.pageSize,
-            currentPage: page,
-            condition: {
-              roleName: this.userState,
-              company: this.userCompany,
-              key: this.companySearch
-            }
-          },
-          headers: { token: localStorage.getItem('token') }
-        })
-        .then(data => {
-          this.total = data.data.total
-          this.data = data.data.data
-          console.log(data)
-        })
+      if (page) this.current = page
+      let params = {
+        pageSize: this.size,
+        currentPage: this.current,
+        condition: {
+          roleName: this.userState,
+          company: this.userCompany,
+          key: this.companySearch
+        }
+      }
+      userList(params).then(res => {
+        this.total = res.total
+        this.data = res.data
+        // this.datadic.forEach(data => {
+        //   if (data.dictClass === '9') {
+        //     data.dictClass = '自定义'
+        //   } else if (data.dictClass === '1') {
+        //     data.dictClass = '国际标准'
+        //   } else if (data.dictClass === '2') {
+        //     data.dictClass = '国家标准'
+        //   } else {
+        //     data.dictClass = '行业标准'
+        //   }
+        // })
+      })
+      // axios
+      //   .axios({
+      //     method: 'post',
+      //     url: 'userinfo/list',
+      //     data: {
+      //       pageSize: this.pageSize,
+      //       currentPage: page,
+      //       condition: {
+      //         roleName: this.userState,
+      //         company: this.userCompany,
+      //         key: this.companySearch
+      //       }
+      //     },
+      //     headers: { token: localStorage.getItem('token') }
+      //   })
+      //   .then(data => {
+      //     this.total = data.data.total
+      //     this.data = data.data.data
+      //     console.log(data)
+      //   })
     },
     goto(data) {
       this.$router.push({

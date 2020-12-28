@@ -172,7 +172,7 @@ export const asyncRoutes = [
         name: 'commanyAdd',
         hidden: true,
         meta: {
-          title: '新增公司',
+          title: '公司管理',
           hideInBread: false
         },
         component: () => import('@/pages/system/company/companyAdd.vue')
