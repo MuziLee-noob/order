@@ -190,7 +190,7 @@ export const asyncRoutes = [
         name: 'userAdd',
         hidden: true,
         meta: {
-          title: '新增用户',
+          title: '用户管理',
           hideInBread: false
         },
         component: () => import('@/pages/system/user/userAdd.vue')

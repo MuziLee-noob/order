@@ -4,18 +4,25 @@
       <TabPane label="全部消息" name="first">
         <Button class="delete">批量删除</Button>
         <Button type="primary" class="cancel" ghost @click="cancel()">返回</Button>
-        <Table :data="allData" :columns="columns" border ref="selection" class="form">
+        <Table :data="allData" :columns="columns" ref="selection" class="form">
           <template slot-scope="{ row, index }" slot="action">
-            <Button type="text" size="small" @click="show(index)">详情</Button>
-            <Button type="text" size="small" @click="del(index)">删除</Button>
+            <span class="new-color" @click="show(index)">详情</span>
+            <span class="new-color" @click="del(index)">删除</span>
           </template>
         </Table>
-        <pagination :page-size="10" :show-info="true" :currentPage="1" :total="100" />
+        <pagination
+          :page-size="pageSize"
+          :show-info="true"
+          :currentPage="current"
+          @on-change="getMessageList"
+          @on-page-size-change="userSize"
+          :total="100"
+        />
       </TabPane>
       <TabPane label="未读消息" name="second">
         <Button class="delete">批量删除</Button>
         <Button type="primary" class="cancel" ghost @click="cancel()">返回</Button>
-        <Table :data="unReadData" :columns="columns" border ref="selection" class="form">
+        <Table :data="unReadData" :columns="columns" ref="selection" class="form">
           <template slot-scope="{ row, index }" slot="action">
             <Button type="text" size="small" @click="show(index)">详情</Button>
             <Button type="text" size="small" @click="del(index)">删除</Button>
@@ -26,25 +33,55 @@
       <TabPane label="已读消息" name="已读消息">
         <Button class="delete">批量删除</Button>
         <Button type="primary" class="cancel" ghost @click="cancel()">返回</Button>
-        <Table :data="readData" :columns="columns" border ref="selection" class="form">
-          <template slot-scope="{ row, index }" slot="action">
-            <Button type="text" size="small" @click="show(index)">详情</Button>
-            <Button type="text" size="small" @click="del(index)">删除</Button>
+        <Table :data="readData" :columns="columns" ref="selection" class="form">
+          <template slot-scope="{ row }" slot="action">
+            <Button type="text" size="small" @click="show(row)">详情</Button>
+            <Button type="text" size="small" @click="del(row)">删除</Button>
           </template>
         </Table>
         <pagination :page-size="10" :show-info="true" :currentPage="1" :total="100" />
       </TabPane>
     </Tabs>
+    <!-- 详情弹框 -->
+    <Modal footer-hide v-model="infoModel" title="信息">
+      <div>您好，最新发布的{{ messTitle }}等待您派单，请知悉!</div>
+    </Modal>
+    删除弹框
+    <Modal id="fusion-del" footer-hide v-model="delModel" width="451">
+      <p slot="header">
+        <span>提示</span>
+      </p>
+      <div class="content">
+        <span class="close-left">
+          此操作将永久删除相关数据，是否确认删除？
+        </span>
+      </div>
+      <div class="add-footer">
+        <Button @click="delOk" class="fusion-del-ok" type="primary">
+          确定
+        </Button>
+        <Button @click="cancel_del()" class="fusion-del-cancel">
+          取消
+        </Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
+import { messageList, allUser, setRole } from '../../api/login'
 export default {
   data() {
     return {
       state: '全部消息',
+      infoModel: false,
+      delModel: false,
+      messTitle: '',
       allData: [],
       unReadData: [],
       readData: [],
+      current: 1,
+      pageSize: 10,
+      total: 0,
       columns: [
         {
           type: 'selection',
@@ -53,26 +90,51 @@ export default {
         },
         {
           title: '标题',
-          key: ''
+          key: 'messTitle'
         },
         {
           title: '发布时间',
-          key: ''
+          key: 'createTime'
         },
         {
           title: '操作',
-          solt: 'action',
+          slot: 'action',
           align: 'center'
         }
       ]
     }
   },
+  created() {
+    this.getMessageList(1)
+  },
   methods: {
-    show() {
-      //点击'详情'，弹框显示信息详情内容。
+    getMessageList(current) {
+      if (current) this.current = current
+      let params = {
+        pageSize: this.pageSize,
+        currentPage: this.current
+      }
+      messageList(params).then(res => {
+        this.allData = res.noData
+      })
     },
-    del() {
-      //删除一条工单信息
+    userSize: function(limit) {
+      this.size = limit
+      this.getMessageList(1)
+    },
+    show(row) {
+      this.infoModel = true
+      this.messTitle = row.messTitle
+    },
+    del(row) {
+      this.delModel = true
+      this.messTitle = row.messTitle
+    },
+    delOk() {
+      this.delModel = false
+    },
+    cancel_del() {
+      this.delModel = false
     },
     delSelected() {
       //删除所有选中的工单信息
@@ -127,5 +189,8 @@ export default {
   width: 110px;
   height: 32px;
   margin-left: 20px;
+}
+/deep/ .ivu-modal-body {
+  padding-bottom: 100px !important;
 }
 </style>

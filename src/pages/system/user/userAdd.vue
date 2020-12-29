@@ -11,7 +11,7 @@
               <FormItem label="用户姓名" prop="userName">
                 <Input v-model="newData.userName" placeholder="请输入用户姓名" />
               </FormItem>
-              <FormItem label="所在区域" prop="area">
+              <FormItem label="所在区域" prop="region">
                 <Row type="flex" justify="space-between">
                   <i-col span="11">
                     <Select v-model="newData.city1">
@@ -19,7 +19,7 @@
                     </Select>
                   </i-col>
                   <i-col span="11">
-                    <Select v-model="newData.area">
+                    <Select v-model="newData.region">
                       <Option v-for="item in newData.city" :value="item.value" :key="item.value">
                         {{ item.lable }}
                       </Option>
@@ -27,18 +27,19 @@
                   </i-col>
                 </Row>
               </FormItem>
-              <FormItem label="手机号" prop="phoneNumber">
-                <Input v-model="newData.phoneNumber" placeholder="请输入手机号码" />
+              <FormItem label="手机号" prop="telphone">
+                <Input v-model="newData.telphone" placeholder="请输入手机号码" />
               </FormItem>
-              <FormItem label="用户角色" prop="userState">
-                <Select v-model="newData.userState" placeholder="请选择选择角色">
-                  <Option value="fea98ada6624476aa960c02a13e771fb">需求发起人</Option>
-                  <Option value="abafab65e99345898cdc9ec66225e59d">支撑接口人</Option>
+              <FormItem label="用户角色" prop="roleUuid">
+                <Select v-model="newData.roleUuid" placeholder="请选择选择角色">
+                  <Option v-for="item in roleList" :value="item.uuid" :key="item.uuid">
+                    {{ item.roleName }}
+                  </Option>
                 </Select>
               </FormItem>
-              <FormItem label="所属公司" prop="userCompany">
+              <FormItem label="所属公司" prop="company">
                 <Select
-                  v-model="newData.userCompany"
+                  v-model="newData.company"
                   placeholder="请选择公司"
                   @on-change="
                     v => {
@@ -47,16 +48,17 @@
                   "
                   :label-in-value="true"
                 >
-                  <Option v-for="item in companyList" :value="item.value" :key="item.value">
-                    {{ item.label }}
+                  <Option v-for="item in companyList" :value="item.uuid" :key="item.uuid">
+                    {{ item.comName }}
                   </Option>
                 </Select>
               </FormItem>
               <FormItem label="是否启用">
-                <i-switch v-model="newData.switch1" @on-change="change" />
+                <i-switch v-model="newData.availableFlag" @on-change="change" />
               </FormItem>
               <FormItem>
                 <Button type="primary" @click="submit('newData')">提交</Button>
+                <Button class="colse" @click="cancel">取消</Button>
               </FormItem>
             </Form>
           </i-col>
@@ -70,6 +72,7 @@
 import axios from '../../../api/axios'
 // import above from '../../components/layout/above'
 // import menuCheck from '../../components/layout/menuCheck'
+import { userAdd, userEdit, userInfo, commanyAll, roleAll } from '../../../api/login'
 export default {
   components: {
     // above,
@@ -77,18 +80,18 @@ export default {
   },
   data() {
     return {
-      aduitFlag: false,
-      data: '',
+      // aduitFlag: false,
+      userData: '',
       companyId: '',
       userUuid: '',
       newData: {
-        city1: '',
+        city1: '武汉',
         userName: '',
-        area: '',
-        phoneNumber: '',
-        userState: '',
-        userCompany: '',
-        switch1: false,
+        region: '',
+        telphone: '',
+        roleUuid: '',
+        company: '',
+        availableFlag: false,
         city: [
           {
             value: '江岸区',
@@ -144,122 +147,185 @@ export default {
           }
         ]
       },
-      companyList: '', //公司列表，从后台来
+      companyList: [], //公司列表，从后台来
+      roleList: [],
       ruleValidate: {
-        phoneNumber: [{ required: true, message: '请输入手机号码', trigger: 'blur' }],
-        area: [{ required: true, message: '请选择所在区域', trigger: 'change' }],
+        telphone: [
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号' }
+        ],
+        region: [{ required: true, message: '请选择所在区域', trigger: 'change' }],
         userName: [{ required: true, message: '请输入用户名称', trigger: 'blur' }],
-        userState: [{ required: true, message: '请选择用户角色', trigger: 'change' }],
-        userCompany: [{ required: true, message: '请选择用户公司', trigger: 'select' }]
+        roleUuid: [{ required: true, message: '请选择用户角色', trigger: 'change' }],
+        company: [{ required: true, message: '请选择用户公司', trigger: 'select' }]
       }
     }
   },
   created() {
-    this.data = ''
+    // this.data = ''
     this.getCompany()
+    this.getUserRole()
+    this.getUSer()
   },
   mounted() {
-    this.getUSer()
+    this.userTitle = this.$route.query.title
+    // this.getUSer()
   },
   methods: {
     getUSer() {
-      this.data = this.$route.query.data
-      if (this.data) {
-        this.aduitFlag = true
-        this.newData.userName = this.data.userName
-        this.newData.area = this.data.region
-        this.newData.phoneNumber = this.data.telphone
-        this.newData.Userompany = this.data.company
-        this.newData.userState = this.data.roleUuid
-        this.userUuid = this.data.uuid
+      let params = {
+        uuid: this.$route.query.data.uuid
       }
-      console.log(this.data)
-    },
-    getCompany() {
-      axios
-        .axios({
-          method: 'get',
-          url: 'userinfo/getAllCompany'
-        })
-        .then(data => {
-          this.companyList = data.data.data
-          for (var i = 0; i < this.companyList.length; i++) {
-            this.companyList[i].value = this.companyList[i].uuid
-            this.companyList[i].label = this.companyList[i].comName
-          }
-          console.log(this.companyList)
-        })
-    },
-    newUSer() {
-      axios
-        .axios({
-          method: 'post',
-          url: 'userinfo/addUser',
-          data: {
-            userName: this.newData.userName,
-            region: this.newData.area,
-            telphone: this.newData.phoneNumber,
-            company: this.newData.userCompany,
-            roleUuid: this.newData.userState
-          }
-        })
-        .then(data => {
-          console.log(data)
-          this.$Modal.success({
-            title: '提示',
-            content: '提交成功',
-            onOk: () => {
-              this.$router.push('/user')
-            }
-          })
-        })
-    },
-    auditUser() {
-      if (this.data) {
-        axios
-          .axios({
-            method: 'post',
-            url: 'userinfo/editUser',
-            data: {
-              uuid: this.userUuid,
-              userName: this.newData.userName,
-              region: this.newData.area,
-              telphone: this.newData.phoneNumber,
-              company: this.newData.userCompany,
-              roleUuid: this.newData.userState
-            }
-          })
-          .then(data => {
-            console.log(data)
-            this.$Modal.success({
-              title: '提示',
-              content: '更新成功',
-              onOk: () => {
-                this.$router.push('/user')
-              }
-            })
-          })
-      }
-    },
-    change(status) {
-      this.newData.switch1 = status
-    },
-    submit(name) {
-      var that = this
-      this.$refs[name].validate(valid => {
-        if (valid) {
-          //Todo 这里写新建和修改用户的方法
-          console.log(this.aduitFlag)
-          if (!that.aduitFlag) {
-            this.newUSer()
-          }
-          if (that.aduitFlag) {
-            this.auditUser()
-          }
-          console.log(this.aduitFlag)
+      userInfo(params).then(res => {
+        if (res.state === '1') {
+          this.userData = res.data
+          this.newData.company = this.userData.company
+          this.newData.roleUuid = this.userData.roleUuid
+          this.newData.region = this.userData.region
+          this.newData.userName = this.userData.userName
+          this.newData.telphone = this.userData.telphone
+          this.newData.availableFlag = this.userData.availableFlag
+        } else {
+          this.$Message.error(res.msg || '失败!')
         }
       })
+      // this.data = this.$route.query.data
+      // if (this.data) {
+      //   this.aduitFlag = true
+      //   this.newData.userName = this.data.userName
+      //   this.newData.area = this.data.region
+      //   this.newData.phoneNumber = this.data.telphone
+      //   this.newData.Userompany = this.data.company
+      //   this.newData.userState = this.data.roleUuid
+      //   this.userUuid = this.data.uuid
+      // }
+      // console.log(this.data)
+    },
+    // 获取所有公司
+    getCompany() {
+      commanyAll().then(res => {
+        this.companyList = res.data
+      })
+      // axios
+      //   .axios({
+      //     method: 'get',
+      //     url: 'userinfo/getAllCompany'
+      //   })
+      //   .then(data => {
+      //     this.companyList = data.data.data
+      //     for (var i = 0; i < this.companyList.length; i++) {
+      //       this.companyList[i].value = this.companyList[i].uuid
+      //       this.companyList[i].label = this.companyList[i].comName
+      //     }
+      //     console.log(this.companyList)
+      //   })
+    },
+    // 获取用户角色
+    getUserRole() {
+      roleAll().then(res => {
+        this.roleList = res.data
+      })
+    },
+    submit(name) {
+      this.$refs[name].validate(valid => {
+        if (valid) {
+          if (this.userTitle === '新建') {
+            userAdd(this.newData).then(res => {
+              if (res.state === '1') {
+                this.$Message.success(res.message || '新增成功')
+                this.cancel()
+              } else {
+                this.$Message.error(res.message || '新增失败')
+              }
+            })
+          } else {
+            this.newData.uuid = this.$route.query.data.uuid
+            let params = this.newData
+            userEdit(params).then(res => {
+              if (res.state === '1') {
+                this.$Message.success(res.msg || '修改成功')
+                this.cancel()
+              } else {
+                this.$Message.error(res.msg || '修改失败')
+              }
+            })
+          }
+        }
+      })
+    },
+    cancel() {
+      this.$router.push('/user')
+    },
+    // newUSer() {
+    //   axios
+    //     .axios({
+    //       method: 'post',
+    //       url: 'userinfo/addUser',
+    //       data: {
+    //         userName: this.newData.userName,
+    //         region: this.newData.area,
+    //         telphone: this.newData.phoneNumber,
+    //         company: this.newData.userCompany,
+    //         roleUuid: this.newData.userState
+    //       }
+    //     })
+    //     .then(data => {
+    //       console.log(data)
+    //       this.$Modal.success({
+    //         title: '提示',
+    //         content: '提交成功',
+    //         onOk: () => {
+    //           this.$router.push('/user')
+    //         }
+    //       })
+    //     })
+    // },
+    // auditUser() {
+    //   if (this.data) {
+    //     axios
+    //       .axios({
+    //         method: 'post',
+    //         url: 'userinfo/editUser',
+    //         data: {
+    //           uuid: this.userUuid,
+    //           userName: this.newData.userName,
+    //           region: this.newData.area,
+    //           telphone: this.newData.phoneNumber,
+    //           company: this.newData.userCompany,
+    //           roleUuid: this.newData.userState
+    //         }
+    //       })
+    //       .then(data => {
+    //         console.log(data)
+    //         this.$Modal.success({
+    //           title: '提示',
+    //           content: '更新成功',
+    //           onOk: () => {
+    //             this.$router.push('/user')
+    //           }
+    //         })
+    //       })
+    //   }
+    // },
+    change(status) {
+      this.newData.availableFlag = status
     }
+    // submit(name) {
+    //   var that = this
+    //   this.$refs[name].validate(valid => {
+    //     if (valid) {
+    //       //Todo 这里写新建和修改用户的方法
+    //       console.log(this.aduitFlag)
+    //       if (!that.aduitFlag) {
+    //         this.newUSer()
+    //       }
+    //       if (that.aduitFlag) {
+    //         this.auditUser()
+    //       }
+    //       console.log(this.aduitFlag)
+    //     }
+    //   })
+    // }
   }
 }
 </script>
