@@ -11,12 +11,12 @@
               :options="options"
               :clearable="false"
               confirm
-              @on-ok="userList(1)"
+              @on-ok="getOrderList(1)"
               id="date"
               placement="bottom-end"
               separator="~"
               type="daterange"
-              v-model="date"
+              v-model="userdate"
             ></DatePicker>
           </FormItem>
           <div class="year">
@@ -40,7 +40,7 @@
       </Row>
     </div>
     <div class="policy-table">
-      <div id="main" style="width:1720px; height:450px"></div>
+      <div id="main" style="width:1520px; height:450px"></div>
     </div>
     <div class="policy-table" style="margin-top: 10px;">
       <Table :columns="orderColums" :data="orderData" stripe></Table>
@@ -57,8 +57,8 @@
 </template>
 <style lang="less" scoped></style>
 <script>
-// import { userPolicyList, commenSelect } from '../../../../api/policy/policy'
-// import { dateFormat } from '../../../../libs/tools'
+import { orderStatics } from '../../../api/login'
+import { dateFormat } from '../../../libs/tools'
 import echarts from 'echarts'
 let that = null
 export default {
@@ -106,22 +106,22 @@ export default {
     }
   },
   mounted() {
-    this.date = [this.prevMonth, this.today]
+    this.userdate = [this.prevMonth, this.today]
     this.getEcharts()
-    window.onresize = () => {
-      if (!this.timer) {
-        this.timer = true
-        setTimeout(() => {
-          this.timer = false
-          that.myChart.resize()
-        }, 600)
-      }
-    }
+    // window.onresize = () => {
+    //   if (!this.timer) {
+    //     this.timer = true
+    //     setTimeout(() => {
+    //       this.timer = false
+    //       that.myChart.resize()
+    //     }, 600)
+    //   }
+    // }
   },
   created() {
     this.getEcharts()
     this.getToday()
-    // this.userList(1)
+    this.getOrderList(1)
   },
   methods: {
     getClass(i) {
@@ -132,38 +132,76 @@ export default {
     getClassHandler(i) {
       this.activityIndex = i
       if (this.activityIndex === 1) {
-        // this.yesToday()
+        this.day = 'month'
       } else if (this.activityIndex === 2) {
-        // this.monthList()
+        this.day = 'week'
+      } else if (this.activityIndex === 3) {
+        this.day = 'month'
       } else {
-        // this.totalList()
+        this.day = 'quarter'
       }
     },
+    // 获取列表数据
+    getOrderList(current) {
+      if (current) this.current = current
+      if (typeof this.userdate[0] === 'object') {
+        this.userdate[0] = dateFormat('YYYY-mm-dd', this.userdate[0])
+      }
+      if (typeof this.userdate[1] === 'object') {
+        this.userdate[1] = dateFormat('YYYY-mm-dd', this.userdate[1])
+      }
+      let params = {
+        startTime: this.userdate[0],
+        endTime: this.userdate[1],
+        day: this.day
+        // size: this.size,
+        // current: this.current
+      }
+      orderStatics(params).then(res => {
+        if (res.state === '1') {
+          this.orderData = res.data
+          // this.userTotal = res.results.total
+        }
+      })
+    },
+
     getEcharts() {
       var myChart = echarts.init(document.getElementById('main'))
       myChart.setOption({
         color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
         tooltip: {},
-        dataset: {
-          source: [
-            ['product', '工单总数', '待办', '已办', '超时'],
-            ['2012', 41.1, 30.4, 65.1, 53.3],
-            ['2013', 86.5, 92.1, 85.7, 83.1],
-            ['2014', 24.1, 67.2, 79.5, 86.4],
-            ['2015', 24.1, 67.2, 79.5, 86.4]
-          ]
-        },
-        xAxis: { type: 'category' },
+        xAxis: [{ type: 'category', data: ['2012', '2013', '2014', '2015', '2016'] }],
         yAxis: {},
         grid: {
           height: 300
         },
         series: [
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' }
+          {
+            name: '工单总数',
+            type: 'bar',
+            barGap: 0,
+            barWidth: '20',
+            data: [320, 332, 301, 334, 390]
+          },
+          {
+            name: '待办',
+            type: 'bar',
+            barWidth: '20',
+            data: [220, 182, 191, 234, 290]
+          },
+          {
+            name: '已办',
+            type: 'bar',
+            barWidth: '20',
+            data: [150, 232, 201, 154, 190]
+          },
+          {
+            name: '超时',
+            type: 'bar',
+            barWidth: '20',
+            data: [98, 77, 101, 99, 40]
+          }
         ]
       })
     },
@@ -181,7 +219,7 @@ export default {
       }
       this.today = y + '-' + m + '-' + d
       this.getPrevMonth()
-      this.date = [this.prevMonth, this.today]
+      this.userdate = [this.prevMonth, this.today]
     },
     // 获取前一个月的时间
     getPrevMonth: function() {
@@ -209,61 +247,9 @@ export default {
     //     }
     //   })
     // },
-    // 获取列表
-    // userList: function(current) {
-    //   if (current) this.current = current
-    //   if (typeof this.userdate[0] === 'object') {
-    //     this.userdate[0] = dateFormat('YYYY-mm-dd', this.userdate[0])
-    //   }
-    //   if (typeof this.userdate[1] === 'object') {
-    //     this.userdate[1] = dateFormat('YYYY-mm-dd', this.userdate[1])
-    //   }
-    //   if (this.coAddressPcdCode === undefined) {
-    //     this.coAddressPcdCode = ''
-    //   }
-    //   if (this.coAddressPcdName === undefined || this.coAddressPcdName === '请选择') {
-    //     this.coAddressPcdName = ''
-    //   }
-    //   let params = {
-    //     eventStartTime: this.userdate[0],
-    //     eventEndTime: this.userdate[1],
-    //     userAccount: this.userAccount,
-    //     userName: this.userName,
-    //     userRole: this.userRole,
-    //     coName: this.coName,
-    //     coAddressPcdCode: this.coAddressPcdCode,
-    //     coAddressPcdName: this.coAddressPcdName,
-    //     ip: this.ip,
-    //     size: this.size,
-    //     current: this.current
-    //   }
-    //   userPolicyList(params).then(res => {
-    //     if (res.status === 0) {
-    //       this.datauser = res.results.records
-    //       this.userTotal = res.results.total
-    //     }
-    //   })
-    // },
     userSize: function(limit) {
       this.size = limit
-      this.current = 1
-      this.userList()
-    },
-    userCurrent: function(limit) {
-      this.current = limit
-      this.userList()
-    },
-    reset: function() {
-      this.userdate = [this.prevMonth, this.today]
-      this.userAccount = ''
-      this.userName = ''
-      this.coName = ''
-      this.coAddressPcdCode = ''
-      this.coAddressPcdName = ''
-      this.placeholders.province = '请选择'
-      this.userRole = ''
-      this.ip = ''
-      this.userList(1)
+      this.getOrderList(1)
     }
   }
 }
