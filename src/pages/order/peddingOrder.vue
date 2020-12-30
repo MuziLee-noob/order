@@ -214,11 +214,19 @@ export default {
     goto(data) {
       console.log(data)
       var uuid = data.orderUuid
-      console.log(uuid)
-      this.$router.push({
-        path: '/details',
-        query: { uuid: uuid }
-      })
+      var nodeFlag = data.nodeState
+      if (nodeFlag == 1 || nodeFlag == 2 || nodeFlag == 7) {
+        console.log(uuid)
+        this.$router.push({
+          path: '/details',
+          query: { uuid: uuid }
+        })
+      } else {
+        this.$router.push({
+          path: '/detailsDone',
+          query: { uuid: uuid }
+        })
+      }
     },
     // demo() {
     //   this.$router.push({
