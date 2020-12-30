@@ -144,20 +144,20 @@ export default {
       axios
         .axios({
           method: 'post',
-          url: 'workflow/handleWorkflow',
+          url: '/api/workflow/handleWorkflow',
           data: {
             uuid: this.orderData.uuid,
             orderCode: this.orderData.orderCode,
-            nodeFlag: 4,
             supportUuid: this.orderData.supportUuid,
             createUuid: this.orderData.createUuid,
-            merits: '123456',
-            score: 100
-          },
-          headers: { token: localStorage.getItem('token') }
+            nodeFlag: 4,
+            merits: 'A', //内部绩效，页面没给我先写死
+            score: 80 //外部评分我先写死
+          }
         })
         .then(data => {
           console.log(data)
+          this.$router.push('/pedding')
         })
     },
     handleSpan({ rowIndex, columnIndex }) {

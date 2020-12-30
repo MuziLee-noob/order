@@ -25,7 +25,8 @@ import axios from '../../api/axios'
 export default {
   props: {
     state1: Boolean,
-    state2: Boolean
+    state2: Boolean,
+    data: {}
   },
   data() {
     return {
@@ -37,18 +38,21 @@ export default {
     }
   },
   methods: {
+    getData() {
+      this.orderCode = this.data.orderCode
+    },
     ok(id) {
       if (id === 1) {
         //Todo 这里写确认开始结算的方法
         axios
           .axios({
             method: 'post',
-            url: 'workflow/handleworkflow',
+            url: '/api/workflow/handleWorkflow',
             data: {
-              nodeflag: '5',
-              supportUuid: this.supportUuid,
-              uuid: this.uuid,
-              orderCode: this.orderCode
+              nodeFlag: '5',
+              supportUuid: this.data.supportUuid,
+              uuid: this.data.uuid,
+              orderCode: this.data.orderCode
             }
           })
           .then(data => {
@@ -60,13 +64,13 @@ export default {
         axios
           .axios({
             method: 'post',
-            url: 'workflow/handleworkflow',
+            url: '/api/workflow/handleWorkflow',
             data: {
-              nodeflag: '',
-              orderState: this.orderState,
+              nodeFlag: '',
+              orderState: this.data.orderState,
               auditSettContent: this.opinion,
-              uuid: this.uuid,
-              orderCode: this.orderCode
+              uuid: this.data.uuid,
+              orderCode: this.data.orderCode
             }
           })
           .then(data => {
@@ -83,13 +87,13 @@ export default {
         axios
           .axios({
             method: 'post',
-            url: 'workflow/handleworkflow',
+            url: '/api/workflow/handleWorkflow',
             data: {
-              nodeflag: '8',
-              supportUuid: this.supportUuid,
+              nodeFlag: '8',
+              supportUuid: this.data.supportUuid,
               auditSettContent: this.opinion,
-              uuid: this.uuid,
-              orderCode: this.orderCode
+              uuid: this.data.uuid,
+              orderCode: this.data.orderCode
             }
           })
           .then(data => {

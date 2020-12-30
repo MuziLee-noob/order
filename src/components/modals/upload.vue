@@ -1,6 +1,6 @@
 <template>
   <div calss="upload">
-    <Modal v-model="state" title="上传结算单" @on-ok="ok" @on-cancel="cancel">
+    <Modal v-model="uploadFlag" title="上传结算单" @on-ok="ok" @on-cancel="cancel">
       <div>工单编号：{{ listNumber }}</div>
       <Row>
         <i-col span="8">备注说明：</i-col>
@@ -16,7 +16,7 @@
           </template>
         </i-col>
         <i-col>
-          <Botton @click="show" Icon type="md-add" />
+          <Button @click="show" Icon type="md-add" />
         </i-col>
       </Row>
     </Modal>
@@ -26,7 +26,6 @@
           ref="upload"
           :show-upload-list="false"
           :default-file-list="defaultList"
-          :on-success="handleSuccess"
           :format="['jpg', 'jpeg', 'png']"
           :max-size="51200"
           :on-format-error="handleFormatError"
@@ -43,30 +42,55 @@
         <span>{{ item.name }}</span>
         <span @click="handleRemove(item)">删除</span>
       </div>
-      <div solt="footer">
-        <Botton @click="confirm">确认</Botton>
+      <div slot="footer">
+        <Button @click="confirm" type="primary">确认</Button>
       </div>
     </Modal>
   </div>
 </template>
 
 <script>
+import axios from '../../api/axios'
 export default {
+  props: {
+    uploadFlag: Boolean,
+    data: {}
+  },
   data() {
     return {
+      formData: new FormData(),
       defaultList: [],
       imgName: '',
       visible: false,
       uploadList: [],
-      state: false, //Todo 这里之后要根据业务逻辑改
       state2: false,
       listNumber: '',
       description: ''
     }
   },
   methods: {
+    getData() {
+      this.listNumber = this.data.orderCode
+    },
     ok() {
       //Todo这里写确认结算单的方法
+      this.formData.append('nodeFlag', 6)
+      this.formData.append('orderCode', this.data.orderCode)
+      this.formData.append('uuid', this.data.uuid)
+      this.formData.append('supportUuid', this.data.supportUuid)
+      this.formData.append('payoff.proposalMessage', this.description)
+      axios
+        .axios({
+          method: 'post',
+          url: 'api/workflow/handleWorkflowFiles',
+          data: this.formData,
+          headers: {
+            token: localStorage.getItem('token')
+          }
+        })
+        .then(data => {
+          console.log(data)
+        })
     },
     cancel() {
       //Todo这里写取消结算单的方法
@@ -76,18 +100,18 @@ export default {
     },
     confirm() {
       //Todo 这里写 返回工单详情页 并更新信息的方法
+      for (var i = 0; i < this.uploadList.length; i++) {
+        this.formData.append('files', this.uploadList[i])
+      }
+      this.state2 = false
     },
     handleView(name) {
       this.imgName = name
       this.visible = true
     },
     handleRemove(file) {
-      const fileList = this.$refs.upload.fileList
-      this.$refs.upload.fileList.splice(fileList.indexOf(file), 1)
-    },
-    handleSuccess(res, file) {
-      file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar' //Todo 这里改成自己的接口
-      file.name = '7eb99afb9d5f317c912f08b5212fd69a'
+      const fileList = this.uploadList
+      this.uploadList.splice(fileList.indexOf(file), 1)
     },
     handleFormatError() {
       this.$Notice.warning({
@@ -100,18 +124,18 @@ export default {
         desc: '文件大小不超过50M'
       })
     },
-    handleBeforeUpload() {
+    handleBeforeUpload(file) {
       const check = this.uploadList.length < 10
+      let that = this
       if (!check) {
         this.$Notice.warning({
           title: '只能上传10张图片'
         })
       }
-      return check
+      that.uploadList.push(file)
+      console.log(that.uploadList)
+      return false
     }
-  },
-  mounted() {
-    this.uploadList = this.$refs.upload.fileList
   }
 }
 </script>
