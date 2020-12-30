@@ -110,8 +110,9 @@
     <!-- </Layout>
     </Layout> -->
     <point ref="point" :pointFlag="pointFlag" :orderData="data" @disable="change($event)" />
-    <!-- <settle :state1="state1" :state2="state2" />
-    <upload /> -->
+    <settle ref="settle" :data="data" :state1="state1" :state2="state2" />
+    <upload ref="upload" :data="data" :uploadFlag="uploadFlag" />
+    <accepted :uuid="uuid" />
   </div>
 </template>
 
@@ -121,17 +122,19 @@ import axios from '../../api/axios'
 // import menuCheck from '../components/layout/menuCheck'
 // import menuRequire from '../components/layout/menuRequire.vue'
 // import menuAccept from '../components/layout/menuAccept.vue'
-// import settle from '../../components/modals/settle.vue'
+import settle from '../../components/modals/settle.vue'
 import point from '../../components/modals/point.vue'
-// import Upload from '../../components/modals/upload.vue'
+import Upload from '../../components/modals/upload.vue'
+import Accepted from './accepted.vue'
 export default {
   components: {
     // menuAccept,
     // menuRequire,
     // menuCheck,
-    // settle,
-    point
-    // Upload
+    settle,
+    point,
+    Upload,
+    Accepted
     // above
   },
   created() {
@@ -149,7 +152,7 @@ export default {
       axios
         .axios({
           method: 'get',
-          url: 'order/orderDetail',
+          url: '/api/order/orderDetail',
           params: {
             orderUuid: this.uuid
           }
@@ -184,14 +187,27 @@ export default {
     change(flag) {
       this.pointFlag = flag
     },
+    check() {
+      this.state2 = true
+      this.$refs.settle.getData()
+    },
     point() {
       this.pointFlag = true
-      //this.$refs.point.getData()
+      this.$refs.point.getData()
+    },
+    settle2() {
+      this.state1 = true
+      this.$refs.settle.getData()
+    },
+    settle3() {
+      this.uploadFlag = true
+      this.$refs.upload.getData()
     }
   },
   data() {
     return {
       pointFlag: false,
+      uploadFlag: false,
       state1: false,
       state2: false,
       data: '',

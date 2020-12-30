@@ -199,7 +199,7 @@ export default {
           axios
             .axios({
               method: 'post',
-              url: 'workflow/handleWorkflowFiles',
+              url: 'api/workflow/handleWorkflowFiles',
               data: this.formData,
               headers: {
                 token: localStorage.getItem('token')
