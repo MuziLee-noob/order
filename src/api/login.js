@@ -64,10 +64,44 @@ export const setRole = params => {
 export const orderStatics = params => {
   return request.get(
     baseUrl +
-      `/statistics/orderStatics?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
+      `/statistics/orderStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
+  )
+}
+// 对外打分
+export const outStatics = params => {
+  return request.get(
+    baseUrl +
+      `/statistics/outSatisfiedStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
+  )
+}
+// 区域打分
+export const regionStatics = params => {
+  return request.get(
+    baseUrl +
+      `/statistics/regionStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
   )
 }
 // 全部信息
 export const messageList = params => {
   return request.post(baseUrl + '/message/list', params)
+}
+// 未读消息
+export const messageUnReadList = params => {
+  return request.post(baseUrl + '/message/unreadList', params)
+}
+// 已读消息
+export const messageReadList = params => {
+  return request.post(baseUrl + '/message/readList', params)
+}
+// 删除消息
+export const messageDelete = params => {
+  return request.post(baseUrl + '/message/deleteCompany', params)
+}
+// 获取用户
+export const getUser = params => {
+  return request.get(baseUrl + `/userinfo/getUser?uuid=${params.uuid}`)
+}
+// 修改密码
+export const passWorkEdit = params => {
+  return request.get(baseUrl + `/userinfo/editPassword?newPassword=${params.newPassword}`)
 }

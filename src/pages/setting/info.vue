@@ -1,13 +1,22 @@
 <template>
   <div class="contentData">
-    <Tabs>
+    <Tabs @on-click="tabs">
       <TabPane label="全部消息" name="first">
-        <Button class="delete">批量删除</Button>
+        <Button type="primary" class="delete" @click="del('批量', 'all', '')">批量删除</Button>
         <Button type="primary" class="cancel" ghost @click="cancel()">返回</Button>
-        <Table :data="allData" :columns="columns" ref="selection" class="form">
-          <template slot-scope="{ row, index }" slot="action">
-            <span class="new-color" @click="show(index)">详情</span>
-            <span class="new-color" @click="del(index)">删除</span>
+        <Table
+          :data="allData"
+          :columns="columns"
+          ref="selection"
+          @on-select="select"
+          @on-select-cancel="selectCancel"
+          @on-select-all="selectAll"
+          @on-select-all-cancel="selectAllCancel"
+          class="form"
+        >
+          <template slot-scope="{ row }" slot="action">
+            <span class="new-color" @click="show(row)">详情</span>
+            <span class="new-color" @click="del('单个', 'all', row)">删除</span>
           </template>
         </Table>
         <pagination
@@ -16,37 +25,69 @@
           :currentPage="current"
           @on-change="getMessageList"
           @on-page-size-change="userSize"
-          :total="100"
+          :total="total"
         />
       </TabPane>
       <TabPane label="未读消息" name="second">
-        <Button class="delete">批量删除</Button>
+        <Button type="primary" class="delete" @click="del('批量', 'unread', '')">批量删除</Button>
         <Button type="primary" class="cancel" ghost @click="cancel()">返回</Button>
-        <Table :data="unReadData" :columns="columns" ref="selection" class="form">
-          <template slot-scope="{ row, index }" slot="action">
-            <Button type="text" size="small" @click="show(index)">详情</Button>
-            <Button type="text" size="small" @click="del(index)">删除</Button>
-          </template>
-        </Table>
-        <pagination :page-size="10" :show-info="true" :currentPage="1" :total="100" />
-      </TabPane>
-      <TabPane label="已读消息" name="已读消息">
-        <Button class="delete">批量删除</Button>
-        <Button type="primary" class="cancel" ghost @click="cancel()">返回</Button>
-        <Table :data="readData" :columns="columns" ref="selection" class="form">
+        <Table
+          :data="unReadData"
+          :columns="columns"
+          ref="selection"
+          @on-select="select"
+          @on-select-cancel="selectCancel"
+          @on-select-all="selectAll"
+          @on-select-all-cancel="selectAllCancel"
+          class="form"
+        >
           <template slot-scope="{ row }" slot="action">
-            <Button type="text" size="small" @click="show(row)">详情</Button>
-            <Button type="text" size="small" @click="del(row)">删除</Button>
+            <span class="new-color" @click="show(row)">详情</span>
+            <span class="new-color" @click="del('单个', 'unread', row)">删除</span>
           </template>
         </Table>
-        <pagination :page-size="10" :show-info="true" :currentPage="1" :total="100" />
+        <pagination
+          :page-size="pageSize"
+          :show-info="true"
+          :currentPage="current"
+          :total="total"
+          @on-change="getUnreadMessageList"
+          @on-page-size-change="userSize"
+        />
+      </TabPane>
+      <TabPane label="已读消息" name="已读">
+        <Button type="primary" class="delete">批量删除</Button>
+        <Button type="primary" class="cancel" ghost @click="cancel()">返回</Button>
+        <Table
+          :data="readData"
+          :columns="columns"
+          ref="selection"
+          @on-select="select"
+          @on-select-cancel="selectCancel"
+          @on-select-all="selectAll"
+          @on-select-all-cancel="selectAllCancel"
+          class="form"
+        >
+          <template slot-scope="{ row }" slot="action">
+            <span class="new-color" @click="show(row)">详情</span>
+            <span class="new-color" @click="del(row)">删除</span>
+          </template>
+        </Table>
+        <pagination
+          :page-size="pageSize"
+          :show-info="true"
+          :currentPage="current"
+          @on-change="getReadMessageList"
+          @on-page-size-change="userSize"
+          :total="total"
+        />
       </TabPane>
     </Tabs>
     <!-- 详情弹框 -->
     <Modal footer-hide v-model="infoModel" title="信息">
-      <div>您好，最新发布的{{ messTitle }}等待您派单，请知悉!</div>
+      <div style="padding-bottom: 80px">您好，最新发布的{{ messTitle }}等待您派单，请知悉!</div>
     </Modal>
-    删除弹框
+    <!-- 删除弹框 -->
     <Modal id="fusion-del" footer-hide v-model="delModel" width="451">
       <p slot="header">
         <span>提示</span>
@@ -68,7 +109,7 @@
   </div>
 </template>
 <script>
-import { messageList, allUser, setRole } from '../../api/login'
+import { messageList, messageDelete, messageUnReadList, messageReadList } from '../../api/login'
 export default {
   data() {
     return {
@@ -76,12 +117,16 @@ export default {
       infoModel: false,
       delModel: false,
       messTitle: '',
+      delTitle: '',
+      deletUuid: '',
+      type: '',
       allData: [],
       unReadData: [],
       readData: [],
       current: 1,
       pageSize: 10,
       total: 0,
+      selected: [],
       columns: [
         {
           type: 'selection',
@@ -108,6 +153,16 @@ export default {
     this.getMessageList(1)
   },
   methods: {
+    tabs(name) {
+      if (name === 'first') {
+        this.getMessageList(1)
+      } else if (name === 'second') {
+        this.getUnreadMessageList(1)
+      } else {
+        this.getReadMessageList(1)
+      }
+    },
+    // 获取全部消息列表
     getMessageList(current) {
       if (current) this.current = current
       let params = {
@@ -115,23 +170,109 @@ export default {
         currentPage: this.current
       }
       messageList(params).then(res => {
-        this.allData = res.noData
+        this.allData = res.Data
+        this.total = res.total
+      })
+    },
+    // 获取未读消息
+    getUnreadMessageList(current) {
+      if (current) this.current = current
+      let params = {
+        pageSize: this.pageSize,
+        currentPage: this.current
+      }
+      messageUnReadList(params).then(res => {
+        this.unReadData = res.Data
+        this.total = res.total
+      })
+    },
+    // 获取已读消息
+    getReadMessageList(current) {
+      if (current) this.current = current
+      let params = {
+        pageSize: this.pageSize,
+        currentPage: this.current
+      }
+      messageReadList(params).then(res => {
+        this.readData = res.Data
+        this.total = res.total
       })
     },
     userSize: function(limit) {
       this.size = limit
       this.getMessageList(1)
     },
+    select(selection, row) {
+      for (var i = 0; i < selection.length; i++) {
+        this.selected[i] = selection[i].uuid
+      }
+    },
+    selectCancel(selection, row) {
+      for (var i = 0; i < selection.length; i++) {
+        this.selected[i] = selection[i].uuid
+      }
+    },
+    selectAll(selection) {
+      for (var i = 0; i < selection.length; i++) {
+        this.selected[i] = selection[i].uuid
+      }
+    },
+    selectAllCancel(selection) {
+      for (var i = 0; i < selection.length; i++) {
+        this.selected[i] = selection[i].uuid
+      }
+    },
     show(row) {
       this.infoModel = true
       this.messTitle = row.messTitle
     },
-    del(row) {
+    del(title, type, row) {
       this.delModel = true
+      this.delTitle = title
       this.messTitle = row.messTitle
+      this.deletUuid = row.uuid
+      this.type = type
     },
     delOk() {
-      this.delModel = false
+      if (this.delTitle === '单个') {
+        var uuidLists = []
+        uuidLists.push(this.deletUuid)
+        messageDelete(uuidLists).then(res => {
+          if (res.state === '1') {
+            this.$Message.success(res.message || '删除成功!')
+            this.delModel = false
+            if (this.type === 'all') {
+              this.getMessageList(1)
+            } else if (this.type === 'unread') {
+              this.getUnreadMessageList(1)
+            } else {
+              this.getReadMessageList(1)
+            }
+          } else {
+            this.$Message.error(res.message || '删除失败!')
+          }
+        })
+      } else {
+        this.delBatch()
+      }
+    },
+    // 批量删除
+    delBatch() {
+      messageDelete(this.selected).then(res => {
+        if (res.state === '1') {
+          this.$Message.success(res.message || '删除成功!')
+          this.delModel = false
+          if (this.type === 'all') {
+            this.getMessageList(1)
+          } else if (this.type === 'unread') {
+            this.getUnreadMessageList(1)
+          } else {
+            this.getReadMessageList(1)
+          }
+        } else {
+          this.$Message.error(res.message || '删除失败!')
+        }
+      })
     },
     cancel_del() {
       this.delModel = false
@@ -189,8 +330,5 @@ export default {
   width: 110px;
   height: 32px;
   margin-left: 20px;
-}
-/deep/ .ivu-modal-body {
-  padding-bottom: 100px !important;
 }
 </style>

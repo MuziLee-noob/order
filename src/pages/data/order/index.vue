@@ -11,7 +11,7 @@
               :options="options"
               :clearable="false"
               confirm
-              @on-ok="getOrderList(1)"
+              @on-ok="confirms()"
               id="date"
               placement="bottom-end"
               separator="~"
@@ -43,15 +43,15 @@
       <div id="main" style="width:1520px; height:450px"></div>
     </div>
     <div class="policy-table" style="margin-top: 10px;">
-      <Table :columns="orderColums" :data="orderData" stripe></Table>
-      <pagination
+      <Table :columns="orderColums" :data="orderData" stripe show-summary></Table>
+      <!-- <pagination
         :page-size="size"
         :show-info="true"
         :currentPage="current"
         :total="userTotal"
         @on-change="userList"
         @on-page-size-change="userSize"
-      />
+      /> -->
     </div>
   </div>
 </template>
@@ -65,11 +65,12 @@ export default {
   name: 'Echarts',
   data() {
     return {
-      date: [],
+      userdate: [],
       activityIndex: 1,
+      day: 'month',
       options: {
-        disabledDate(date) {
-          return date && date.valueOf() >= new Date()
+        disabledDate(userdate) {
+          return userdate && userdate.valueOf() >= new Date()
         }
       },
       userTotal: 0,
@@ -78,27 +79,27 @@ export default {
       orderColums: [
         {
           title: '日期',
-          key: 'eventName',
+          key: '时间',
           tooltip: true
         },
         {
           title: '工单总数',
-          key: 'ip',
+          key: '总工单',
           tooltip: true
         },
         {
           title: '待办',
-          key: 'userAccount',
+          key: '待办',
           tooltip: true
         },
         {
           title: '已办',
-          key: 'ip',
+          key: '已办',
           tooltip: true
         },
         {
           title: '超时',
-          key: 'userAccount',
+          key: '超时',
           tooltip: true
         }
       ],
@@ -107,21 +108,21 @@ export default {
   },
   mounted() {
     this.userdate = [this.prevMonth, this.today]
-    this.getEcharts()
-    // window.onresize = () => {
-    //   if (!this.timer) {
-    //     this.timer = true
-    //     setTimeout(() => {
-    //       this.timer = false
-    //       that.myChart.resize()
-    //     }, 600)
-    //   }
-    // }
+    this.getOrderList()
+    window.onresize = () => {
+      if (!this.timer) {
+        this.timer = true
+        setTimeout(() => {
+          this.timer = false
+          that.getEcharts.resize()
+        }, 600)
+      }
+    }
   },
   created() {
-    this.getEcharts()
+    // this.getEcharts()
     this.getToday()
-    this.getOrderList(1)
+    // this.getOrderList(1)
   },
   methods: {
     getClass(i) {
@@ -131,6 +132,9 @@ export default {
     },
     getClassHandler(i) {
       this.activityIndex = i
+      this.userdate = []
+      this.userdate[0] = ''
+      this.userdate[1] = ''
       if (this.activityIndex === 1) {
         this.day = 'month'
       } else if (this.activityIndex === 2) {
@@ -140,10 +144,16 @@ export default {
       } else {
         this.day = 'quarter'
       }
+      this.getOrderList()
+    },
+    confirms() {
+      this.day = ''
+      this.activityIndex = 0
+      this.getOrderList()
     },
     // 获取列表数据
-    getOrderList(current) {
-      if (current) this.current = current
+    getOrderList() {
+      // if (current) this.current = current
       if (typeof this.userdate[0] === 'object') {
         this.userdate[0] = dateFormat('YYYY-mm-dd', this.userdate[0])
       }
@@ -154,13 +164,40 @@ export default {
         startTime: this.userdate[0],
         endTime: this.userdate[1],
         day: this.day
-        // size: this.size,
-        // current: this.current
       }
       orderStatics(params).then(res => {
-        if (res.state === '1') {
+        if (res.state === 1) {
           this.orderData = res.data
-          // this.userTotal = res.results.total
+          this.time = []
+          this.all = []
+          this.pendding = []
+          this.finish = []
+          this.overTime = []
+          if (this.orderData.length > 0) {
+            this.orderData.forEach((item, index) => {
+              this.time.push(item.时间)
+              this.all.push(item.总工单)
+              this.pendding.push(item.待办)
+              this.finish.push(item.已办)
+              this.overTime.push(item.超时)
+              this.getEcharts()
+            })
+          } else {
+            this.time.push('')
+            this.all.push(0)
+            this.pendding.push(0)
+            this.finish.push(0)
+            this.overTime.push(0)
+            this.getEcharts()
+          }
+          // console.log(this.orderData)
+        } else {
+          this.time.push('')
+          this.all.push(0)
+          this.pendding.push(0)
+          this.finish.push(0)
+          this.overTime.push(0)
+          this.getEcharts()
         }
       })
     },
@@ -171,7 +208,7 @@ export default {
         color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
         tooltip: {},
-        xAxis: [{ type: 'category', data: ['2012', '2013', '2014', '2015', '2016'] }],
+        xAxis: [{ type: 'category', data: this.time }],
         yAxis: {},
         grid: {
           height: 300
@@ -182,25 +219,25 @@ export default {
             type: 'bar',
             barGap: 0,
             barWidth: '20',
-            data: [320, 332, 301, 334, 390]
+            data: this.all
           },
           {
             name: '待办',
             type: 'bar',
             barWidth: '20',
-            data: [220, 182, 191, 234, 290]
+            data: this.pendding
           },
           {
             name: '已办',
             type: 'bar',
             barWidth: '20',
-            data: [150, 232, 201, 154, 190]
+            data: this.finish
           },
           {
             name: '超时',
             type: 'bar',
             barWidth: '20',
-            data: [98, 77, 101, 99, 40]
+            data: this.overTime
           }
         ]
       })

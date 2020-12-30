@@ -50,22 +50,14 @@
       <div id="main" style="width:1720px; height:450px"></div>
     </div>
     <div class="policy-table" style="margin-top: 10px;">
-      <Table :columns="areaColums" :data="areaData" stripe></Table>
-      <pagination
-        :page-size="size"
-        :show-info="true"
-        :currentPage="current"
-        :total="userTotal"
-        @on-change="userList"
-        @on-page-size-change="userSize"
-      />
+      <Table :columns="areaColums" :data="areaData" stripe show-summary></Table>
     </div>
   </div>
 </template>
 <style lang="less" scoped></style>
 <script>
-// import { userPolicyList, commenSelect } from '../../../../api/policy/policy'
-// import { dateFormat } from '../../../../libs/tools'
+import { regionStatics } from '../../../api/login'
+import { dateFormat } from '../../../libs/tools'
 import echarts from 'echarts'
 let that = null
 export default {
@@ -74,6 +66,7 @@ export default {
     return {
       date: [],
       activityIndex: 1,
+      day: 'month',
       options: {
         disabledDate(date) {
           return date && date.valueOf() >= new Date()
@@ -137,6 +130,11 @@ export default {
         }
       ],
       areaColums: [
+        {
+          title: '工单区域',
+          key: 'eventName',
+          tooltip: true
+        },
         {
           title: '全部',
           key: 'eventName',
@@ -209,6 +207,7 @@ export default {
   mounted() {
     this.date = [this.prevMonth, this.today]
     this.getEcharts()
+    this.getRegionList()
     window.onresize = () => {
       if (!this.timer) {
         this.timer = true
@@ -222,7 +221,6 @@ export default {
   created() {
     this.getEcharts()
     this.getToday()
-    // this.userList(1)
   },
   methods: {
     getClass(i) {
@@ -232,13 +230,68 @@ export default {
     },
     getClassHandler(i) {
       this.activityIndex = i
+      this.date = []
+      this.date[0] = ''
+      this.date[1] = ''
       if (this.activityIndex === 1) {
-        // this.yesToday()
+        this.day = 'month'
       } else if (this.activityIndex === 2) {
-        // this.monthList()
+        this.day = 'week'
+      } else if (this.activityIndex === 3) {
+        this.day = 'month'
       } else {
-        // this.totalList()
+        this.day = 'quarter'
       }
+      // this.getOrderList()
+    },
+    // 获取列表数据
+    getRegionList() {
+      if (typeof this.date[0] === 'object') {
+        this.date[0] = dateFormat('YYYY-mm-dd', this.date[0])
+      }
+      if (typeof this.date[1] === 'object') {
+        this.date[1] = dateFormat('YYYY-mm-dd', this.date[1])
+      }
+      let params = {
+        startTime: this.date[0],
+        endTime: this.date[1],
+        day: this.day
+      }
+      regionStatics(params).then(res => {
+        if (res.state === 1) {
+          this.areaData = res.data
+          this.time = []
+          this.all = []
+          this.pendding = []
+          this.finish = []
+          this.overTime = []
+          if (this.areaData.length > 0) {
+            this.orderData.forEach((item, index) => {
+              this.time.push(item.时间)
+              this.all.push(item.总工单)
+              this.pendding.push(item.待办)
+              this.finish.push(item.已办)
+              this.overTime.push(item.超时)
+              this.getEcharts()
+            })
+          } else {
+            this.time.push('')
+            this.all.push(0)
+            this.pendding.push(0)
+            this.finish.push(0)
+            this.overTime.push(0)
+            this.getEcharts()
+          }
+          // console.log(this.orderData)
+        } else {
+          this.time.push('')
+          this.all.push(0)
+          this.pendding.push(0)
+          this.finish.push(0)
+          this.overTime.push(0)
+          this.getEcharts()
+        }
+      })
     },
     getEcharts() {
       var myChart = echarts.init(document.getElementById('main'))

@@ -111,6 +111,7 @@ export default {
           this.$store.commit('setUserUuid', this.uid)
           console.log(this.uid, this.token, role)
           localStorage.setItem('token', this.token)
+          localStorage.setItem('uuid', this.uid)
           if (role == 2) {
             console.log(role)
             this.$router.push('/pedding')
