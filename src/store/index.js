@@ -16,13 +16,13 @@ export default new Vuex.Store({
   mutations: {
     login: (state, data) => {
       state.token = data
-      localStorage.setItem('token',data);
+      localStorage.setItem('token', data)
     },
-    setRole(state,data){
-      state.role=data;
+    setRole(state, data) {
+      state.role = data
     },
-    setUserUuid(state,data){
-      state.userUuid=data;
+    setUserUuid(state, data) {
+      state.userUuid = data
     }
   },
   actions: {},
