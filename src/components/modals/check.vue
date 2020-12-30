@@ -113,7 +113,7 @@ export default {
       axios
         .axios({
           method: 'post',
-          url: '/workflow/handleWorkflow',
+          url: '/api/workflow/handleWorkflow',
           data: {
             uuid: this.data.uuid,
             orderCode: this.data.orderCode,

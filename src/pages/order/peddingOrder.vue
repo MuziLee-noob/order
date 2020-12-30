@@ -181,9 +181,9 @@ export default {
         },
         {
           title: '发布时间',
-          key: 'createTime',
+          key: 'orderCreateTime',
           render: (h, params) => {
-            let createTimeStr = moment(params.row.createTime).format('yyyy-MM-DD HH:mm')
+            let createTimeStr = moment(params.row.orderCreateTime).format('yyyy-MM-DD HH:mm')
             return h('span', createTimeStr)
           }
         },

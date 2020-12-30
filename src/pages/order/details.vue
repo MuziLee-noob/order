@@ -152,7 +152,7 @@ export default {
       axios
         .axios({
           method: 'get',
-          url: 'order/orderDetail',
+          url: '/api/order/orderDetail',
           params: {
             orderUuid: this.uuid
           }
