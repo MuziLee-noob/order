@@ -7,9 +7,24 @@ import routes from './modules/routes'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {},
+  state: {
+    token: localStorage.getItem('token'),
+    role: 2,
+    userUuid: ''
+  },
   getters,
-  mutations: {},
+  mutations: {
+    login: (state, data) => {
+      state.token = data
+      localStorage.setItem('token',data);
+    },
+    setRole(state,data){
+      state.role=data;
+    },
+    setUserUuid(state,data){
+      state.userUuid=data;
+    }
+  },
   actions: {},
   modules: {
     user,
