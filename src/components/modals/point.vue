@@ -9,13 +9,20 @@
     </Modal>
   </div>
 </template>
+
 <script>
+import axios from '../../api/axios'
 export default {
   props: {
-    pointFlag: Boolean
+    pointFlag: Boolean,
+    orderData: {}
   },
   data() {
     return {
+      merits: '',
+      uuid: '',
+      createUuid: '',
+      supportUuid: '',
       flag: false,
       listNumber: '', //工单编号
       sum: 0, //打分的总分数
@@ -119,12 +126,39 @@ export default {
       ]
     }
   },
+  // created() {
+  //   this.getData()
+  // },
   methods: {
     cancel() {
       this.$emit('disable', false)
     },
+    getData() {
+      this.uuid = this.orderData.uuid
+      this.listNumber = this.orderData.orderCode
+      this.supportUuid = this.orderData.supportUuid
+      this.createUuid = this.orderData.createUuid
+      console.log(this.orderData)
+    },
     confirm() {
-      //Todo 这里写提交表单的方法 还要解决计算总和的问题
+      axios
+        .axios({
+          method: 'post',
+          url: 'workflow/handleWorkflow',
+          data: {
+            uuid: this.orderData.uuid,
+            orderCode: this.orderData.orderCode,
+            nodeFlag: 4,
+            supportUuid: this.orderData.supportUuid,
+            createUuid: this.orderData.createUuid,
+            merits: '123456',
+            score: 100
+          },
+          headers: { token: localStorage.getItem('token') }
+        })
+        .then(data => {
+          console.log(data)
+        })
     },
     handleSpan({ rowIndex, columnIndex }) {
       if (rowIndex === 0 && columnIndex === 0) {
