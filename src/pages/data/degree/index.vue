@@ -49,22 +49,14 @@
         </Form>
       </Row>
     </div>
-    <Tabs type="card" :animated="false" style="margin: 0 20px;">
-      <TabPane label="打分统计">
+    <Tabs type="card" :animated="false" style="margin: 0 20px;" @on-click="tabs">
+      <TabPane label="打分统计" name="degree">
         <div class="policy-table" style="margin: 0;">
           <div id="main" style="width:1720px; height:450px;padding-top:30px;"></div>
-          <Table :columns="degreeColums" :data="degreerData" stripe></Table>
-          <pagination
-            :page-size="size"
-            :show-info="true"
-            :currentPage="current"
-            :total="userTotal"
-            @on-change="userList"
-            @on-page-size-change="userSize"
-          />
+          <Table :columns="degreeColums" :data="degreeData" stripe></Table>
         </div>
       </TabPane>
-      <TabPane label="对内打分">
+      <TabPane label="对内打分" name="inDegree">
         <div class="policy-table" style="margin: 0;">
           <Form>
             <FormItem label="" class="mgr">
@@ -76,18 +68,10 @@
             </FormItem>
           </Form>
           <div id="inside" style="width:1720px; height:450px"></div>
-          <Table :columns="degreeColums" :data="degreerData" stripe></Table>
-          <pagination
-            :page-size="size"
-            :show-info="true"
-            :currentPage="current"
-            :total="userTotal"
-            @on-change="userList"
-            @on-page-size-change="userSize"
-          />
+          <Table :columns="inDegreeColums" :data="inDegreeData" stripe></Table>
         </div>
       </TabPane>
-      <TabPane label="对外打分">
+      <TabPane label="对外打分" name="outDegree">
         <div class="policy-table" style="margin: 0;">
           <Form>
             <FormItem label="" class="mgr">
@@ -99,36 +83,16 @@
             </FormItem>
           </Form>
           <div id="outside" style="width:1720px; height:450px"></div>
-          <Table :columns="degreeColums" :data="degreerData" stripe></Table>
-          <pagination
-            :page-size="size"
-            :show-info="true"
-            :currentPage="current"
-            :total="userTotal"
-            @on-change="userList"
-            @on-page-size-change="userSize"
-          />
+          <Table :columns="outDegreeColums" :data="outDegreeData" stripe show-summary></Table>
         </div>
       </TabPane>
     </Tabs>
-
-    <!-- <div class="policy-table" style="margin-top: 10px;">
-      <Table :columns="degreeColums" :data="degreerData" stripe></Table>
-      <pagination
-        :page-size="size"
-        :show-info="true"
-        :currentPage="current"
-        :total="userTotal"
-        @on-change="userList"
-        @on-page-size-change="userSize"
-      />
-    </div> -->
   </div>
 </template>
 <style lang="less" scoped></style>
 <script>
-// import { userPolicyList, commenSelect } from '../../../../api/policy/policy'
-// import { dateFormat } from '../../../../libs/tools'
+import { outStatics } from '../../../api/login'
+import { dateFormat } from '../../../libs/tools'
 import echarts from 'echarts'
 let that = null
 export default {
@@ -137,6 +101,7 @@ export default {
     return {
       date: [],
       activityIndex: 1,
+      day: 'month',
       options: {
         disabledDate(date) {
           return date && date.valueOf() >= new Date()
@@ -199,7 +164,66 @@ export default {
           lable: '新洲区'
         }
       ],
+      // 打分统计
       degreeColums: [
+        {
+          title: '日期',
+          key: 'eventName',
+          tooltip: true
+        },
+        {
+          title: '90（含）-100',
+          key: 'ip',
+          tooltip: true
+        },
+        {
+          title: '80（含）-90（不含）',
+          key: 'userAccount',
+          tooltip: true
+        },
+        {
+          title: '70（含）-80（不含）',
+          key: 'ip',
+          tooltip: true
+        },
+        {
+          title: '70及以下',
+          key: 'userAccount',
+          tooltip: true
+        }
+      ],
+      degreeData: [],
+      // 对内打分统计
+      inDegreeColums: [
+        {
+          title: '日期',
+          key: 'eventName',
+          tooltip: true
+        },
+        {
+          title: '90（含）-100',
+          key: 'ip',
+          tooltip: true
+        },
+        {
+          title: '80（含）-90（不含）',
+          key: 'userAccount',
+          tooltip: true
+        },
+        {
+          title: '70（含）-80（不含）',
+          key: 'ip',
+          tooltip: true
+        },
+        {
+          title: '70及以下',
+          key: 'userAccount',
+          tooltip: true
+        }
+      ],
+      inDegreeData: [],
+      // 对外打分
+      outDegreeColums: [
         {
           title: '支撑单位',
           key: 'eventName',
@@ -226,26 +250,16 @@ export default {
           tooltip: true
         }
       ],
-      degreeData: []
+      outDegreeData: []
     }
   },
   mounted() {
     this.date = [this.prevMonth, this.today]
-    this.getEcharts()
-    window.onresize = () => {
-      if (!this.timer) {
-        this.timer = true
-        setTimeout(() => {
-          this.timer = false
-          that.myChart.resize()
-        }, 600)
-      }
-    }
+    this.getEchars()
+    // this.getOutList()
   },
   created() {
-    this.getEcharts()
     this.getToday()
-    // this.userList(1)
   },
   methods: {
     getClass(i) {
@@ -256,22 +270,77 @@ export default {
     getClassHandler(i) {
       this.activityIndex = i
       if (this.activityIndex === 1) {
-        // this.yesToday()
+        this.day = 'month'
       } else if (this.activityIndex === 2) {
-        // this.monthList()
+        this.day = 'week'
+      } else if (this.activityIndex === 3) {
+        this.day = 'month'
       } else {
-        // this.totalList()
+        this.day = 'quarter'
       }
     },
-    change(state) {
-      if (state == 'inside') {
-        // this.$router.push('/inSta')
+    tabs(name) {
+      if (name === 'degree') {
+        this.getEchars()
+      } else if (name === 'inDegree') {
+        this.getIncharts()
+      } else {
+        this.getOutCharts()
+        // this.getOutList()
       }
     },
-    getEcharts() {
+    // 获取列表数据
+    getOutList() {
+      if (typeof this.date[0] === 'object') {
+        this.date[0] = dateFormat('YYYY-mm-dd', this.date[0])
+      }
+      if (typeof this.date[1] === 'object') {
+        this.date[1] = dateFormat('YYYY-mm-dd', this.date[1])
+      }
+      let params = {
+        startTime: this.date[0],
+        endTime: this.date[1],
+        day: this.day
+      }
+      outStatics(params).then(res => {
+        if (res.state === 1) {
+          this.outDegreeData = res.data
+          this.time = []
+          this.all = []
+          this.pendding = []
+          this.finish = []
+          this.overTime = []
+          if (this.outDegreeData.length > 0) {
+            this.orderData.forEach((item, index) => {
+              this.time.push(item.时间)
+              this.all.push(item.总工单)
+              this.pendding.push(item.待办)
+              this.finish.push(item.已办)
+              this.overTime.push(item.超时)
+              this.getOutCharts()
+            })
+          } else {
+            this.time.push('')
+            this.all.push(0)
+            this.pendding.push(0)
+            this.finish.push(0)
+            this.overTime.push(0)
+            this.getOutCharts()
+          }
+          // console.log(this.orderData)
+        } else {
+          this.time.push('')
+          this.all.push(0)
+          this.pendding.push(0)
+          this.finish.push(0)
+          this.overTime.push(0)
+          this.getOutCharts()
+        }
+      })
+    },
+    // 打分echarts
+    getEchars() {
       var myChart = echarts.init(document.getElementById('main'))
-      var insideMyChart = echarts.init(document.getElementById('inside'))
-      var outsideMyChart = echarts.init(document.getElementById('outside'))
       myChart.setOption({
         color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
@@ -297,6 +366,10 @@ export default {
           { type: 'bar', barWidth: '20' }
         ]
       })
+    },
+    // 对内打分
+    getIncharts() {
+      var insideMyChart = echarts.init(document.getElementById('inside'))
       insideMyChart.setOption({
         color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
@@ -322,6 +395,10 @@ export default {
           { type: 'bar', barWidth: '20' }
         ]
       })
+    },
+    // 对外打分
+    getOutCharts() {
+      var outsideMyChart = echarts.init(document.getElementById('outside'))
       outsideMyChart.setOption({
         color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
@@ -348,7 +425,7 @@ export default {
         ]
       })
     },
-    // 获取当天的时间
+    //获取当天的时间
     getToday: function() {
       var nowdate = new Date()
       var y = nowdate.getFullYear()
