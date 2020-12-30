@@ -215,7 +215,6 @@ export default {
     upload(e) {
       var that = this
       console.log(e.target.files.length)
-      console
       for (var i = 0; i < e.target.files.length; i++) {
         that.formData.append('files', e.target.files[i])
       }

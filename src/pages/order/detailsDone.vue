@@ -34,14 +34,13 @@
       <div class="title">
         <span class="title-">湖北武汉移动政企信息化IT技术支撑服务项目</span>
         <i-col span="4">
-          <Button :disabled="isModify" @click="modify()" v-if="roll === 2">修改</Button>
-          <Button disabled v-if="roll === 2">打分</Button>
+          <Button disabled v-if="roll === 2">修改</Button>
+          <Button @click="point()" v-if="roll === 2">打分</Button>
           <Button :disabled="isCheck" @click="check()" v-if="roll === 1">审核</Button>
-          <Button disabled v-if="roll === 1">结算</Button>
-          <Button @click="accept()" v-if="roll === 3">受理</Button>
-          <Button @click="cooperate()" v-if="roll === 3">需协作</Button>
-          <Button disabled v-if="roll === 3">结算</Button>
-          <Button @click="finish()" v-if="roll === 3">确认完成</Button>
+          <Button :disabled="isSettle2" @click="settle2()" v-if="roll === 1">结算</Button>
+          <Button disabled v-if="roll === 3">受理</Button>
+          <Button disabled v-if="roll === 3">需协作</Button>
+          <Button @click="settle3()" v-if="roll === 3">结算</Button>
         </i-col>
       </div>
       <!-- <Divider /> -->
@@ -110,35 +109,33 @@
     </Content>
     <!-- </Layout>
     </Layout> -->
-    <check ref="check" :checkFlag="checkFlag" :data="data" @disable="change($event)" />
-    <accept ref="accept" :acceptFlag="acceptFlag" :data="data" @disable1="change1($event)" />
-    <cooperate :cooperateFlag="cooperateFlag" @disable2="change2($event)" />
+    <point ref="point" :pointFlag="pointFlag" :orderData="data" @disable="change($event)" />
+    <!-- <settle :state1="state1" :state2="state2" />
+    <upload /> -->
   </div>
 </template>
 
 <script>
 import axios from '../../api/axios'
-import moment from 'moment'
 // import above from '../components/layout/above'
 // import menuCheck from '../components/layout/menuCheck'
 // import menuRequire from '../components/layout/menuRequire.vue'
 // import menuAccept from '../components/layout/menuAccept.vue'
-import Check from '../../components/modals/check.vue'
-import Accept from '../../components/modals/accept.vue'
-import Cooperate from '../../components/modals/cooperate.vue'
+// import settle from '../../components/modals/settle.vue'
+import point from '../../components/modals/point.vue'
+// import Upload from '../../components/modals/upload.vue'
 export default {
   components: {
     // menuAccept,
     // menuRequire,
     // menuCheck,
-    Check,
-    Accept,
-    Cooperate
+    // settle,
+    point
+    // Upload
     // above
   },
   created() {
     this.getdata()
-    console.log(this.role)
   },
   methods: {
     down(id) {
@@ -171,8 +168,6 @@ export default {
           this.cost = data.data.data.capital //预期花费
           this.description = data.data.data.orderDesr //工单详情
           this.opinion = data.data.data.auditSettContent //审核人意见
-          this.supportUuid = data.data.data.supportUuid
-          this.createUuid = data.data.data.createUuid
           this.state =
             data.data.data.orderState == '1'
               ? '待办'
@@ -187,65 +182,22 @@ export default {
         })
     },
     change(flag) {
-      this.checkFlag = flag
+      this.pointFlag = flag
     },
-    change1(flag) {
-      this.acceptFlag = flag
-    },
-    change2(flag) {
-      this.cooperateFlag = flag
-    },
-    back() {
-      this.$router.push(-1)
-    },
-    modify() {
-      this.$router.push('/newlist') //要传当前的工单编号过去
-    },
-    check() {
-      this.checkFlag = true
-      this.$refs.check.getData()
-    },
-    accept() {
-      this.acceptFlag = true
-      this.$refs.accept.getData()
-      //弹出受理对话框
-    },
-    cooperate() {
-      this.cooperateFlag = true
-      //弹出需协作对话框
-    },
-    finish() {
-      var startTime = moment(this.beginDate).format('yyyy-MM-DD HH:mm:ss')
-      var finishTime = moment(this.endDate).format('yyyy-MM-DD HH:mm:ss')
-      axios
-        .axios({
-          method: 'post',
-          url: 'api/workflow/handleWorkflow',
-          data: {
-            uuid: this.uuid,
-            orderCode: this.listNumber,
-            nodeFlag: 3,
-            supportUuid: this.supportUuid,
-            createUuid: this.createUuid,
-            startTime: startTime,
-            finishTime: finishTime,
-            supportContent: 'this.supportContent'
-          }
-        })
-        .then(data => {
-          console.log(data)
-        })
+    point() {
+      this.pointFlag = true
+      //this.$refs.point.getData()
     }
   },
   data() {
     return {
+      pointFlag: false,
+      state1: false,
+      state2: false,
       data: '',
       checkFlag: false,
       cooperateFlag: false,
       acceptFlag: false,
-      supportContent: '', //这个是支撑过程记录，应该要给个页面填一下，我先写死
-      createUuid: '',
-      supportUuid: '',
       state: '', //工单状态
       aquireName: '', //需求发起人姓名
       checkName: '', //审核人姓名
