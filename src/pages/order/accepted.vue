@@ -1,5 +1,5 @@
 <template>
-<!-- 这个是处理 支撑记录的组件 只被引入了detailsDone里 -->
+  <!-- 这个是处理 支撑记录的组件 只被引入了detailsDone里 -->
   <div class="accepted">
     <Tabs value="list1" type="card">
       <TabPane label="工单处理信息" name="list1">

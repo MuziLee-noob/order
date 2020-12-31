@@ -1,5 +1,5 @@
 <template>
-<!-- 处理打分用 -->
+  <!-- 处理打分用 -->
   <div class="point">
     <Modal title="满意度打分" v-model="pointFlag" width="1400px" @on-cancel="cancel">
       <Row>工单编号{{ listNumber }}</Row>
