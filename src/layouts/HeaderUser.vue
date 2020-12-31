@@ -1,21 +1,24 @@
 <template>
   <div class="header-user">
     <i-dropdown>
-      <ul name="setting" style="float: left;margin-right: 20px;" @click="userSet">
-        <i-icon
+      <ul name="setting" style="float: left;margin-right: 20px;margin-top:5px;" @click="userSet">
+        <img src="../assets/images/shezhi.png" alt="" />
+        <!-- <i-icon
           class="header-user__icon"
           size="18"
           style="color:#fff"
           type="ios-settings-outline"
-        />
+        /> -->
         <!-- <span>个人设置</span> -->
       </ul>
-      <ul name="user" style="float: left;margin-right: 20px;" @click="info">
-        <i-icon class="header-user__icon" size="18" style="color:#fff" type="ios-person-outline" />
+      <ul name="user" style="float: left;margin-right: 20px;margin-top:7px;" @click="info">
+        <img src="../assets/images/ling.png" alt="" />
+        <!-- <i-icon class="header-user__icon" size="18" style="color:#fff" type="ios-person-outline" /> -->
         <!-- <span>消息</span> -->
       </ul>
-      <ul name="logout" style="float: left;margin-right: 20px;" @click="isOut">
-        <i-icon class="header-user__icon" size="18" style="color:#fff" type="ios-power-outline" />
+      <ul name="logout" style="float: left;margin-right: 20px;margin-top:7px;" @click="isOut">
+        <img src="../assets/images/close.png" alt="" />
+        <!-- <i-icon class="header-user__icon" size="18" style="color:#fff" type="ios-power-outline" /> -->
         <!-- <span>退出登录</span> -->
       </ul>
     </i-dropdown>

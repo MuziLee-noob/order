@@ -9,6 +9,8 @@ const state = {
   user: { ...defaultUser },
   permissions: [],
   roles: []
+  // auditCreat: '',
+  // auditOther: ''
 }
 
 const getters = {}

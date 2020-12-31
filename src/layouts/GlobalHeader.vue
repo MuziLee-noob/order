@@ -1,7 +1,8 @@
 <template>
   <div class="global-header">
-    <span class="headerLine"></span>
-    <span class="headerNew" @click="reback">武分派单系统</span>
+    <!-- <span class="headerLine"></span> -->
+    <img src="../assets/images/编组3.png" alt="" style="padding-left:66px;" />
+    <!-- <span class="headerNew" @click="reback">武分派单系统</span> -->
     <div class="global-header__custom-content">
       <HeaderUser />
     </div>

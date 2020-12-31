@@ -99,13 +99,13 @@ export default {
           this.uid = data.data.data.uuid
           this.token = data.data.token
           if (data.data.data.roleUuid === 'fea98ada6624476aa960c02a13e771fb') {
-            role = 2 //需求发起人
+            role = 2 //需求发起人    新建 代办 已办
           }
           if (data.data.data.roleUuid === '7ce7b05588154db694a1383bc515fa92') {
-            role = 1 //审核人
+            role = 1 //审核人   除新建之外都可看见
           }
           if (data.data.data.roleUuid === 'abafab65e99345898cdc9ec66225e59d') {
-            role = 3 //支撑接口人
+            role = 3 //支撑接口人  代办和已办
           }
           this.$store.commit('setRole', role)
           this.$store.commit('setUserUuid', this.uid)
@@ -113,9 +113,16 @@ export default {
           localStorage.setItem('token', this.token)
           localStorage.setItem('uuid', this.uid)
           if (role == 2) {
-            console.log(role)
+            this.$store.state.user.auditOther = ''
+            this.$store.state.user.auditCreat = 'audit'
+            this.$router.push('/pedding')
+          } else if (role === 1) {
+            this.$store.state.user.auditCreat = ''
+            this.$store.state.user.auditOther = 'need'
             this.$router.push('/pedding')
           } else {
+            this.$store.state.user.auditOther = ''
+            this.$store.state.user.auditCreat = ''
             this.$router.push('/pedding')
           }
         })
