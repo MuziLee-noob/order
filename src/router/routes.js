@@ -40,45 +40,6 @@ export const constantRoutes = [
 ]
 
 export const asyncRoutes = [
-  // {
-  //   path: '/',
-  //   name: 'set',
-  //   component: MainView,
-  //   meta: {
-  //     hideInBread: true,
-  //     title: '个人设置',
-  //     hideFrame: true
-  //   },
-  //   children: [
-  //     {
-  //       path: '/setting',
-  //       name: 'setting',
-  //       meta: {
-  //         title: '设置',
-  //         hideFrame: true,
-  //         hideInBread: false
-  //       },
-  //       component: () => import('@/pages/setting/index')
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/',
-  //   name: 'infomation',
-  //   component: MainView,
-  //   children: [
-  //     {
-  //       path: '/info',
-  //       name: 'info',
-  //       meta: {
-  //         title: '消息',
-  //         hideFrame: true,
-  //         hideInBread: false
-  //       },
-  //       component: () => import('@/pages/setting/info.vue')
-  //     }
-  //   ]
-  // },
   {
     path: '/',
     name: 'order',
@@ -96,6 +57,23 @@ export const asyncRoutes = [
           title: '待办工单'
         },
         component: () => import('@/pages/order/peddingOrder.vue')
+      },
+      {
+        path: '/finish',
+        name: 'finish',
+        meta: {
+          title: '已办工单'
+        },
+        component: () => import('@/pages/order/doneOrder.vue')
+      },
+      {
+        path: '/create',
+        name: 'create',
+        meta: {
+          show: 'audit',
+          title: '创建工单'
+        },
+        component: () => import('@/pages/order/createOrder.vue')
       },
       {
         path: '/details',
@@ -130,22 +108,6 @@ export const asyncRoutes = [
           hideInBread: false
         },
         component: () => import('@/pages/setting/info.vue')
-      },
-      {
-        path: '/finish',
-        name: 'finish',
-        meta: {
-          title: '已办工单'
-        },
-        component: () => import('@/pages/order/doneOrder.vue')
-      },
-      {
-        path: '/create',
-        name: 'create',
-        meta: {
-          title: '创建工单'
-        },
-        component: () => import('@/pages/order/createOrder.vue')
       }
     ]
   },
@@ -156,6 +118,7 @@ export const asyncRoutes = [
     meta: {
       hideInBread: true,
       title: '系统管理',
+      other: 'need',
       icon: 'log'
     },
     children: [
@@ -163,7 +126,8 @@ export const asyncRoutes = [
         path: '/commany',
         name: 'commany',
         meta: {
-          title: '公司管理'
+          title: '公司管理',
+          other: 'need'
         },
         component: () => import('@/pages/system/company/index.vue')
       },
@@ -181,6 +145,7 @@ export const asyncRoutes = [
         path: '/user',
         name: 'user',
         meta: {
+          other: 'need',
           title: '用户管理'
         },
         component: () => import('@/pages/system/user/index.vue')
@@ -199,6 +164,7 @@ export const asyncRoutes = [
         path: '/role',
         name: 'role',
         meta: {
+          other: 'need',
           title: '角色管理'
         },
         component: () => import('@/pages/system/role/index.vue')
@@ -210,15 +176,17 @@ export const asyncRoutes = [
     name: 'data',
     component: MainView,
     meta: {
+      other: 'need',
       hideInBread: true,
       title: '数据统计',
-      icon: 'log'
+      icon: 'audit'
     },
     children: [
       {
         path: '/order',
         name: 'orderStatic',
         meta: {
+          other: 'need',
           title: '工单统计'
         },
         component: () => import('@/pages/data/order/index.vue')
@@ -227,6 +195,7 @@ export const asyncRoutes = [
         path: '/degree',
         name: 'degree',
         meta: {
+          other: 'need',
           title: '满意度统计'
         },
         component: () => import('@/pages/data/degree/index.vue')
@@ -235,6 +204,7 @@ export const asyncRoutes = [
         path: '/area',
         name: 'area',
         meta: {
+          other: 'need',
           title: '区域统计'
         },
         component: () => import('@/pages/data/area/index.vue')
@@ -243,6 +213,7 @@ export const asyncRoutes = [
         path: '/support',
         name: 'support',
         meta: {
+          other: 'need',
           title: '支撑单位统计'
         },
         component: () => import('@/pages/data/support/index.vue')

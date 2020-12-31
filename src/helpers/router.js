@@ -21,6 +21,8 @@ export const getMenuList = routes => {
         name: name,
         icon: (meta && meta.icon) || '',
         title: (meta && meta.title) || '',
+        show: (meta && meta.show) || '',
+        other: (meta && meta.other) || '',
         children: []
       }
       if (hasChild(item)) {
@@ -32,6 +34,27 @@ export const getMenuList = routes => {
   })
   return menuList
 }
+// export const getMenuList = routes => {
+//   let menuList = []
+//   routes.forEach(item => {
+//     if (!item.hidden) {
+//       const { name, meta, children } = item
+//       const route = {
+//         name: name,
+//         icon: (meta && meta.icon) || '',
+//         title: (meta && meta.title) || '',
+//         show: (meta && meta.show) || '',
+//         children: []
+//       }
+//       if (hasChild(item)) {
+//         route.children = getMenuList(children)
+//       }
+//       if (item.meta && item.meta.href) route.href = item.meta.href
+//       menuList.push(route)
+//     }
+//   })
+//   return menuList
+// }
 
 /**
  * 获取当前匹配路由

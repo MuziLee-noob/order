@@ -83,18 +83,176 @@ export default {
 
   computed: {
     ...mapGetters(['routes']),
-
     menuList() {
       const routes = this.routes
       const menuList = getMenuList(routes)
-      // const arr = []
+      const arr = []
       //条件筛选目录
+      menuList.forEach((data, ind) => {
+        if (data.show && data.show !== '') {
+          //控制新建工单
+          if (data.show === this.$store.state.user.auditCreat) {
+            let array = {
+              title: data.title,
+              show: data.show,
+              other: data.other,
+              name: data.name,
+              icon: data.icon,
+              children: []
+            }
+            arr.push(array)
+            if (data.children && data.children.length > 0) {
+              data.children.forEach((val, index) => {
+                if (val.show && val.show !== '') {
+                  if (val.show === this.$store.state.user.auditCreat) {
+                    arr[ind].children.push(val)
+                  }
+                } else if (val.other && val.other !== '') {
+                  if (val.other === this.$store.state.user.auditOther) {
+                    arr[ind].children.push(val)
+                  }
+                } else {
+                  arr[ind].children.push(val)
+                }
+              })
+            }
+          }
+        } else if (data.other && data.other !== '') {
+          //控制除新建，代办和已办其他页面
+          if (data.other === this.$store.state.user.auditOther) {
+            let array = {
+              title: data.title,
+              show: data.show,
+              other: data.other,
+              name: data.name,
+              icon: data.icon,
+              children: []
+            }
+            arr.push(array)
+            if (data.children && data.children.length > 0) {
+              data.children.forEach((val, index) => {
+                if (val.show && val.show !== '') {
+                  if (val.show === this.$store.state.user.auditCreat) {
+                    arr[ind].children.push(val)
+                  }
+                } else if (val.other && val.other !== '') {
+                  if (val.other === this.$store.state.user.auditOther) {
+                    arr[ind].children.push(val)
+                  }
+                } else {
+                  arr[ind].children.push(val)
+                }
+              })
+            }
+          }
+        } else {
+          let array = {
+            title: data.title,
+            name: data.name,
+            icon: data.icon,
+            children: []
+          }
+          arr.push(array)
+          if (data.children && data.children.length > 0) {
+            data.children.forEach((val, index) => {
+              if (val.show && val.show !== '') {
+                if (val.show === this.$store.state.user.auditCreat) {
+                  arr[ind].children.push(val)
+                }
+              } else if (val.other && val.other !== '') {
+                if (val.other === this.$store.state.user.auditOther) {
+                  arr[ind].children.push(val)
+                }
+              } else {
+                arr[ind].children.push(val)
+              }
+            })
+          }
+        }
+      })
       // menuList.forEach((data, ind) => {
-      //   if (data.show === this.$store.state.user.menu) {
-      //     arr.push(data)
+      //   debugger
+      //   if (data.show) {
+      //     //控制新建工单
+      //     if (data.show === this.$store.state.user.auditCreat) {
+      //       let array = {
+      //         title: data.title,
+      //         show: data.show,
+      //         name: data.name,
+      //         icon: data.icon,
+      //         children: []
+      //       }
+      //       arr.push(array)
+      //       if (data.children && data.children.length > 0) {
+      //         data.children.forEach((val, index) => {
+      //           if (val.show || val.show === '') {
+      //             if (val.show === this.$store.state.user.auditCreat) {
+      //               arr[ind].children.push(val)
+      //             }
+      //           } else if (val.other || val.other === '') {
+      //             if (val.other === this.$store.state.user.auditOther) {
+      //               arr[ind].children.push(val)
+      //             }
+      //           } else {
+      //             arr[ind].children.push(val)
+      //           }
+      //         })
+      //       }
+      //     }
+      //   } else if (data.other) {
+      //     //控制除新建，代办和已办其他页面
+      //     if (data.other === this.$store.state.user.auditOther) {
+      //       let array = {
+      //         title: data.title,
+      //         other: data.other,
+      //         name: data.name,
+      //         icon: data.icon,
+      //         children: []
+      //       }
+      //       arr.push(array)
+      //       if (data.children && data.children.length > 0) {
+      //         data.children.forEach((val, index) => {
+      //           if (val.show || val.show === '') {
+      //             if (val.show === this.$store.state.user.auditCreat) {
+      //               arr[ind].children.push(val)
+      //             }
+      //           } else if (val.other || val.other === '') {
+      //             if (val.other === this.$store.state.user.auditOther) {
+      //               arr[ind].children.push(val)
+      //             }
+      //           } else {
+      //             arr[ind].children.push(val)
+      //           }
+      //         })
+      //       }
+      //     }
+      //   } else {
+      //     let array = {
+      //       title: data.title,
+      //       name: data.name,
+      //       icon: data.icon,
+      //       children: []
+      //     }
+      //     arr.push(array)
+      //     if (data.children && data.children.length > 0) {
+      //       data.children.forEach((val, index) => {
+      //         if (val.show || val.show === '') {
+      //           if (val.show === this.$store.state.user.auditCreat) {
+      //             arr[ind].children.push(val)
+      //           }
+      //         } else if (val.other || val.other === '') {
+      //           if (val.other === this.$store.state.user.auditOther) {
+      //             arr[ind].children.push(val)
+      //           }
+      //         } else {
+      //           arr[ind].children.push(val)
+      //         }
+      //       })
+      //     }
       //   }
       // })
-      return menuList
+      // console.log(arr)
+      return arr
     }
   },
 

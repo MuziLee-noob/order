@@ -35,7 +35,7 @@
       <pagination
         :page-size="size"
         :show-info="true"
-        :currentPage="page"
+        :currentPage="current"
         :total="total"
         @on-change="getData"
         @on-page-size-change="userSize"
