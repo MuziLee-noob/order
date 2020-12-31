@@ -1,4 +1,5 @@
 <template>
+<!-- 新建工单 -->
   <div class="companyOperate">
     <!-- <Layout>
       <Header>
@@ -221,6 +222,7 @@ export default {
     },
     ok() {
       //Todo 这里写弹出的确认对话框的方法：转到代办工单界面
+      this.$router.push('/pedding')
     }
   }
 }

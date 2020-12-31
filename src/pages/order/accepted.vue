@@ -1,19 +1,20 @@
 <template>
+<!-- 这个是处理 支撑记录的组件 只被引入了detailsDone里 -->
   <div class="accepted">
     <Tabs value="list1" type="card">
       <TabPane label="工单处理信息" name="list1">
         <Table :columns="columns1" :data="data1">
           <template slot-scope="{ row, index }" slot="action">
-            <span class="del" @click="del(row, index)" v-show="flag">删除</span>
-            <span @click="downLoad(rwo, index)">下载</span>
+            <Button class="del" @click="del(row, index)" v-show="flag">删除</Button>
+            <Button @click="downLoad(rwo, index)">下载</Button>
           </template>
         </Table>
       </TabPane>
       <TabPane label="结算处理信息" name="list2" v-show="doing">
         <Table :columns="columns2" :data="data2">
           <template slot-scope="{ row, index }" slot="action">
-            <span class="del" @click="del(row, index)" v-show="flag">删除</span>
-            <span @click="downLoad(row, index)">下载</span>
+            <Button class="del" @click="del(row, index)" v-show="flag">删除</Button>
+            <Button @click="downLoad(row, index)">下载</Button>
           </template>
         </Table>
       </TabPane>
@@ -54,14 +55,14 @@ export default {
         },
         {
           title: '附件',
-          key: 'fileName'
+          key: 'fileName' //Todo 这里差个展示文件名字点击下载的方法
         },
         {
           title: '操作',
           slot: 'action'
         }
       ],
-      data1: '', //Todo表格里的数据，从后台来
+      data1: [], //Todo表格里的数据，从后台来
       columns2: [
         //Todo 这里的key要改成和后台相同的
         {
@@ -81,7 +82,7 @@ export default {
           key: 'uploadTime'
         },
         {
-          title: '附件',
+          title: '附件', //Todo 这里差个展示文件名字点击下载的方法
           key: 'annex'
         },
         {
@@ -93,7 +94,7 @@ export default {
           slot: 'action'
         }
       ],
-      data2: ''
+      data2: []
     }
   },
   mounted() {
@@ -123,6 +124,7 @@ export default {
         .then(data => {
           console.log(data)
           this.data1 = data.data.data
+          console.log(this.data1)
         })
       axios
         .axios({
@@ -135,6 +137,7 @@ export default {
         .then(data => {
           console.log(data)
           this.data2 = data.data.data
+          console.log(this.data2)
         })
     }
   }
