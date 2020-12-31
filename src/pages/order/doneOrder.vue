@@ -1,4 +1,5 @@
 <template>
+<!-- 已办工单页面 -->
   <div class="fusion-manage">
     <!-- <Layout style="height:73px">
             <Header :style="{height:'100%'}">
@@ -249,38 +250,17 @@ export default {
       this.page = page
       this.getData(page)
     },
-    pageSizeChange(pageSize) {
-      this.pageSize = pageSize
-      this.page = 0
-    },
     handleCancel(selection, row) {
       //从已选项中去除取消项
-      remove(this.selected, n => {
-        return n.game_id === row.game_id
-      })
     },
     handleSelect(selection, row) {
       //添加到已选项
-      this.selected.push(row)
     },
     handleSelectAll(selection) {
       //数组合并，有可能用户先选择了某几项，已经被我们push进去，因此数组合并需要去重一下
-      this.selected = uniqBy(this.selected.concat(selection), 'game_id') //Todo 数据要改
     },
     handleCancelSelectAll() {
       //从已选项中移除当页数据
-      this.selected = differenceBy(this.selected, this.tableData, 'game_id') //Todo 数据要改
-    },
-    //把源数据加上_checked字段，遍历已选项数据，更新选中状态
-    updateChecked() {
-      for (var i = 0; i < this.tableData.length; i++) {
-        this.tableData[i]._checked = false
-        for (var j = 0; j < this.selected.length; j++) {
-          if (this.selected[j].game_id === this.tableData[i].game_id) {
-            this.tableData[i]._checked = true
-          }
-        }
-      }
     }
   }
 }

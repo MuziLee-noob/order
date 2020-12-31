@@ -1,4 +1,5 @@
 <template>
+<!-- 工单详情 处理支撑接口人确认结束之后的 -->
   <div class="companyOperate">
     <!-- <Layout>
       <Header>
@@ -73,7 +74,7 @@
           <i-col span="24">
             <span>附件:</span>
             <ul>
-              <li v-for="(item, index) in files" :key="index">
+              <li v-for="(item, index) in filesName" :key="index">
                 <a @click="down(index)">{{ item }}</a>
               </li>
             </ul>
@@ -143,10 +144,11 @@ export default {
   methods: {
     down(id) {
       let a = document.createElement('a')
-      a.href = this.files[id]
+      a.href = 'http://api.dispatch-32102.p.onecode.ict.cmcc/api/download/' + this.filesUrl[id]
       a.click()
     },
     getdata() {
+      var that = this
       this.uuid = this.$route.query.uuid
       console.log(this.uuid)
       axios
@@ -180,6 +182,15 @@ export default {
           this.files = data.data.data.requireFile
           this.files = this.files.substring(1, this.files.length - 1)
           this.files = this.files.split(',')
+          for (var i = 0; i < this.files.length; i++) {
+            for (let j = this.files[i].length; j > -1; j--) {
+              if (this.files[i].charAt(j) == '=') {
+                that.filesName[i] = that.files[i].slice(0, j)
+                that.filesUrl[i] = that.files[i].slice(j + 1, this.files[i].length)
+                break
+              }
+            }
+          }
           //console.log(this.files)
           //console.log(data)
         })
@@ -227,6 +238,8 @@ export default {
       description: '', //工单详情
       opinion: '', //审核人意见
       files: [],
+      filesName: [],
+      filesUrl: [],
       roll: this.$store.state.role, //角色
       //这组是控制相应的按钮是否可用，true是不可用
       isModify: true, //修改工单

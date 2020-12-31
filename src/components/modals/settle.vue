@@ -1,4 +1,5 @@
 <template>
+<!-- 处理开启结算 及结算审核 -->
   <div class="settle">
     <Modal v-model="state1" title="提示" @on-ok="ok(1)" @on-cancel="cancel(1)">
       <Row>提交给支撑接口人进行结算？</Row>
@@ -57,6 +58,7 @@ export default {
           })
           .then(data => {
             console.log(data)
+            this.$router.push('/pedding')
           })
       }
       if (id === 2) {
@@ -75,6 +77,7 @@ export default {
           })
           .then(data => {
             console.log(data)
+            this.$router.push('/pedding')
           })
       }
     },
@@ -98,6 +101,7 @@ export default {
           })
           .then(data => {
             console.log(data)
+            this.$router.push('/pedding')
           })
       }
     }

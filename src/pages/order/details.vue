@@ -1,4 +1,5 @@
 <template>
+<!-- 工单详情页面 处理支撑接口人确认结束之前的工单详情 -->
   <div class="companyOperate">
     <!-- <Layout>
       <Header>
@@ -74,7 +75,7 @@
           <i-col span="24">
             <span>附件:</span>
             <ul>
-              <li v-for="(item, index) in files" :key="index">
+              <li v-for="(item, index) in filesName" :key="index">
                 <a @click="down(index)">{{ item }}</a>
               </li>
             </ul>
@@ -141,12 +142,13 @@ export default {
     console.log(this.role)
   },
   methods: {
-    down(id) {
+    down(id) { //下载文件
       let a = document.createElement('a')
-      a.href = this.files[id]
+      a.href = 'http://api.dispatch-32102.p.onecode.ict.cmcc/api/download/' + this.filesUrl[id]
       a.click()
     },
     getdata() {
+      var that = this
       this.uuid = this.$route.query.uuid
       console.log(this.uuid)
       axios
@@ -182,7 +184,17 @@ export default {
           this.files = data.data.data.requireFile
           this.files = this.files.substring(1, this.files.length - 1)
           this.files = this.files.split(',')
-          //console.log(this.files)
+          for (var i = 0; i < this.files.length; i++) {
+            for (let j = this.files[i].length; j > -1; j--) {
+              if (this.files[i].charAt(j) == '=') {
+                that.filesName[i] = that.files[i].slice(0, j)
+                that.filesUrl[i] = that.files[i].slice(j + 1, this.files[i].length)
+                break
+              }
+            }
+          }
+          console.log(this.filesName)
+          console.log(this.filesUrl)
           //console.log(data)
         })
     },
@@ -198,10 +210,10 @@ export default {
     back() {
       this.$router.push(-1)
     },
-    modify() {
-      this.$router.push('/newlist') //要传当前的工单编号过去
+    modify() {//修改工单，进入新建工单页面，重新提交
+      this.$router.push('/newlist') 
     },
-    check() {
+    check() {//审核工单
       this.checkFlag = true
       this.$refs.check.getData()
     },
@@ -214,7 +226,7 @@ export default {
       this.cooperateFlag = true
       //弹出需协作对话框
     },
-    finish() {
+    finish() { //确认结束按钮
       var startTime = moment(this.beginDate).format('yyyy-MM-DD HH:mm:ss')
       var finishTime = moment(this.endDate).format('yyyy-MM-DD HH:mm:ss')
       axios
@@ -234,11 +246,14 @@ export default {
         })
         .then(data => {
           console.log(data)
+          this.$router.push('/pedding')
         })
     }
   },
   data() {
     return {
+      filesName: [],
+      filesUrl: [],
       data: '',
       checkFlag: false,
       cooperateFlag: false,

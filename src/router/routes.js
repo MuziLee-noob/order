@@ -86,6 +86,16 @@ export const asyncRoutes = [
         component: () => import('@/pages/order/details.vue')
       },
       {
+        path: '/detailsDone',
+        name: 'detailsDone',
+        hidden: true,
+        meta: {
+          title: '工单详情',
+          hideInBread: false
+        },
+        component: () => import('@/pages/order/detailsDone.vue')
+      },
+      {
         path: '/setting',
         name: 'setting',
         hideInBread: true,

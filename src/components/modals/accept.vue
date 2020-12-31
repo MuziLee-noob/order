@@ -1,4 +1,5 @@
 <template>
+<!-- 处理工单受理 -->
   <div class="accept">
     <Modal v-model="acceptFlag1" title="填写工作量" @on-ok="ok" @on-cancel="cancel">
       <Row type="flex" align="middle">工单编号{{ listNumber }}</Row>
