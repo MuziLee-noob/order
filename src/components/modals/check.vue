@@ -1,4 +1,5 @@
 <template>
+<!-- 处理审核用组件 -->
   <div class="check">
     <Modal
       v-model="checkFlag1"
@@ -153,6 +154,7 @@ export default {
         })
         .then(data => {
           console.log(data)
+          this.$router.push('/pedding')
         })
     }
   }

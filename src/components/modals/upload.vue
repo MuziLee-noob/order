@@ -1,4 +1,5 @@
 <template>
+<!-- 支撑接口人上传支撑记录 -->
   <div calss="upload">
     <Modal v-model="uploadFlag" title="上传结算单" @on-ok="ok" @on-cancel="cancel">
       <div>工单编号：{{ listNumber }}</div>
@@ -90,6 +91,7 @@ export default {
         })
         .then(data => {
           console.log(data)
+          this.$router.push('/pedding')
         })
     },
     cancel() {
