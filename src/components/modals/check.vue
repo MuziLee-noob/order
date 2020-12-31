@@ -1,5 +1,5 @@
 <template>
-<!-- 处理审核用组件 -->
+  <!-- 处理审核用组件 -->
   <div class="check">
     <Modal
       v-model="checkFlag1"

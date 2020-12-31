@@ -1,5 +1,5 @@
 <template>
-<!-- 工单详情页面 处理支撑接口人确认结束之前的工单详情 -->
+  <!-- 工单详情页面 处理支撑接口人确认结束之前的工单详情 -->
   <div class="companyOperate">
     <!-- <Layout>
       <Header>
@@ -142,7 +142,8 @@ export default {
     console.log(this.role)
   },
   methods: {
-    down(id) { //下载文件
+    down(id) {
+      //下载文件
       let a = document.createElement('a')
       a.href = 'http://api.dispatch-32102.p.onecode.ict.cmcc/api/download/' + this.filesUrl[id]
       a.click()
@@ -210,10 +211,12 @@ export default {
     back() {
       this.$router.push(-1)
     },
-    modify() {//修改工单，进入新建工单页面，重新提交
-      this.$router.push('/newlist') 
+    modify() {
+      //修改工单，进入新建工单页面，重新提交
+      this.$router.push('/newlist')
     },
-    check() {//审核工单
+    check() {
+      //审核工单
       this.checkFlag = true
       this.$refs.check.getData()
     },
@@ -226,7 +229,8 @@ export default {
       this.cooperateFlag = true
       //弹出需协作对话框
     },
-    finish() { //确认结束按钮
+    finish() {
+      //确认结束按钮
       var startTime = moment(this.beginDate).format('yyyy-MM-DD HH:mm:ss')
       var finishTime = moment(this.endDate).format('yyyy-MM-DD HH:mm:ss')
       axios

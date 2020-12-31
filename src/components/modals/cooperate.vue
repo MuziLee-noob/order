@@ -1,5 +1,5 @@
 <template>
-<!-- 处理需要协作组件 -->
+  <!-- 处理需要协作组件 -->
   <div class="cooperate">
     <Modal v-model="cooperateFlag1" @on-cancel="cancel">
       <p slot="header">协作处理</p>
