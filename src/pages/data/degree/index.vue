@@ -91,7 +91,7 @@
 </template>
 <style lang="less" scoped></style>
 <script>
-import { outStatics } from '../../../api/login'
+import { outStatics, allStatics } from '../../../api/login'
 import { dateFormat } from '../../../libs/tools'
 import echarts from 'echarts'
 let that = null
@@ -101,7 +101,7 @@ export default {
     return {
       date: [],
       activityIndex: 1,
-      day: 'month',
+      day: '',
       options: {
         disabledDate(date) {
           return date && date.valueOf() >= new Date()
@@ -168,27 +168,27 @@ export default {
       degreeColums: [
         {
           title: '日期',
-          key: 'eventName',
+          key: 'date',
           tooltip: true
         },
         {
           title: '90（含）-100',
-          key: 'ip',
+          key: 'nintytohundred',
           tooltip: true
         },
         {
           title: '80（含）-90（不含）',
-          key: 'userAccount',
+          key: 'eightytoninty',
           tooltip: true
         },
         {
           title: '70（含）-80（不含）',
-          key: 'ip',
+          key: 'seventyoeighty',
           tooltip: true
         },
         {
           title: '70及以下',
-          key: 'userAccount',
+          key: 'behindseventy',
           tooltip: true
         }
       ],
@@ -255,8 +255,8 @@ export default {
   },
   mounted() {
     this.date = [this.prevMonth, this.today]
-    this.getEchars()
-    // this.getOutList()
+    // this.getEchars()
+    this.getAllList()
   },
   created() {
     this.getToday()
@@ -281,7 +281,8 @@ export default {
     },
     tabs(name) {
       if (name === 'degree') {
-        this.getEchars()
+        // this.getEchars()
+        this.getAllList()
       } else if (name === 'inDegree') {
         this.getIncharts()
       } else {
@@ -290,7 +291,7 @@ export default {
       }
     },
     // 获取列表数据
-    getOutList() {
+    getAllList() {
       if (typeof this.date[0] === 'object') {
         this.date[0] = dateFormat('YYYY-mm-dd', this.date[0])
       }
@@ -302,39 +303,40 @@ export default {
         endTime: this.date[1],
         day: this.day
       }
-      outStatics(params).then(res => {
+      allStatics(params).then(res => {
         if (res.state === 1) {
-          this.outDegreeData = res.data
+          this.degreeData = res.data
           this.time = []
-          this.all = []
-          this.pendding = []
-          this.finish = []
+          this.bai = []
+          this.jiu = []
+          this.ba = []
+          this.qi = []
           this.overTime = []
           if (this.outDegreeData.length > 0) {
             this.orderData.forEach((item, index) => {
-              this.time.push(item.时间)
-              this.all.push(item.总工单)
-              this.pendding.push(item.待办)
-              this.finish.push(item.已办)
-              this.overTime.push(item.超时)
-              this.getOutCharts()
+              this.time.push(item.date)
+              this.bai.push(item.nintytohundred)
+              this.jiu.push(item.eightytoninty)
+              this.ba.push(item.seventyoeighty)
+              this.qi.push(item.behindseventy)
+              this.getEchars()
             })
           } else {
             this.time.push('')
-            this.all.push(0)
-            this.pendding.push(0)
-            this.finish.push(0)
-            this.overTime.push(0)
-            this.getOutCharts()
+            this.bai.push(0)
+            this.jiu.push(0)
+            this.ba.push(0)
+            this.qi.push(0)
+            this.getEchars()
           }
           // console.log(this.orderData)
         } else {
           this.time.push('')
-          this.all.push(0)
-          this.pendding.push(0)
-          this.finish.push(0)
-          this.overTime.push(0)
-          this.getOutCharts()
+          this.bai.push(0)
+          this.jiu.push(0)
+          this.ba.push(0)
+          this.qi.push(0)
+          this.getEchars()
         }
       })
     },
@@ -342,28 +344,39 @@ export default {
     getEchars() {
       var myChart = echarts.init(document.getElementById('main'))
       myChart.setOption({
-        color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
+        color: ['#20A0FF', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
         tooltip: {},
-        dataset: {
-          source: [
-            ['product', '工单总数', '待办', '已办', '超时'],
-            ['2012', 41.1, 30.4, 65.1, 53.3],
-            ['2013', 86.5, 92.1, 85.7, 83.1],
-            ['2014', 24.1, 67.2, 79.5, 86.4],
-            ['2015', 24.1, 67.2, 79.5, 86.4]
-          ]
-        },
-        xAxis: { type: 'category' },
+        xAxis: [{ type: 'category', data: this.time }],
         yAxis: {},
         grid: {
           height: 300
         },
         series: [
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' }
+          {
+            name: '90（含）-100',
+            type: 'bar',
+            barWidth: '20',
+            data: this.bai
+          },
+          {
+            name: '80（含）-90（不含）',
+            type: 'bar',
+            barWidth: '20',
+            data: this.jiu
+          },
+          {
+            name: '70（含）-80（不含）',
+            type: 'bar',
+            barWidth: '20',
+            data: this.ba
+          },
+          {
+            name: '70及以下',
+            type: 'bar',
+            barWidth: '20',
+            data: this.qi
+          }
         ]
       })
     },

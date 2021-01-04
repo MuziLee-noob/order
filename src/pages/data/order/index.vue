@@ -272,21 +272,6 @@ export default {
         d = '0' + d
       }
       this.prevMonth = y + '-' + m + '-' + d
-    },
-    // // 获取用户角色
-    // initSearch() {
-    //   let params = {
-    //     dictCode: 'zy_enterprise_role'
-    //   }
-    //   commenSelect(params).then(res => {
-    //     if (res.status === 0) {
-    //       this.userSelect = res.results
-    //     }
-    //   })
-    // },
-    userSize: function(limit) {
-      this.size = limit
-      this.getOrderList(1)
     }
   }
 }

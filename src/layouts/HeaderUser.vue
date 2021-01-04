@@ -11,8 +11,13 @@
         /> -->
         <!-- <span>个人设置</span> -->
       </ul>
-      <ul name="user" style="float: left;margin-right: 20px;margin-top:7px;" @click="info">
+      <ul
+        name="user"
+        style="float: left;margin-right: 20px;margin-top:7px;position:relative"
+        @click="info"
+      >
         <img src="../assets/images/ling.png" alt="" />
+        <sup class="ivu-badge-count">{{ num }}</sup>
         <!-- <i-icon class="header-user__icon" size="18" style="color:#fff" type="ios-person-outline" /> -->
         <!-- <span>消息</span> -->
       </ul>
@@ -53,7 +58,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { getUserInfo } from '../api/policy/policy'
+import { getNum } from '../api/login'
 import store from '@/store'
 import { getUrlQuery } from '../libs/tools'
 export default {
@@ -65,11 +70,13 @@ export default {
     return {
       realName: '',
       token: '',
-      delModel: false
+      delModel: false,
+      num: 0
     }
   },
   created() {
     // this.getUser()
+    this.getMessgeNum()
   },
   computed: {
     ...mapGetters(['userName', 'avatar'])
@@ -102,6 +109,14 @@ export default {
     },
     cancel_del() {
       this.delModel = false
+    },
+    // 获取未读消息的条数
+    getMessgeNum() {
+      getNum().then(res => {
+        if (res.state === 1) {
+          this.num = res.total
+        }
+      })
     },
     //退出登录确定
     delOk() {
@@ -170,6 +185,20 @@ export default {
   .header-user__text {
     padding-left: 40px;
     margin-top: -68px;
+  }
+  .ivu-badge-count {
+    top: 5px;
+    right: 0;
+    height: 12px;
+    border-radius: 10px;
+    min-width: 17px;
+    background: #ed4014;
+    color: #fff;
+    line-height: 10px;
+    text-align: center;
+    padding: 0 2px;
+    font-size: 10px;
+    box-shadow: none;
   }
 }
 </style>
