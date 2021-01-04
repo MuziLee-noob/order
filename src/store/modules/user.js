@@ -8,9 +8,9 @@ const state = {
   token: getToken(),
   user: { ...defaultUser },
   permissions: [],
-  roles: []
-  // auditCreat: '',
-  // auditOther: ''
+  roles: [],
+  auditCreat: '',
+  auditOther: ''
 }
 
 const getters = {}

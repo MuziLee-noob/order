@@ -4,6 +4,10 @@ let baseUrl = '/api'
 export const loginAuth = params => {
   return request.get(baseUrl + '/login/manageuserlogin', params)
 }
+// 未读消息条数
+export const getNum = params => {
+  return request.get(baseUrl + '/message/getMessageNum', params)
+}
 // 公司管理
 export const companyList = params => {
   return request.post(baseUrl + '/userinfo/companyList', params)
@@ -11,6 +15,14 @@ export const companyList = params => {
 // 新建公司
 export const companyAdd = params => {
   return request.post(baseUrl + '/userinfo/addCompany', params)
+}
+// 文件导入
+export const companyExport = params => {
+  return request.post(baseUrl + '/userinfo/imporBatchCompany', params)
+}
+// 模板下载
+export const down = params => {
+  return request.get(baseUrl + '/userinfo/companyDownload', params)
 }
 // 编辑公司
 export const companyEdit = params => {
@@ -67,6 +79,13 @@ export const orderStatics = params => {
       `/statistics/orderStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
   )
 }
+// 打分
+export const allStatics = params => {
+  return request.get(
+    baseUrl +
+      `/statistics/outSatisfiedSumStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
+  )
+}
 // 对外打分
 export const outStatics = params => {
   return request.get(
@@ -79,6 +98,13 @@ export const regionStatics = params => {
   return request.get(
     baseUrl +
       `/statistics/regionStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
+  )
+}
+// 支撑单位
+export const supportStatics = params => {
+  return request.get(
+    baseUrl +
+      `/statistics/supportStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
   )
 }
 // 全部信息

@@ -132,74 +132,99 @@ export default {
       areaColums: [
         {
           title: '工单区域',
-          key: 'eventName',
+          key: '区域',
           tooltip: true
         },
         {
-          title: '全部',
-          key: 'eventName',
+          title: '工单总数',
+          key: '总工单',
           tooltip: true
         },
         {
-          title: '汉江区',
-          key: 'ip',
+          title: '待办',
+          key: '待办',
           tooltip: true
         },
         {
-          title: '江岸区',
-          key: 'userAccount',
+          title: '已办',
+          key: '已办',
           tooltip: true
         },
         {
-          title: '硚口区',
-          key: 'ip',
-          tooltip: true
-        },
-        {
-          title: '汉阳区',
-          key: 'userAccount',
-          tooltip: true
-        },
-        {
-          title: '武昌区',
-          key: 'userAccount',
-          tooltip: true
-        },
-        {
-          title: '青山区',
-          key: 'ip',
-          tooltip: true
-        },
-        {
-          title: '洪山区',
-          key: 'userAccount',
-          tooltip: true
-        },
-        {
-          title: '东西湖区',
-          key: 'userAccount',
-          tooltip: true
-        },
-        {
-          title: '蔡甸区',
-          key: 'ip',
-          tooltip: true
-        },
-        {
-          title: '江夏区',
-          key: 'userAccount',
-          tooltip: true
-        },
-        {
-          title: '黄陂区',
-          key: 'ip',
-          tooltip: true
-        },
-        {
-          title: '新洲区',
-          key: 'userAccount',
+          title: '超时',
+          key: '超时',
           tooltip: true
         }
+        // {
+        //   title: '工单区域',
+        //   key: '工单区域',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '全部',
+        //   key: '全部',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '汉江区',
+        //   key: '汉江区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '江岸区',
+        //   key: '江岸区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '硚口区',
+        //   key: '硚口区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '汉阳区',
+        //   key: '汉阳区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '武昌区',
+        //   key: '武昌区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '青山区',
+        //   key: '青山区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '洪山区',
+        //   key: '洪山区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '东西湖区',
+        //   key: '东西湖区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '蔡甸区',
+        //   key: '蔡甸区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '江夏区',
+        //   key: '江夏区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '黄陂区',
+        //   key: '黄陂区',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '新洲区',
+        //   key: '新洲区',
+        //   tooltip: true
+        // }
       ],
       areaData: []
     }
@@ -260,22 +285,66 @@ export default {
       regionStatics(params).then(res => {
         if (res.state === 1) {
           this.areaData = res.data
-          this.time = []
+          this.area = []
           this.all = []
           this.pendding = []
           this.finish = []
           this.overTime = []
+          // this.area = []
+          // this.all = []
+          // this.jiangHan = []
+          // this.jiangAn = []
+          // this.qiaoKou = []
+          // this.hanYang = []
+          // this.wuChang = []
+          // this.qingShan = []
+          // this.hongShan = []
+          // this.dongXi = []
+          // this.hanLan = []
+          // this.caiDian = []
+          // this.jiangXia = []
+          // this.huangPo = []
+          // this.xinZhou = []
           if (this.areaData.length > 0) {
             this.orderData.forEach((item, index) => {
-              this.time.push(item.时间)
+              this.area.push(item.区域)
               this.all.push(item.总工单)
               this.pendding.push(item.待办)
               this.finish.push(item.已办)
               this.overTime.push(item.超时)
+              // this.area.push(item.工单区域)
+              // this.all.push(item.全部)
+              // this.jiangHan.push(item.江汉区)
+              // this.jiangAn.push(item.江岸区)
+              // this.qiaoKou.push(item.硚口区)
+              // this.hanYang.push(item.汉阳区)
+              // this.wuChang.push(item.武昌区)
+              // this.qingShan.push(item.青山区)
+              // this.hongShan.push(item.洪山区)
+              // this.dongXi.push(item.东西湖区)
+              // this.hanLan.push(item.汉南区)
+              // this.caiDian.push(item.蔡甸区)
+              // this.jiangXia.push(item.江夏区)
+              // this.huangPo.push(item.黄陂区)
+              // this.xinZhou.push(item.新洲区)
               this.getEcharts()
             })
           } else {
-            this.time.push('')
+            // this.all.push(0)
+            // this.jiangHan.push(0)
+            // this.jiangAn.push(0)
+            // this.qiaoKou.push(0)
+            // this.hanYang.push(0)
+            // this.wuChang.push(0)
+            // this.qingShan.push(0)
+            // this.hongShan.push(0)
+            // this.dongXi.push(0)
+            // this.hanLan.push(0)
+            // this.caiDian.push(0)
+            // this.jiangXia.push(0)
+            // this.huangPo.push(0)
+            // this.xinZhou.push(0)
+            this.area.push('')
             this.all.push(0)
             this.pendding.push(0)
             this.finish.push(0)
@@ -284,7 +353,7 @@ export default {
           }
           // console.log(this.orderData)
         } else {
-          this.time.push('')
+          this.area.push('')
           this.all.push(0)
           this.pendding.push(0)
           this.finish.push(0)
@@ -299,25 +368,122 @@ export default {
         color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
         tooltip: {},
-        dataset: {
-          source: [
-            ['product', '工单总数', '待办', '已办', '超时'],
-            ['2012', 41.1, 30.4, 65.1, 53.3],
-            ['2013', 86.5, 92.1, 85.7, 83.1],
-            ['2014', 24.1, 67.2, 79.5, 86.4],
-            ['2015', 24.1, 67.2, 79.5, 86.4]
-          ]
-        },
-        xAxis: { type: 'category' },
+        xAxis: [{ type: 'category', data: this.area }],
         yAxis: {},
         grid: {
           height: 300
         },
         series: [
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' }
+          {
+            name: '工单总数',
+            type: 'bar',
+            barGap: 0,
+            barWidth: '20',
+            data: this.all
+          },
+          {
+            name: '待办',
+            type: 'bar',
+            barWidth: '20',
+            data: this.pendding
+          },
+          {
+            name: '已办',
+            type: 'bar',
+            barWidth: '20',
+            data: this.finish
+          },
+          {
+            name: '超时',
+            type: 'bar',
+            barWidth: '20',
+            data: this.overTime
+          }
+          // {
+          //   name: '全部',
+          //   type: 'bar',
+          //   barGap: 0,
+          //   barWidth: '20',
+          //   data: this.all
+          // },
+          // {
+          //   name: '江汉区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.jiangHan
+          // },
+          // {
+          //   name: '江岸区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.jiangAn
+          // },
+          // {
+          //   name: '硚口区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.qiaoKou
+          // },
+          // {
+          //   name: '汉阳区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.hanYang
+          // },
+          // {
+          //   name: '武昌区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.wuChang
+          // },
+          // {
+          //   name: '青山区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.qingShan
+          // },
+          // {
+          //   name: '洪山区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.hongShan
+          // },
+          // {
+          //   name: '东西湖区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.dongXi
+          // },
+          // {
+          //   name: '汉南区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.hanLan
+          // },
+          // {
+          //   name: '蔡甸区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.caiDian
+          // },
+          // {
+          //   name: '江夏区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.jiangXia
+          // },
+          // {
+          //   name: '黄陂区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.huangPo
+          // },
+          // {
+          //   name: '新洲区',
+          //   type: 'bar',
+          //   barWidth: '20',
+          //   data: this.xinZhou
+          // }
         ]
       })
     },
@@ -352,52 +518,6 @@ export default {
       }
       this.prevMonth = y + '-' + m + '-' + d
     },
-    // // 获取用户角色
-    // initSearch() {
-    //   let params = {
-    //     dictCode: 'zy_enterprise_role'
-    //   }
-    //   commenSelect(params).then(res => {
-    //     if (res.status === 0) {
-    //       this.userSelect = res.results
-    //     }
-    //   })
-    // },
-    // 获取列表
-    // userList: function(current) {
-    //   if (current) this.current = current
-    //   if (typeof this.userdate[0] === 'object') {
-    //     this.userdate[0] = dateFormat('YYYY-mm-dd', this.userdate[0])
-    //   }
-    //   if (typeof this.userdate[1] === 'object') {
-    //     this.userdate[1] = dateFormat('YYYY-mm-dd', this.userdate[1])
-    //   }
-    //   if (this.coAddressPcdCode === undefined) {
-    //     this.coAddressPcdCode = ''
-    //   }
-    //   if (this.coAddressPcdName === undefined || this.coAddressPcdName === '请选择') {
-    //     this.coAddressPcdName = ''
-    //   }
-    //   let params = {
-    //     eventStartTime: this.userdate[0],
-    //     eventEndTime: this.userdate[1],
-    //     userAccount: this.userAccount,
-    //     userName: this.userName,
-    //     userRole: this.userRole,
-    //     coName: this.coName,
-    //     coAddressPcdCode: this.coAddressPcdCode,
-    //     coAddressPcdName: this.coAddressPcdName,
-    //     ip: this.ip,
-    //     size: this.size,
-    //     current: this.current
-    //   }
-    //   userPolicyList(params).then(res => {
-    //     if (res.status === 0) {
-    //       this.datauser = res.results.records
-    //       this.userTotal = res.results.total
-    //     }
-    //   })
-    // },
     userSize: function(limit) {
       this.size = limit
       this.current = 1

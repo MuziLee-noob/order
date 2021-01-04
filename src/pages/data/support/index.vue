@@ -64,8 +64,8 @@
 </template>
 <style lang="less" scoped></style>
 <script>
-// import { userPolicyList, commenSelect } from '../../../../api/policy/policy'
-// import { dateFormat } from '../../../../libs/tools'
+import { supportStatics } from '../../../api/login'
+import { dateFormat } from '../../../libs/tools'
 import echarts from 'echarts'
 let that = null
 export default {
@@ -103,36 +103,56 @@ export default {
       supportColums: [
         {
           title: '支撑单位',
-          key: 'ip',
+          key: '支撑单位',
           tooltip: true
         },
         {
-          title: '全部',
-          key: 'eventName',
+          title: '工单总数',
+          key: '总工单',
           tooltip: true
         },
         {
-          title: '集成',
-          key: 'userAccount',
+          title: '待办',
+          key: '待办',
           tooltip: true
         },
         {
-          title: '研究院',
-          key: 'ip',
+          title: '已办',
+          key: '已办',
           tooltip: true
         },
         {
-          title: '其他',
-          key: 'userAccount',
+          title: '超时',
+          key: '超时',
           tooltip: true
         }
+        // {
+        //   title: '全部',
+        //   key: 'eventName',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '集成',
+        //   key: 'userAccount',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '研究院',
+        //   key: 'ip',
+        //   tooltip: true
+        // },
+        // {
+        //   title: '其他',
+        //   key: 'userAccount',
+        //   tooltip: true
+        // }
       ],
       supportData: []
     }
   },
   mounted() {
     this.date = [this.prevMonth, this.today]
-    this.getEcharts()
+    this.getSupportList()
     window.onresize = () => {
       if (!this.timer) {
         this.timer = true
@@ -144,7 +164,7 @@ export default {
     }
   },
   created() {
-    this.getEcharts()
+    // this.getEcharts()
     this.getToday()
     // this.userList(1)
   },
@@ -156,13 +176,69 @@ export default {
     },
     getClassHandler(i) {
       this.activityIndex = i
+      this.userdate = []
+      this.userdate[0] = ''
+      this.userdate[1] = ''
       if (this.activityIndex === 1) {
-        // this.yesToday()
+        this.day = 'month'
       } else if (this.activityIndex === 2) {
-        // this.monthList()
+        this.day = 'week'
+      } else if (this.activityIndex === 3) {
+        this.day = 'month'
       } else {
-        // this.totalList()
+        this.day = 'quarter'
       }
+      this.getSupportList()
+    },
+    // 获取列表数据
+    getSupportList() {
+      // if (current) this.current = current
+      if (typeof this.date[0] === 'object') {
+        this.date[0] = dateFormat('YYYY-mm-dd', this.date[0])
+      }
+      if (typeof this.date[1] === 'object') {
+        this.date[1] = dateFormat('YYYY-mm-dd', this.date[1])
+      }
+      let params = {
+        startTime: this.date[0],
+        endTime: this.date[1],
+        day: this.day
+      }
+      supportStatics(params).then(res => {
+        if (res.state === 1) {
+          this.supportData = res.data
+          this.time = []
+          this.all = []
+          this.pendding = []
+          this.finish = []
+          this.overTime = []
+          if (this.supportData.length > 0) {
+            this.supportData.forEach((item, index) => {
+              this.time.push(item.支撑单位)
+              this.all.push(item.总工单)
+              this.pendding.push(item.待办)
+              this.finish.push(item.已办)
+              this.overTime.push(item.超时)
+              this.getEcharts()
+            })
+          } else {
+            this.time.push('')
+            this.all.push(0)
+            this.pendding.push(0)
+            this.finish.push(0)
+            this.overTime.push(0)
+            this.getEcharts()
+          }
+          // console.log(this.orderData)
+        } else {
+          this.time.push('')
+          this.all.push(0)
+          this.pendding.push(0)
+          this.finish.push(0)
+          this.overTime.push(0)
+          this.getEcharts()
+        }
+      })
     },
     getEcharts() {
       var myChart = echarts.init(document.getElementById('main'))
@@ -170,25 +246,37 @@ export default {
         color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
         tooltip: {},
-        dataset: {
-          source: [
-            ['product', '工单总数', '待办', '已办', '超时'],
-            ['2012', 41.1, 30.4, 65.1, 53.3],
-            ['2013', 86.5, 92.1, 85.7, 83.1],
-            ['2014', 24.1, 67.2, 79.5, 86.4],
-            ['2015', 24.1, 67.2, 79.5, 86.4]
-          ]
-        },
-        xAxis: { type: 'category' },
+        xAxis: [{ type: 'category', data: this.time }],
         yAxis: {},
         grid: {
           height: 300
         },
         series: [
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' }
+          {
+            name: '工单总数',
+            type: 'bar',
+            barGap: 0,
+            barWidth: '20',
+            data: this.all
+          },
+          {
+            name: '待办',
+            type: 'bar',
+            barWidth: '20',
+            data: this.pendding
+          },
+          {
+            name: '已办',
+            type: 'bar',
+            barWidth: '20',
+            data: this.finish
+          },
+          {
+            name: '超时',
+            type: 'bar',
+            barWidth: '20',
+            data: this.overTime
+          }
         ]
       })
     },
@@ -222,73 +310,6 @@ export default {
         d = '0' + d
       }
       this.prevMonth = y + '-' + m + '-' + d
-    },
-    // // 获取用户角色
-    // initSearch() {
-    //   let params = {
-    //     dictCode: 'zy_enterprise_role'
-    //   }
-    //   commenSelect(params).then(res => {
-    //     if (res.status === 0) {
-    //       this.userSelect = res.results
-    //     }
-    //   })
-    // },
-    // 获取列表
-    // userList: function(current) {
-    //   if (current) this.current = current
-    //   if (typeof this.userdate[0] === 'object') {
-    //     this.userdate[0] = dateFormat('YYYY-mm-dd', this.userdate[0])
-    //   }
-    //   if (typeof this.userdate[1] === 'object') {
-    //     this.userdate[1] = dateFormat('YYYY-mm-dd', this.userdate[1])
-    //   }
-    //   if (this.coAddressPcdCode === undefined) {
-    //     this.coAddressPcdCode = ''
-    //   }
-    //   if (this.coAddressPcdName === undefined || this.coAddressPcdName === '请选择') {
-    //     this.coAddressPcdName = ''
-    //   }
-    //   let params = {
-    //     eventStartTime: this.userdate[0],
-    //     eventEndTime: this.userdate[1],
-    //     userAccount: this.userAccount,
-    //     userName: this.userName,
-    //     userRole: this.userRole,
-    //     coName: this.coName,
-    //     coAddressPcdCode: this.coAddressPcdCode,
-    //     coAddressPcdName: this.coAddressPcdName,
-    //     ip: this.ip,
-    //     size: this.size,
-    //     current: this.current
-    //   }
-    //   userPolicyList(params).then(res => {
-    //     if (res.status === 0) {
-    //       this.datauser = res.results.records
-    //       this.userTotal = res.results.total
-    //     }
-    //   })
-    // },
-    userSize: function(limit) {
-      this.size = limit
-      this.current = 1
-      this.userList()
-    },
-    userCurrent: function(limit) {
-      this.current = limit
-      this.userList()
-    },
-    reset: function() {
-      this.userdate = [this.prevMonth, this.today]
-      this.userAccount = ''
-      this.userName = ''
-      this.coName = ''
-      this.coAddressPcdCode = ''
-      this.coAddressPcdName = ''
-      this.placeholders.province = '请选择'
-      this.userRole = ''
-      this.ip = ''
-      this.userList(1)
     }
   }
 }

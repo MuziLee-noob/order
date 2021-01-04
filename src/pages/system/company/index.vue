@@ -41,19 +41,50 @@
         @on-page-size-change="userSize"
       />
     </div>
-    <Modal v-model="delFlag" title="提示">
+    <Modal v-model="exportModel" footer-hide title="">
+      <Form
+        :label-width="150"
+        ref="formValidate"
+        :model="formValidate"
+        :rules="ruleValidate"
+        style="margin-top:40px;"
+      >
+        <FormItem label="模板下载：">
+          <a @click="downLoad" class="upload-a">公司导入模板.xls</a>
+        </FormItem>
+        <FormItem label="导入模板：" prop="uploadLogo">
+          <Upload
+            ref="uploadFile"
+            :auto-upload="false"
+            action=""
+            :multiple="false"
+            :show-upload-list="false"
+            :before-upload="handleBefore"
+            accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          >
+            <Button type="primary">选择文件</Button>
+            <div v-if="newfile !== null" style="margin-top:10px;">{{ newfile.name }}</div>
+          </Upload>
+        </FormItem>
+      </Form>
+      <div style="text-align: right">
+        <Button type="primary" style="margin-right:15px;" @click="exportExcelOk">确定</Button>
+        <Button type="text" @click="exportModel = false">取消</Button>
+      </div>
+    </Modal>
+    <!-- <Modal v-model="delFlag" title="提示">
       <p>此操作将永久删除用户相关数据，是否确认删除？</p>
     </Modal>
     <Modal v-model="resetFlag" title="提示">
       <p>确认重置密码？（默认密码为123456）</p>
-    </Modal>
+    </Modal> -->
   </div>
 </template>
 <style lang="less" scoped></style>
 <script>
-import { companyList } from '../../../api/login'
+import { companyList, companyExport, down } from '../../../api/login'
 // import { dateFormat } from '../../../../libs/tools'
-// import axios from '../../../api/axios'
+import axios from '../../../api/axios'
 export default {
   components: {
     // above,
@@ -68,8 +99,17 @@ export default {
       size: 10,
       resetFlag: false,
       delFlag: false,
+      exportModel: false,
+      newfile: '',
+      token: '',
       companySearch: '', //搜索公司的字段
       companyData: [], //后台来的数据
+      formValidate: {
+        uploadLogo: null
+      },
+      ruleValidate: {
+        uploadLogo: [{ required: true, trigger: 'change' }]
+      },
       companyColums: [
         //Todo写成和后台一样的
         {
@@ -101,6 +141,9 @@ export default {
       ]
     }
   },
+  mounted() {
+    this.token = localStorage.getItem('token')
+  },
   created() {
     this.getData(1)
   },
@@ -127,7 +170,35 @@ export default {
     //   })
     // },
     leadIn() {
-      //Todo批量导入的方法
+      this.exportModel = true
+      this.newfile = ''
+    },
+    // 模板下载
+    downLoad() {
+      window.open('/api/userinfo/companyDownload')
+    },
+    // 上传文件
+    handleBefore(file) {
+      this.newfile = file
+      return false
+    },
+    // 确定导入
+    exportExcelOk() {
+      if (this.newfile === '') {
+        this.$Message.error('请选择要导入文件')
+      } else {
+        var formData = new FormData()
+        formData.append('file', this.newfile)
+        companyExport(formData).then(res => {
+          if (res.data.state === '1') {
+            this.$Message.success(res.data.message || '成功!')
+            this.exportModel = false
+            this.getData(1)
+          } else {
+            this.$Message.error(res.data.message || '失败!')
+          }
+        })
+      }
     },
     getData(current) {
       if (current) this.current = current
