@@ -43,7 +43,9 @@
           </FormItem>
           <FormItem>
             <Button type="primary" @click="submit1('formItem')">提交</Button>
-            <Button type="primary" class="cancel" ghost @click="cancel()">取消</Button>
+            <Button type="primary" ghost @click="cancel()" style="width: 60px;">
+              取消
+            </Button>
           </FormItem>
         </Form>
       </TabPane>
@@ -167,15 +169,15 @@ export default {
   }
 }
 </script>
-<style lang="less" scope>
+<style lang="less" scoped>
 .contentData {
   background: #fff;
   margin: 0 20px;
 }
-.ivu-tabs-bar {
+/deep/ .ivu-tabs-bar {
   height: 48px;
   //   background: #f5f5f5;
-  //   border-bottom: 1px solid #dcdee2;
+  // border-bottom: 1px solid #dcdee2;
   //   border-top: 1px solid #dcdee2;
   margin-bottom: 16px;
   padding-left: 758px;
@@ -192,7 +194,7 @@ export default {
 .form {
   padding: 23px 670px;
   margin-top: 20px;
-  box-shadow: 0px 1px 2px 0px #c7c7c7, 0px 0px 4px 0px rgba(158, 158, 158, 0.5);
+  // box-shadow: 0px 1px 2px 0px #c7c7c7, 0px 0px 4px 0px rgba(158, 158, 158, 0.5);
 }
 .cancel {
   margin-left: 20px;

@@ -11,7 +11,7 @@
               :options="options"
               :clearable="false"
               confirm
-              @on-ok="userList(1)"
+              @on-ok="confirms"
               id="date"
               placement="bottom-end"
               separator="~"
@@ -53,7 +53,7 @@
       <TabPane label="打分统计" name="degree">
         <div class="policy-table" style="margin: 0;">
           <div id="main" style="width:1720px; height:450px;padding-top:30px;"></div>
-          <Table :columns="degreeColums" :data="degreeData" stripe></Table>
+          <Table :columns="degreeColums" :data="degreeData" stripe show-summary></Table>
         </div>
       </TabPane>
       <TabPane label="对内打分" name="inDegree">
@@ -101,6 +101,7 @@ export default {
     return {
       date: [],
       activityIndex: 1,
+      tabsName: 'degree',
       day: '',
       options: {
         disabledDate(date) {
@@ -173,17 +174,17 @@ export default {
         },
         {
           title: '90（含）-100',
-          key: 'nintytohundred',
+          key: 'ninety',
           tooltip: true
         },
         {
           title: '80（含）-90（不含）',
-          key: 'eightytoninty',
+          key: 'eighty',
           tooltip: true
         },
         {
           title: '70（含）-80（不含）',
-          key: 'seventyoeighty',
+          key: 'seventy',
           tooltip: true
         },
         {
@@ -226,27 +227,27 @@ export default {
       outDegreeColums: [
         {
           title: '支撑单位',
-          key: 'eventName',
+          key: 'supportUnit',
           tooltip: true
         },
         {
-          title: '全部',
-          key: 'ip',
+          title: '90（含）-100',
+          key: 'ninety',
           tooltip: true
         },
         {
-          title: '集成',
-          key: 'userAccount',
+          title: '80（含）-90（不含）',
+          key: 'eighty',
           tooltip: true
         },
         {
-          title: '研究院',
-          key: 'ip',
+          title: '70（含）-80（不含）',
+          key: 'seventy',
           tooltip: true
         },
         {
-          title: '其他',
-          key: 'userAccount',
+          title: '70及以下',
+          key: 'behindseventy',
           tooltip: true
         }
       ],
@@ -269,6 +270,9 @@ export default {
     },
     getClassHandler(i) {
       this.activityIndex = i
+      this.date = []
+      this.date[0] = ''
+      this.date[1] = ''
       if (this.activityIndex === 1) {
         this.day = 'month'
       } else if (this.activityIndex === 2) {
@@ -278,19 +282,40 @@ export default {
       } else {
         this.day = 'quarter'
       }
+      if (this.tabsName === 'degree') {
+        this.getAllList()
+      } else if (this.tabsName === 'inDegree') {
+        this.getIncharts()
+      } else {
+        this.getOutList()
+      }
+    },
+    confirms() {
+      this.day = ''
+      this.activityIndex = 0
+      if (this.tabsName === 'degree') {
+        this.getAllList()
+      } else if (this.tabsName === 'inDegree') {
+        this.getIncharts()
+      } else {
+        this.getOutList()
+      }
     },
     tabs(name) {
       if (name === 'degree') {
         // this.getEchars()
+        this.tabsName = 'degree'
         this.getAllList()
       } else if (name === 'inDegree') {
+        this.tabsName = 'inDegree'
         this.getIncharts()
       } else {
-        this.getOutCharts()
-        // this.getOutList()
+        // this.getOutCharts()
+        this.tabsName = 'outDegree'
+        this.getOutList()
       }
     },
-    // 获取列表数据
+    // 获取打分统计列表数据
     getAllList() {
       if (typeof this.date[0] === 'object') {
         this.date[0] = dateFormat('YYYY-mm-dd', this.date[0])
@@ -312,12 +337,12 @@ export default {
           this.ba = []
           this.qi = []
           this.overTime = []
-          if (this.outDegreeData.length > 0) {
-            this.orderData.forEach((item, index) => {
+          if (this.degreeData.length > 0) {
+            this.degreeData.forEach((item, index) => {
               this.time.push(item.date)
-              this.bai.push(item.nintytohundred)
-              this.jiu.push(item.eightytoninty)
-              this.ba.push(item.seventyoeighty)
+              this.bai.push(item.ninety)
+              this.jiu.push(item.eighty)
+              this.ba.push(item.seventy)
               this.qi.push(item.behindseventy)
               this.getEchars()
             })
@@ -409,32 +434,92 @@ export default {
         ]
       })
     },
+    // 获取对外打分统计列表数据
+    getOutList() {
+      if (typeof this.date[0] === 'object') {
+        this.date[0] = dateFormat('YYYY-mm-dd', this.date[0])
+      }
+      if (typeof this.date[1] === 'object') {
+        this.date[1] = dateFormat('YYYY-mm-dd', this.date[1])
+      }
+      let params = {
+        startTime: this.date[0],
+        endTime: this.date[1],
+        day: this.day
+      }
+      outStatics(params).then(res => {
+        if (res.state === 1) {
+          this.outDegreeData = res.data
+          this.outDegree = []
+          this.outBai = []
+          this.outJiu = []
+          this.outBa = []
+          this.outQi = []
+          if (this.outDegreeData.length > 0) {
+            this.outDegreeData.forEach((item, index) => {
+              this.outDegree.push(item.supportUnit)
+              this.outBai.push(item.ninety)
+              this.outJiu.push(item.eighty)
+              this.outBa.push(item.seventy)
+              this.outQi.push(item.behindseventy)
+              this.getOutCharts()
+            })
+          } else {
+            this.outDegree.push('')
+            this.outBai.push(0)
+            this.outJiu.push(0)
+            this.outBa.push(0)
+            this.outQi.push(0)
+            this.getOutCharts()
+          }
+          // console.log(this.orderData)
+        } else {
+          this.outDegree.push('')
+          this.outBai.push(0)
+          this.outJiu.push(0)
+          this.outBa.push(0)
+          this.outQi.push(0)
+          this.getOutCharts()
+        }
+      })
+    },
     // 对外打分
     getOutCharts() {
       var outsideMyChart = echarts.init(document.getElementById('outside'))
       outsideMyChart.setOption({
-        color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
+        color: ['#20A0FF', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
         tooltip: {},
-        dataset: {
-          source: [
-            ['product', '工单总数', '待办', '已办', '超时'],
-            ['2012', 41.1, 30.4, 65.1, 53.3],
-            ['2013', 86.5, 92.1, 85.7, 83.1],
-            ['2014', 24.1, 67.2, 79.5, 86.4],
-            ['2015', 24.1, 67.2, 79.5, 86.4]
-          ]
-        },
-        xAxis: { type: 'category' },
+        xAxis: [{ type: 'category', data: this.outDegree }],
         yAxis: {},
         grid: {
           height: 300
         },
         series: [
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' }
+          {
+            name: '90（含）-100',
+            type: 'bar',
+            barWidth: '20',
+            data: this.outBai
+          },
+          {
+            name: '80（含）-90（不含）',
+            type: 'bar',
+            barWidth: '20',
+            data: this.outJiu
+          },
+          {
+            name: '70（含）-80（不含）',
+            type: 'bar',
+            barWidth: '20',
+            data: this.outBa
+          },
+          {
+            name: '70及以下',
+            type: 'bar',
+            barWidth: '20',
+            data: this.outQi
+          }
         ]
       })
     },

@@ -72,5 +72,6 @@ module.exports = {
   timeConvert, // 时间戳转化方法
   filterNull,
   getUrlQuery,
-  dateFormat // 时间转化方法
+  dateFormat, // 时间转化方法
+  urlPrefix: 'http://api.dispatch-32102.p.onecode.ict.cmcc'
 }

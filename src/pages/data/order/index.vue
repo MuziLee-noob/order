@@ -34,7 +34,7 @@
             </div>
           </div>
           <div class="btns">
-            <Button @click="userList(1)" class="search">导出数据</Button>
+            <Button @click="exportExcel" class="search">导出数据</Button>
           </div>
         </Form>
       </Row>
@@ -58,7 +58,7 @@
 <style lang="less" scoped></style>
 <script>
 import { orderStatics } from '../../../api/login'
-import { dateFormat } from '../../../libs/tools'
+import { dateFormat, urlPrefix } from '../../../libs/tools'
 import echarts from 'echarts'
 let that = null
 export default {
@@ -79,7 +79,7 @@ export default {
       orderColums: [
         {
           title: '日期',
-          key: '时间',
+          key: '日期',
           tooltip: true
         },
         {
@@ -114,7 +114,7 @@ export default {
         this.timer = true
         setTimeout(() => {
           this.timer = false
-          that.getEcharts.resize()
+          that.getOrderList.resize()
         }, 600)
       }
     }
@@ -151,6 +151,10 @@ export default {
       this.activityIndex = 0
       this.getOrderList()
     },
+    // 导出数据
+    exportExcel() {
+      window.location.href = `${urlPrefix}/api/statistics/exportOrder`
+    },
     // 获取列表数据
     getOrderList() {
       // if (current) this.current = current
@@ -175,7 +179,7 @@ export default {
           this.overTime = []
           if (this.orderData.length > 0) {
             this.orderData.forEach((item, index) => {
-              this.time.push(item.时间)
+              this.time.push(item.日期)
               this.all.push(item.总工单)
               this.pendding.push(item.待办)
               this.finish.push(item.已办)
