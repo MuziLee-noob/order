@@ -11,7 +11,7 @@
               :options="options"
               :clearable="false"
               confirm
-              @on-ok="userList(1)"
+              @on-ok="confirms"
               id="date"
               placement="bottom-end"
               separator="~"
@@ -50,15 +50,7 @@
       <div id="main" style="width:1720px; height:450px"></div>
     </div>
     <div class="policy-table" style="margin-top: 10px;">
-      <Table :columns="supportColums" :data="supportData" stripe></Table>
-      <pagination
-        :page-size="size"
-        :show-info="true"
-        :currentPage="current"
-        :total="userTotal"
-        @on-change="userList"
-        @on-page-size-change="userSize"
-      />
+      <Table :columns="supportColums" :data="supportData" stripe show-summary></Table>
     </div>
   </div>
 </template>
@@ -176,9 +168,9 @@ export default {
     },
     getClassHandler(i) {
       this.activityIndex = i
-      this.userdate = []
-      this.userdate[0] = ''
-      this.userdate[1] = ''
+      this.date = []
+      this.date[0] = ''
+      this.date[1] = ''
       if (this.activityIndex === 1) {
         this.day = 'month'
       } else if (this.activityIndex === 2) {
@@ -188,6 +180,11 @@ export default {
       } else {
         this.day = 'quarter'
       }
+      this.getSupportList()
+    },
+    confirms() {
+      this.day = ''
+      this.activityIndex = 0
       this.getSupportList()
     },
     // 获取列表数据

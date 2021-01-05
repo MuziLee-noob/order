@@ -38,16 +38,7 @@
                 </Select>
               </FormItem>
               <FormItem label="所属公司" prop="company">
-                <Select
-                  v-model="newData.company"
-                  placeholder="请选择公司"
-                  @on-change="
-                    v => {
-                      enable(v, 'type')
-                    }
-                  "
-                  :label-in-value="true"
-                >
+                <Select v-model="newData.company" placeholder="请选择公司" :label-in-value="true">
                   <Option v-for="item in companyList" :value="item.uuid" :key="item.uuid">
                     {{ item.comName }}
                   </Option>
@@ -154,7 +145,7 @@ export default {
           { required: true, message: '请输入手机号码', trigger: 'blur' },
           { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号' }
         ],
-        region: [{ required: true, message: '请选择所在区域', trigger: 'change' }],
+        region: [{ required: true, message: '请选择所在区域', trigger: ['blur', 'change'] }],
         userName: [{ required: true, message: '请输入用户名称', trigger: 'blur' }],
         roleUuid: [{ required: true, message: '请选择用户角色', trigger: 'change' }],
         company: [{ required: true, message: '请选择用户公司', trigger: 'select' }]

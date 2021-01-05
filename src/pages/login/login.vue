@@ -33,7 +33,8 @@ export default {
       password: '',
       uid: '',
       role: Number,
-      token: ''
+      token: '',
+      roleUuid: ''
     }
   },
   methods: {
@@ -98,6 +99,7 @@ export default {
           console.log(data)
           this.uid = data.data.data.uuid
           this.token = data.data.token
+          this.roleUuid = data.data.data.roleUuid
           if (data.data.data.roleUuid === 'fea98ada6624476aa960c02a13e771fb') {
             role = 2 //需求发起人    新建 代办 已办
           }
@@ -112,6 +114,7 @@ export default {
           console.log(this.uid, this.token, role)
           localStorage.setItem('token', this.token)
           localStorage.setItem('uuid', this.uid)
+          localStorage.setItem('roleUuid', this.roleUuid)
           if (role == 2) {
             this.$store.state.user.auditOther = ''
             this.$store.state.user.auditCreat = 'audit'

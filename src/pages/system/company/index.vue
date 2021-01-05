@@ -13,7 +13,7 @@
       <Row class="check-condition clearfix">
         <Form :label-width="80">
           <FormItem label="公司名称" class="mgr">
-            <Input v-model="companySearch" placeholder="公司名称" />
+            <Input v-model="companySearch" placeholder="公司名称" clearable />
           </FormItem>
           <div class="btns">
             <Button @click="getData(1)" class="search">查询</Button>
@@ -83,6 +83,7 @@
 <style lang="less" scoped></style>
 <script>
 import { companyList, companyExport, down } from '../../../api/login'
+import { urlPrefix } from '../../../libs/tools'
 // import { dateFormat } from '../../../../libs/tools'
 import axios from '../../../api/axios'
 export default {
@@ -122,7 +123,42 @@ export default {
         },
         {
           title: '状态',
-          key: 'stateStr'
+          key: 'flag',
+          render: (h, params) => {
+            if (params.row.flag === 1) {
+              return h(
+                'div',
+                {
+                  style: {
+                    width: '60px',
+                    height: '22px',
+                    lineHeight: '22px',
+                    borderRadius: '4px',
+                    color: '#11DA16',
+                    textAlign: 'center',
+                    background: '#DAFCDB'
+                  }
+                },
+                params.row.flag === 1 ? '启用' : '禁用'
+              )
+            } else {
+              return h(
+                'div',
+                {
+                  style: {
+                    color: '#E02020',
+                    background: '#FFDBDB',
+                    borderRadius: '4px',
+                    width: '60px',
+                    height: '22px',
+                    lineHeight: '22px',
+                    textAlign: 'center'
+                  }
+                },
+                params.row.flag === 1 ? '启用' : '禁用'
+              )
+            }
+          }
           // render: (h, params) => {
           //   let tmpStr = ''
           //   if (params.row.flag == 1) {
@@ -175,7 +211,8 @@ export default {
     },
     // 模板下载
     downLoad() {
-      window.open('/api/userinfo/companyDownload')
+      window.location.href = `${urlPrefix}/api/userinfo/companyDownload`
+      // window.open('http://api.dispatch-32102.p.onecode.ict.cmcc/api/userinfo/companyDownload')
     },
     // 上传文件
     handleBefore(file) {
@@ -190,6 +227,7 @@ export default {
         var formData = new FormData()
         formData.append('file', this.newfile)
         companyExport(formData).then(res => {
+          console.log(res.state)
           if (res.data.state === '1') {
             this.$Message.success(res.data.message || '成功!')
             this.exportModel = false

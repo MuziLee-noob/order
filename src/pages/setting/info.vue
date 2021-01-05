@@ -2,7 +2,7 @@
   <div class="contentData">
     <Tabs @on-click="tabs">
       <TabPane label="全部消息" name="first">
-        <Button type="primary" class="delete" @click="del('批量', 'all', '')">批量删除</Button>
+        <Button type="primary" class="delete-info" @click="del('批量', 'all', '')">批量删除</Button>
         <Button type="primary" class="cancel" ghost @click="cancel()">返回</Button>
         <Table
           :data="allData"
@@ -286,13 +286,13 @@ export default {
   }
 }
 </script>
-<style lang="less" scope>
+<style lang="less" scoped>
 .contentData {
   background: #fff;
   margin: 0 20px;
   padding: 0 20px;
 }
-.ivu-tabs-bar {
+/deep/ .ivu-tabs-bar {
   height: 48px;
   //   background: #f5f5f5;
   //   border-bottom: 1px solid #dcdee2;
@@ -312,9 +312,9 @@ export default {
 .form {
   padding: 23px 0;
   margin-top: 20px;
-  box-shadow: 0px 1px 2px 0px #c7c7c7, 0px 0px 4px 0px rgba(158, 158, 158, 0.5);
+  // box-shadow: 0px 1px 2px 0px #c7c7c7, 0px 0px 4px 0px rgba(158, 158, 158, 0.5);
 }
-.delete {
+.delete-info {
   width: 114px;
   height: 36px;
   padding: 0;

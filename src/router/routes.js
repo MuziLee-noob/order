@@ -94,31 +94,31 @@ export const asyncRoutes = [
           hideInBread: false
         },
         component: () => import('@/pages/order/detailsDone.vue')
-      },
-      {
-        path: '/setting',
-        name: 'setting',
-        hideInBread: true,
-        hidden: true,
-        meta: {
-          title: '设置',
-          hideFrame: true,
-          hideInBread: false
-        },
-        component: () => import('@/pages/setting/index')
-      },
-      {
-        path: '/info',
-        name: 'info',
-        hideInBread: true,
-        hidden: true,
-        meta: {
-          title: '消息',
-          hideFrame: true,
-          hideInBread: false
-        },
-        component: () => import('@/pages/setting/info.vue')
       }
+      // {
+      //   path: '/setting',
+      //   name: 'setting',
+      //   hideInBread: true,
+      //   hidden: true,
+      //   meta: {
+      //     title: '设置',
+      //     hideFrame: true,
+      //     hideInBread: false
+      //   },
+      //   component: () => import('@/pages/setting/index')
+      // },
+      // {
+      //   path: '/info',
+      //   name: 'info',
+      //   hideInBread: true,
+      //   hidden: true,
+      //   meta: {
+      //     title: '消息',
+      //     hideFrame: true,
+      //     hideInBread: false
+      //   },
+      //   component: () => import('@/pages/setting/info.vue')
+      // }
     ]
   },
   {
@@ -227,6 +227,54 @@ export const asyncRoutes = [
           title: '支撑单位统计'
         },
         component: () => import('@/pages/data/support/index.vue')
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: 'shezhi',
+    component: MainView,
+    meta: {
+      hideInBread: false,
+      title: '个人设置',
+      other: 'aa'
+    },
+    children: [
+      {
+        path: '/setting',
+        name: 'setting',
+        hideInBread: true,
+        hidden: true,
+        meta: {
+          title: '个人中心',
+          hideFrame: true,
+          hideInBread: false
+        },
+        component: () => import('@/pages/setting/index')
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: 'shezhi',
+    component: MainView,
+    meta: {
+      hideInBread: false,
+      title: '消息管理',
+      other: 'aa'
+    },
+    children: [
+      {
+        path: '/info',
+        name: 'info',
+        hideInBread: true,
+        hidden: true,
+        meta: {
+          title: '消息',
+          hideFrame: true,
+          hideInBread: false
+        },
+        component: () => import('@/pages/setting/info.vue')
       }
     ]
   },

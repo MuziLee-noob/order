@@ -11,7 +11,7 @@
               :options="options"
               :clearable="false"
               confirm
-              @on-ok="userList(1)"
+              @on-ok="confirms"
               id="date"
               placement="bottom-end"
               separator="~"
@@ -132,7 +132,7 @@ export default {
       areaColums: [
         {
           title: '工单区域',
-          key: '区域',
+          key: '工单区域',
           tooltip: true
         },
         {
@@ -231,7 +231,7 @@ export default {
   },
   mounted() {
     this.date = [this.prevMonth, this.today]
-    this.getEcharts()
+    // this.getEcharts()
     this.getRegionList()
     window.onresize = () => {
       if (!this.timer) {
@@ -244,7 +244,7 @@ export default {
     }
   },
   created() {
-    this.getEcharts()
+    // this.getEcharts()
     this.getToday()
   },
   methods: {
@@ -267,7 +267,12 @@ export default {
       } else {
         this.day = 'quarter'
       }
-      // this.getOrderList()
+      this.getRegionList()
+    },
+    confirms() {
+      this.day = ''
+      this.activityIndex = 0
+      this.getRegionList()
     },
     // 获取列表数据
     getRegionList() {
@@ -306,8 +311,8 @@ export default {
           // this.huangPo = []
           // this.xinZhou = []
           if (this.areaData.length > 0) {
-            this.orderData.forEach((item, index) => {
-              this.area.push(item.区域)
+            this.areaData.forEach((item, index) => {
+              this.area.push(item.工单区域)
               this.all.push(item.总工单)
               this.pendding.push(item.待办)
               this.finish.push(item.已办)

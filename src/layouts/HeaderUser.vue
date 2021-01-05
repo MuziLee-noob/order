@@ -1,5 +1,6 @@
 <template>
   <div class="header-user">
+    <div class="roleName">{{ roleName }}：{{ userNames }}</div>
     <i-dropdown>
       <ul name="setting" style="float: left;margin-right: 20px;margin-top:5px;" @click="userSet">
         <img src="../assets/images/shezhi.png" alt="" />
@@ -42,7 +43,7 @@
       </p>
       <div class="content">
         <span class="new-icon-del iconfont icon-tixing"></span>
-        <span class="close-left">确定退出登录?</span>
+        <span class="close-left" style="color:#333;">确定退出登录?</span>
       </div>
       <div class="add-footer">
         <Button @click="delOk" class="fusion-del-ok" type="primary">
@@ -61,6 +62,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { getNum } from '../api/login'
 import store from '@/store'
 import { getUrlQuery } from '../libs/tools'
+import { getUser } from '../api/login'
 export default {
   name: 'HeaderUser',
 
@@ -71,11 +73,14 @@ export default {
       realName: '',
       token: '',
       delModel: false,
-      num: 0
+      num: 0,
+      roleName: '',
+      account: '',
+      userNames: ''
     }
   },
   created() {
-    // this.getUser()
+    this.getusers()
     this.getMessgeNum()
   },
   computed: {
@@ -109,6 +114,19 @@ export default {
     },
     cancel_del() {
       this.delModel = false
+    },
+    // 获取用户
+    getusers() {
+      let params = {
+        uuid: localStorage.getItem('uuid')
+      }
+      getUser(params).then(res => {
+        if (res.state === '1') {
+          this.account = res.data.userAcount
+          this.userNames = res.data.userName
+          this.roleName = res.data.roleName
+        }
+      })
     },
     // 获取未读消息的条数
     getMessgeNum() {
@@ -199,6 +217,12 @@ export default {
     padding: 0 2px;
     font-size: 10px;
     box-shadow: none;
+  }
+  .roleName {
+    font-size: 16px;
+    float: left;
+    margin-right: 50px;
+    color: #fff;
   }
 }
 </style>

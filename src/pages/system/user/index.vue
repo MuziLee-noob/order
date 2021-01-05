@@ -13,31 +13,21 @@
       <Row class="check-condition clearfix">
         <Form :label-width="10">
           <FormItem label="" class="mgr">
-            <Select
-              v-model="userCompany"
-              placeholder="选择公司"
-              :label-in-value="true"
-              @on-change="
-                v => {
-                  enable(v, 'type')
-                }
-              "
-              clearable
-            >
-              <Option v-for="item in companyList" :value="item.uuid" :key="item.uuid">
+            <Select v-model="userCompany" placeholder="选择公司" :label-in-value="true" clearable>
+              <Option v-for="item in companyList" :value="item.comName" :key="item.uuid">
                 {{ item.comName }}
               </Option>
             </Select>
           </FormItem>
           <FormItem label="" class="mgr">
-            <Select v-model="userState" placeholder="选择角色">
-              <Option v-for="item in roleList" :value="item.uuid" :key="item.uuid">
+            <Select v-model="userState" placeholder="选择角色" clearable>
+              <Option v-for="item in roleList" :value="item.roleName" :key="item.uuid">
                 {{ item.roleName }}
               </Option>
             </Select>
           </FormItem>
           <FormItem label="" class="mgr">
-            <Input v-model="companySearch" placeholder="姓名/手机号" />
+            <Input v-model="companySearch" placeholder="姓名/手机号" clearable />
           </FormItem>
           <div class="btns">
             <Button @click="getData(1)" class="search">查询</Button>

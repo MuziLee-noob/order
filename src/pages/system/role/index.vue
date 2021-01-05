@@ -59,6 +59,7 @@
               search
               @on-search="userRoleList"
               style="width: 55%;"
+              clearable
               placeholder="姓名/手机号"
             />
             <span style="float: right;">角色名称：{{ roleName }}</span>
@@ -107,13 +108,40 @@ export default {
           title: '状态',
           key: 'state',
           render: (h, params) => {
-            let tmpStr = ''
-            if (params.row.state == 0) {
-              tmpStr = '启用'
-            } else if (params.row.state == 1) {
-              tmpStr = '禁用'
+            // let tmpStr = ''
+            if (params.row.state === 0) {
+              return h(
+                'div',
+                {
+                  style: {
+                    width: '60px',
+                    height: '22px',
+                    lineHeight: '22px',
+                    borderRadius: '4px',
+                    color: '#11DA16',
+                    textAlign: 'center',
+                    background: '#DAFCDB'
+                  }
+                },
+                params.row.state === 0 ? '启用' : '禁用'
+              )
+            } else {
+              return h(
+                'div',
+                {
+                  style: {
+                    color: '#E02020',
+                    background: '#FFDBDB',
+                    borderRadius: '4px',
+                    width: '60px',
+                    height: '22px',
+                    lineHeight: '22px',
+                    textAlign: 'center'
+                  }
+                },
+                params.row.state === 0 ? '启用' : '禁用'
+              )
             }
-            return h('span', tmpStr)
           }
         },
         {
