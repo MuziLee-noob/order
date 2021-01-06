@@ -85,22 +85,53 @@
         </Button>
       </div>
     </Modal>
-    <!-- <Modal v-model="delFlag" title="提示" @on-ok="delOk">
-      <p>此操作将永久删除用户相关数据，是否确认删除？</p>
+    <!-- 批量导入 -->
+    <Modal v-model="exportModel" footer-hide title="">
+      <Form
+        :label-width="150"
+        ref="formValidate"
+        :model="formValidate"
+        :rules="ruleValidate"
+        style="margin-top:40px;"
+      >
+        <FormItem label="模板下载：">
+          <a @click="downLoad" class="upload-a">用户导入模板.xls</a>
+        </FormItem>
+        <FormItem label="导入模板：" prop="uploadLogo">
+          <Upload
+            ref="uploadFile"
+            :auto-upload="false"
+            action=""
+            :multiple="false"
+            :show-upload-list="false"
+            :before-upload="handleBefore"
+            accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          >
+            <Button type="primary">选择文件</Button>
+            <div v-if="newfile !== null" style="margin-top:10px;">{{ newfile.name }}</div>
+          </Upload>
+        </FormItem>
+      </Form>
+      <div style="text-align: right">
+        <Button type="primary" style="margin-right:15px;" @click="exportExcelOk">确定</Button>
+        <Button type="text" @click="exportModel = false">取消</Button>
+      </div>
     </Modal>
-    <Modal v-model="resetFlag" title="提示" @on-ok="resetOk">
-      <p>确认重置密码？（默认密码为123456）</p>
-    </Modal> -->
   </div>
 </template>
 <style lang="less" scoped></style>
 <script>
 import axios from '../../../api/axios'
 import qs from 'qs'
-import { userList, commanyAll, roleAll, userDelete, resetPassword } from '../../../api/login'
-// import { userPolicyList, commenSelect } from '../../../../api/policy/policy'
-// import { dateFormat } from '../../../../libs/tools'
-
+import {
+  userList,
+  commanyAll,
+  roleAll,
+  userDelete,
+  resetPassword,
+  userExport
+} from '../../../api/login'
+import { urlPrefix } from '../../../libs/tools'
 export default {
   data() {
     return {
@@ -120,6 +151,14 @@ export default {
       data: [], //后台来的数据
       companyList: [], //下拉菜单公司列表的
       roleList: [],
+      exportModel: false,
+      newfile: '',
+      formValidate: {
+        uploadLogo: null
+      },
+      ruleValidate: {
+        uploadLogo: [{ required: true, trigger: 'change' }]
+      },
       columns: [
         //Todo写成和后台一样的
         {
@@ -149,7 +188,7 @@ export default {
         },
         {
           title: '注册时间',
-          key: 'createTime'
+          key: 'createTimeStr'
         },
         {
           title: '操作',
@@ -190,34 +229,25 @@ export default {
         this.selected[i] = selection[i].uuid
       }
     },
+    // 获取公司
     getCompany() {
       commanyAll().then(res => {
         this.companyList = res.data
       })
-      // axios
-      //   .axios({
-      //     method: 'get',
-      //     url: 'userinfo/getAllCompany'
-      //   })
-      //   .then(data => {
-      //     this.companyList = data.data.data
-      //     for (var i = 0; i < this.companyList.length; i++) {
-      //       this.companyList[i].value = this.companyList[i].comName
-      //       this.companyList[i].label = this.companyList[i].comName
-      //     }
-      //     console.log(this.companyList)
-      //   })
     },
+    //获取角色
     getUserRole() {
       roleAll().then(res => {
         this.roleList = res.data
       })
     },
+    // 是否删除
     isDel(row, title) {
       this.delModel = true
       this.isDelColse = title
       this.uuid = row.uuid
     },
+    // 确认删除
     delOk() {
       if (this.isDelColse === '删除') {
         var uuidLists = []
@@ -243,6 +273,7 @@ export default {
         })
       }
     },
+    // 批量删除
     delBatchOk() {
       var selected = qs.stringify(this.selected)
       let params = {
@@ -258,49 +289,48 @@ export default {
         }
       })
     },
+    // 关闭弹框
     cancel_del() {
       this.delModel = false
     },
-    // del1() {
-    //   var selected = qs.stringify(this.selected)
-    //   axios
-    //     .axios({
-    //       method: 'post',
-    //       url: 'userinfo/deleteUser',
-    //       data: { uuidList: selected }
-    //     })
-    //     .then(data => {
-    //       console.log(data)
-    //     })
-    // },
-    //Todo 这里写弹出确认删除对话框的方法
-    // change() {
-    //   //Todo 这里写转到修改用户的方法
-    // },
-    // reset() {
-    //   //Todo 这里写弹出确认重置密码对话框的方法
-    // },
-    // resetOk() {
-    //   this.$Modal.success({
-    //     title: '提示',
-    //     content: '更新成功'
-    //   }) //这里是创建一个成功对话框
-    //   //Todo 在这里写重置用户密码的方法
-    // },
-    // search() {
-    //   this.getData(1)
-    //   this.page = 1
-    // },
+    // 导入弹框
     leadIn() {
-      axios.axios({
-        method: 'get',
-        url: 'userinfo/companyDownload'
-      })
-      //Todo批量导入的方法
+      this.exportModel = true
+      this.newfile = ''
     },
+    // 模板下载
+    downLoad() {
+      window.location.href = `${urlPrefix}/api/userinfo/userDownload`
+    },
+    // 上传文件
+    handleBefore(file) {
+      this.newfile = file
+      return false
+    },
+    // 确定导入
+    exportExcelOk() {
+      if (this.newfile === '') {
+        this.$Message.error('请选择要导入文件')
+      } else {
+        var formData = new FormData()
+        formData.append('file', this.newfile)
+        userExport(formData).then(res => {
+          console.log(res.state)
+          if (res.data.state === '1') {
+            this.$Message.success(res.data.message || '成功!')
+            this.exportModel = false
+            this.getData(1)
+          } else {
+            this.$Message.error(res.data.message || '失败!')
+          }
+        })
+      }
+    },
+    // 跳入新增页面
     newUser(title, data) {
       this.$router.push({ path: '/userAdd', query: { title: title, data: data } })
     },
+    // 获取列表
     getData(current) {
       if (current) this.current = current
       let params = {
@@ -316,33 +346,7 @@ export default {
         this.total = res.total
         this.data = res.data
       })
-      // axios
-      //   .axios({
-      //     method: 'post',
-      //     url: 'userinfo/list',
-      //     data: {
-      //       pageSize: this.pageSize,
-      //       currentPage: page,
-      //       condition: {
-      //         roleName: this.userState,
-      //         company: this.userCompany,
-      //         key: this.companySearch
-      //       }
-      //     },
-      //     headers: { token: localStorage.getItem('token') }
-      //   })
-      //   .then(data => {
-      //     this.total = data.data.total
-      //     this.data = data.data.data
-      //     console.log(data)
-      //   })
     },
-    // goto(data) {
-    //   this.$router.push({
-    //     path: '/userOperate',
-    //     query: { data: data }
-    //   })
-    // },
     userSize: function(limit) {
       this.size = limit
       this.current = 1

@@ -72,19 +72,12 @@
         <Button type="text" @click="exportModel = false">取消</Button>
       </div>
     </Modal>
-    <!-- <Modal v-model="delFlag" title="提示">
-      <p>此操作将永久删除用户相关数据，是否确认删除？</p>
-    </Modal>
-    <Modal v-model="resetFlag" title="提示">
-      <p>确认重置密码？（默认密码为123456）</p>
-    </Modal> -->
   </div>
 </template>
 <style lang="less" scoped></style>
 <script>
 import { companyList, companyExport, down } from '../../../api/login'
 import { urlPrefix } from '../../../libs/tools'
-// import { dateFormat } from '../../../../libs/tools'
 import axios from '../../../api/axios'
 export default {
   components: {
@@ -112,7 +105,6 @@ export default {
         uploadLogo: [{ required: true, trigger: 'change' }]
       },
       companyColums: [
-        //Todo写成和后台一样的
         {
           title: '公司名称',
           key: 'comName'
@@ -159,15 +151,6 @@ export default {
               )
             }
           }
-          // render: (h, params) => {
-          //   let tmpStr = ''
-          //   if (params.row.flag == 1) {
-          //     tmpStr = '启用'
-          //   } else if (params.row.flag == 2) {
-          //     tmpStr = '禁用'
-          //   }
-          //   return h('span', tmpStr)
-          // }
         },
         {
           title: '操作',
@@ -187,24 +170,7 @@ export default {
     newCompany(title, data) {
       this.$router.push({ path: '/commanyAdd', query: { title: title, data: data } })
     },
-    // show(row, index) {
-    //   this.srow = row
-    //   this.index = index
-    //   console.log(this.srow, this.index)
-    //   this.$router.push({
-    //     path: '/companyOperate',
-    //     query: { data: this.srow, flag: true }
-    //   })
-    // },
-    // change(row, index) {
-    //   this.srow = row
-    //   this.index = index
-    //   console.log(this.srow, this.index)
-    //   this.$router.push({
-    //     path: '/companyOperate',
-    //     query: { data: this.srow, flag: false }
-    //   })
-    // },
+    // 导入弹框
     leadIn() {
       this.exportModel = true
       this.newfile = ''
@@ -212,7 +178,6 @@ export default {
     // 模板下载
     downLoad() {
       window.location.href = `${urlPrefix}/api/userinfo/companyDownload`
-      // window.open('http://api.dispatch-32102.p.onecode.ict.cmcc/api/userinfo/companyDownload')
     },
     // 上传文件
     handleBefore(file) {
@@ -238,6 +203,7 @@ export default {
         })
       }
     },
+    // 获取列表
     getData(current) {
       if (current) this.current = current
       let params = {
@@ -249,30 +215,7 @@ export default {
         console.log(res)
         this.total = res.total
         this.companyData = res.data
-        // this.datadic.forEach(data => {
-        //   if (data.dictClass === '9') {
-        //     data.dictClass = '自定义'
-        //   } else if (data.dictClass === '1') {
-        //     data.dictClass = '国际标准'
-        //   } else if (data.dictClass === '2') {
-        //     data.dictClass = '国家标准'
-        //   } else {
-        //     data.dictClass = '行业标准'
-        //   }
-        // })
       })
-      // axios
-      //   .axios({
-      //     method: 'post',
-      //     url: '/api/userinfo/companyList',
-      //     data: { pageSize: 10, currentPage: page, condition: { comName: this.companySearch } },
-      //     headers: { token: localStorage.getItem('token') }
-      //   })
-      //   .then(data => {
-      //     this.total = data.data.total
-      //     this.data = data.data.data
-      //     console.log(data)
-      //   })
     },
     userSize: function(limit) {
       this.size = limit

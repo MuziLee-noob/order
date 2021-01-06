@@ -48,6 +48,10 @@ export const roleAll = params => {
 export const userAdd = params => {
   return request.post(baseUrl + '/userinfo/addUser', params)
 }
+// 文件导入
+export const userExport = params => {
+  return request.post(baseUrl + '/userinfo/imporBatchUser', params)
+}
 // 编辑用户
 export const userEdit = params => {
   return request.post(baseUrl + '/userinfo/editUser', params)
@@ -66,7 +70,7 @@ export const resetPassword = params => {
 }
 // 获取所有用户
 export const allUser = params => {
-  return request.get(baseUrl + '/userinfo/getAllUser')
+  return request.get(baseUrl + `/userinfo/getAllUser?key=${params.key}`)
 }
 // 确定分配角色
 export const setRole = params => {
@@ -86,25 +90,32 @@ export const allStatics = params => {
       `/statistics/outSatisfiedSumStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
   )
 }
+// 对内打分
+export const inStatics = params => {
+  return request.get(
+    baseUrl +
+      `/statistics/inSatisfiedStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}&&unit=${params.unit}`
+  )
+}
 // 对外打分
 export const outStatics = params => {
   return request.get(
     baseUrl +
-      `/statistics/outSatisfiedStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
+      `/statistics/outSatisfiedStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}&&unit=${params.unit}`
   )
 }
 // 区域打分
 export const regionStatics = params => {
   return request.get(
     baseUrl +
-      `/statistics/regionStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
+      `/statistics/regionStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}&&region=${params.region}`
   )
 }
 // 支撑单位
 export const supportStatics = params => {
   return request.get(
     baseUrl +
-      `/statistics/supportStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}`
+      `/statistics/supportStaticsChart?startTime=${params.startTime}&&endTime=${params.endTime}&&day=${params.day}&&unit=${params.unit}`
   )
 }
 // 全部信息

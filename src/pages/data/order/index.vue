@@ -9,9 +9,9 @@
           <FormItem label="时间范围" class="mgr">
             <DatePicker
               :options="options"
-              :clearable="false"
-              confirm
-              @on-ok="confirms()"
+              :clearable="true"
+              placeholder="请选择时间范围"
+              @on-change="confirms"
               id="date"
               placement="bottom-end"
               separator="~"
@@ -21,13 +21,13 @@
           </FormItem>
           <div class="year">
             <div class="fault_span" :class="getClass(1)" @click="getClassHandler(1)" key="1">
-              近一个月
+              近一周
             </div>
             <div class="fault_span" :class="getClass(2)" @click="getClassHandler(2)" key="2">
               近一周
             </div>
             <div class="fault_span" :class="getClass(3)" @click="getClassHandler(3)" key="3">
-              近三个月
+              近一个月
             </div>
             <div class="fault_span" :class="getClass(4)" @click="getClassHandler(4)" key="4">
               近一年
@@ -67,7 +67,7 @@ export default {
     return {
       userdate: [],
       activityIndex: 1,
-      day: 'month',
+      day: 'week',
       options: {
         disabledDate(userdate) {
           return userdate && userdate.valueOf() >= new Date()
@@ -107,21 +107,21 @@ export default {
     }
   },
   mounted() {
-    this.userdate = [this.prevMonth, this.today]
+    // this.userdate = [this.prevMonth, this.today]
     this.getOrderList()
     window.onresize = () => {
       if (!this.timer) {
         this.timer = true
         setTimeout(() => {
           this.timer = false
-          that.getOrderList.resize()
+          that.myChart.resize()
         }, 600)
       }
     }
   },
   created() {
     // this.getEcharts()
-    this.getToday()
+    // this.getToday()
     // this.getOrderList(1)
   },
   methods: {
@@ -136,9 +136,9 @@ export default {
       this.userdate[0] = ''
       this.userdate[1] = ''
       if (this.activityIndex === 1) {
-        this.day = 'month'
-      } else if (this.activityIndex === 2) {
         this.day = 'week'
+      } else if (this.activityIndex === 2) {
+        this.day = 'month'
       } else if (this.activityIndex === 3) {
         this.day = 'month'
       } else {
@@ -157,7 +157,6 @@ export default {
     },
     // 获取列表数据
     getOrderList() {
-      // if (current) this.current = current
       if (typeof this.userdate[0] === 'object') {
         this.userdate[0] = dateFormat('YYYY-mm-dd', this.userdate[0])
       }

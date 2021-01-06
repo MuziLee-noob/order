@@ -9,9 +9,9 @@
           <FormItem label="时间范围" class="mgr">
             <DatePicker
               :options="options"
-              :clearable="false"
-              confirm
-              @on-ok="confirms"
+              :clearable="true"
+              placeholder="请选择时间范围"
+              @on-change="confirms"
               id="date"
               placement="bottom-end"
               separator="~"
@@ -21,10 +21,10 @@
           </FormItem>
           <div class="year">
             <div class="fault_span" :class="getClass(1)" @click="getClassHandler(1)" key="1">
-              近一个月
+              近一周
             </div>
             <div class="fault_span" :class="getClass(2)" @click="getClassHandler(2)" key="2">
-              近一周
+              近一个月
             </div>
             <div class="fault_span" :class="getClass(3)" @click="getClassHandler(3)" key="3">
               近三个月
@@ -34,14 +34,14 @@
             </div>
           </div>
           <FormItem label="" class="mgr">
-            <Select>
-              <Option v-for="item in support" :value="item.value" :key="item.value">
-                {{ item.lable }}
+            <Select v-model="unit" @on-change="getSupportList" clearable>
+              <Option v-for="item in support" :value="item.comName" :key="item.uuid">
+                {{ item.comName }}
               </Option>
             </Select>
           </FormItem>
           <div class="btns">
-            <Button @click="userList(1)" class="search">导出数据</Button>
+            <Button @click="exportExcel" class="search">导出数据</Button>
           </div>
         </Form>
       </Row>
@@ -56,8 +56,8 @@
 </template>
 <style lang="less" scoped></style>
 <script>
-import { supportStatics } from '../../../api/login'
-import { dateFormat } from '../../../libs/tools'
+import { supportStatics, commanyAll } from '../../../api/login'
+import { dateFormat, urlPrefix } from '../../../libs/tools'
 import echarts from 'echarts'
 let that = null
 export default {
@@ -66,32 +66,14 @@ export default {
     return {
       date: [],
       activityIndex: 1,
+      day: 'week',
+      unit: '',
       options: {
         disabledDate(date) {
           return date && date.valueOf() >= new Date()
         }
       },
-      userTotal: 0,
-      size: 10,
-      current: 1,
-      support: [
-        {
-          value: '全部单位',
-          lable: '全部单位'
-        },
-        {
-          value: '集成公司',
-          lable: '集成公司'
-        },
-        {
-          value: '研究院',
-          lable: '研究院'
-        },
-        {
-          value: '其他',
-          lable: '其他'
-        }
-      ],
+      support: [],
       supportColums: [
         {
           title: '支撑单位',
@@ -118,32 +100,12 @@ export default {
           key: '超时',
           tooltip: true
         }
-        // {
-        //   title: '全部',
-        //   key: 'eventName',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '集成',
-        //   key: 'userAccount',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '研究院',
-        //   key: 'ip',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '其他',
-        //   key: 'userAccount',
-        //   tooltip: true
-        // }
       ],
       supportData: []
     }
   },
   mounted() {
-    this.date = [this.prevMonth, this.today]
+    // this.date = [this.prevMonth, this.today]
     this.getSupportList()
     window.onresize = () => {
       if (!this.timer) {
@@ -157,8 +119,8 @@ export default {
   },
   created() {
     // this.getEcharts()
-    this.getToday()
-    // this.userList(1)
+    // this.getToday()
+    this.getCommany()
   },
   methods: {
     getClass(i) {
@@ -172,9 +134,9 @@ export default {
       this.date[0] = ''
       this.date[1] = ''
       if (this.activityIndex === 1) {
-        this.day = 'month'
-      } else if (this.activityIndex === 2) {
         this.day = 'week'
+      } else if (this.activityIndex === 2) {
+        this.day = 'month'
       } else if (this.activityIndex === 3) {
         this.day = 'month'
       } else {
@@ -187,9 +149,20 @@ export default {
       this.activityIndex = 0
       this.getSupportList()
     },
+    // 获取所有单位
+    getCommany() {
+      commanyAll().then(res => {
+        if (res.state === '1') {
+          this.support = res.data
+        }
+      })
+    },
+    // 导出数据
+    exportExcel() {
+      window.location.href = `${urlPrefix}/api/statistics/exportSupport`
+    },
     // 获取列表数据
     getSupportList() {
-      // if (current) this.current = current
       if (typeof this.date[0] === 'object') {
         this.date[0] = dateFormat('YYYY-mm-dd', this.date[0])
       }
@@ -199,7 +172,8 @@ export default {
       let params = {
         startTime: this.date[0],
         endTime: this.date[1],
-        day: this.day
+        day: this.day,
+        unit: this.unit === undefined ? '' : this.unit
       }
       supportStatics(params).then(res => {
         if (res.state === 1) {
