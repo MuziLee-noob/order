@@ -108,6 +108,7 @@ export default {
     },
     info() {
       this.$router.push('/info')
+      this.getMessgeNum()
     },
     isOut() {
       this.delModel = true

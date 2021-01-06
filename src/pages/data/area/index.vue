@@ -9,9 +9,9 @@
           <FormItem label="时间范围" class="mgr">
             <DatePicker
               :options="options"
-              :clearable="false"
-              confirm
-              @on-ok="confirms"
+              :clearable="true"
+              placeholder="请选择时间范围"
+              @on-change="confirms"
               id="date"
               placement="bottom-end"
               separator="~"
@@ -21,10 +21,10 @@
           </FormItem>
           <div class="year">
             <div class="fault_span" :class="getClass(1)" @click="getClassHandler(1)" key="1">
-              近一个月
+              近一周
             </div>
             <div class="fault_span" :class="getClass(2)" @click="getClassHandler(2)" key="2">
-              近一周
+              近一个月
             </div>
             <div class="fault_span" :class="getClass(3)" @click="getClassHandler(3)" key="3">
               近三个月
@@ -34,14 +34,14 @@
             </div>
           </div>
           <FormItem label="武汉市" class="mgr">
-            <Select>
+            <Select v-model="region" clearable @on-change="getRegionList">
               <Option v-for="item in arealist" :value="item.value" :key="item.value">
                 {{ item.lable }}
               </Option>
             </Select>
           </FormItem>
           <div class="btns">
-            <Button @click="userList(1)" class="search">导出数据</Button>
+            <Button @click="exportExcel" class="search">导出数据</Button>
           </div>
         </Form>
       </Row>
@@ -57,7 +57,7 @@
 <style lang="less" scoped></style>
 <script>
 import { regionStatics } from '../../../api/login'
-import { dateFormat } from '../../../libs/tools'
+import { dateFormat, urlPrefix } from '../../../libs/tools'
 import echarts from 'echarts'
 let that = null
 export default {
@@ -66,15 +66,13 @@ export default {
     return {
       date: [],
       activityIndex: 1,
-      day: 'month',
+      day: 'week',
+      region: '',
       options: {
         disabledDate(date) {
           return date && date.valueOf() >= new Date()
         }
       },
-      userTotal: 0,
-      size: 10,
-      current: 1,
       arealist: [
         {
           value: '江岸区',
@@ -155,84 +153,17 @@ export default {
           key: '超时',
           tooltip: true
         }
-        // {
-        //   title: '工单区域',
-        //   key: '工单区域',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '全部',
-        //   key: '全部',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '汉江区',
-        //   key: '汉江区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '江岸区',
-        //   key: '江岸区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '硚口区',
-        //   key: '硚口区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '汉阳区',
-        //   key: '汉阳区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '武昌区',
-        //   key: '武昌区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '青山区',
-        //   key: '青山区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '洪山区',
-        //   key: '洪山区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '东西湖区',
-        //   key: '东西湖区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '蔡甸区',
-        //   key: '蔡甸区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '江夏区',
-        //   key: '江夏区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '黄陂区',
-        //   key: '黄陂区',
-        //   tooltip: true
-        // },
-        // {
-        //   title: '新洲区',
-        //   key: '新洲区',
-        //   tooltip: true
-        // }
       ],
       areaData: []
     }
   },
   mounted() {
-    this.date = [this.prevMonth, this.today]
+    // this.date = [this.prevMonth, this.today]
     // this.getEcharts()
     this.getRegionList()
+    this.$nextTick(() => {
+      this.getEcharts()
+    })
     window.onresize = () => {
       if (!this.timer) {
         this.timer = true
@@ -245,7 +176,7 @@ export default {
   },
   created() {
     // this.getEcharts()
-    this.getToday()
+    // this.getToday()
   },
   methods: {
     getClass(i) {
@@ -259,9 +190,9 @@ export default {
       this.date[0] = ''
       this.date[1] = ''
       if (this.activityIndex === 1) {
-        this.day = 'month'
-      } else if (this.activityIndex === 2) {
         this.day = 'week'
+      } else if (this.activityIndex === 2) {
+        this.day = 'month'
       } else if (this.activityIndex === 3) {
         this.day = 'month'
       } else {
@@ -274,6 +205,10 @@ export default {
       this.activityIndex = 0
       this.getRegionList()
     },
+    // 导出数据
+    exportExcel() {
+      window.location.href = `${urlPrefix}/api/statistics/exportRegion`
+    },
     // 获取列表数据
     getRegionList() {
       if (typeof this.date[0] === 'object') {
@@ -285,7 +220,8 @@ export default {
       let params = {
         startTime: this.date[0],
         endTime: this.date[1],
-        day: this.day
+        day: this.day,
+        region: this.region === undefined ? '' : this.region
       }
       regionStatics(params).then(res => {
         if (res.state === 1) {
@@ -295,21 +231,6 @@ export default {
           this.pendding = []
           this.finish = []
           this.overTime = []
-          // this.area = []
-          // this.all = []
-          // this.jiangHan = []
-          // this.jiangAn = []
-          // this.qiaoKou = []
-          // this.hanYang = []
-          // this.wuChang = []
-          // this.qingShan = []
-          // this.hongShan = []
-          // this.dongXi = []
-          // this.hanLan = []
-          // this.caiDian = []
-          // this.jiangXia = []
-          // this.huangPo = []
-          // this.xinZhou = []
           if (this.areaData.length > 0) {
             this.areaData.forEach((item, index) => {
               this.area.push(item.工单区域)
@@ -317,38 +238,9 @@ export default {
               this.pendding.push(item.待办)
               this.finish.push(item.已办)
               this.overTime.push(item.超时)
-              // this.area.push(item.工单区域)
-              // this.all.push(item.全部)
-              // this.jiangHan.push(item.江汉区)
-              // this.jiangAn.push(item.江岸区)
-              // this.qiaoKou.push(item.硚口区)
-              // this.hanYang.push(item.汉阳区)
-              // this.wuChang.push(item.武昌区)
-              // this.qingShan.push(item.青山区)
-              // this.hongShan.push(item.洪山区)
-              // this.dongXi.push(item.东西湖区)
-              // this.hanLan.push(item.汉南区)
-              // this.caiDian.push(item.蔡甸区)
-              // this.jiangXia.push(item.江夏区)
-              // this.huangPo.push(item.黄陂区)
-              // this.xinZhou.push(item.新洲区)
               this.getEcharts()
             })
           } else {
-            // this.all.push(0)
-            // this.jiangHan.push(0)
-            // this.jiangAn.push(0)
-            // this.qiaoKou.push(0)
-            // this.hanYang.push(0)
-            // this.wuChang.push(0)
-            // this.qingShan.push(0)
-            // this.hongShan.push(0)
-            // this.dongXi.push(0)
-            // this.hanLan.push(0)
-            // this.caiDian.push(0)
-            // this.jiangXia.push(0)
-            // this.huangPo.push(0)
-            // this.xinZhou.push(0)
             this.area.push('')
             this.all.push(0)
             this.pendding.push(0)
@@ -356,7 +248,6 @@ export default {
             this.overTime.push(0)
             this.getEcharts()
           }
-          // console.log(this.orderData)
         } else {
           this.area.push('')
           this.all.push(0)
@@ -404,91 +295,6 @@ export default {
             barWidth: '20',
             data: this.overTime
           }
-          // {
-          //   name: '全部',
-          //   type: 'bar',
-          //   barGap: 0,
-          //   barWidth: '20',
-          //   data: this.all
-          // },
-          // {
-          //   name: '江汉区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.jiangHan
-          // },
-          // {
-          //   name: '江岸区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.jiangAn
-          // },
-          // {
-          //   name: '硚口区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.qiaoKou
-          // },
-          // {
-          //   name: '汉阳区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.hanYang
-          // },
-          // {
-          //   name: '武昌区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.wuChang
-          // },
-          // {
-          //   name: '青山区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.qingShan
-          // },
-          // {
-          //   name: '洪山区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.hongShan
-          // },
-          // {
-          //   name: '东西湖区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.dongXi
-          // },
-          // {
-          //   name: '汉南区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.hanLan
-          // },
-          // {
-          //   name: '蔡甸区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.caiDian
-          // },
-          // {
-          //   name: '江夏区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.jiangXia
-          // },
-          // {
-          //   name: '黄陂区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.huangPo
-          // },
-          // {
-          //   name: '新洲区',
-          //   type: 'bar',
-          //   barWidth: '20',
-          //   data: this.xinZhou
-          // }
         ]
       })
     },
@@ -522,27 +328,6 @@ export default {
         d = '0' + d
       }
       this.prevMonth = y + '-' + m + '-' + d
-    },
-    userSize: function(limit) {
-      this.size = limit
-      this.current = 1
-      this.userList()
-    },
-    userCurrent: function(limit) {
-      this.current = limit
-      this.userList()
-    },
-    reset: function() {
-      this.userdate = [this.prevMonth, this.today]
-      this.userAccount = ''
-      this.userName = ''
-      this.coName = ''
-      this.coAddressPcdCode = ''
-      this.coAddressPcdName = ''
-      this.placeholders.province = '请选择'
-      this.userRole = ''
-      this.ip = ''
-      this.userList(1)
     }
   }
 }

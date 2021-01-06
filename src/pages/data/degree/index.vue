@@ -9,9 +9,9 @@
           <FormItem label="时间范围" class="mgr">
             <DatePicker
               :options="options"
-              :clearable="false"
-              confirm
-              @on-ok="confirms"
+              :clearable="true"
+              placeholder="请选择时间范围"
+              @on-change="confirms"
               id="date"
               placement="bottom-end"
               separator="~"
@@ -21,10 +21,10 @@
           </FormItem>
           <div class="year">
             <div class="fault_span" :class="getClass(1)" @click="getClassHandler(1)" key="1">
-              近一个月
+              近一周
             </div>
             <div class="fault_span" :class="getClass(2)" @click="getClassHandler(2)" key="2">
-              近一周
+              近一个月
             </div>
             <div class="fault_span" :class="getClass(3)" @click="getClassHandler(3)" key="3">
               近三个月
@@ -33,18 +33,8 @@
               近一年
             </div>
           </div>
-          <!-- <div class="year">
-            <RadioGroup v-model="state" @on-change="change(state)" style="margin-top: -26px;">
-              <Radio label="inside">
-                <span>对内</span>
-              </Radio>
-              <Radio label="outside">
-                <span>对外</span>
-              </Radio>
-            </RadioGroup>
-          </div> -->
           <div class="btns">
-            <Button @click="userList(1)" class="search">导出数据</Button>
+            <Button @click="exportExcel" class="search">导出数据</Button>
           </div>
         </Form>
       </Row>
@@ -60,7 +50,7 @@
         <div class="policy-table" style="margin: 0;">
           <Form>
             <FormItem label="" class="mgr">
-              <Select class="degreeSelect">
+              <Select class="degreeSelect" v-model="inUnit" @on-change="getInList" clearable>
                 <Option v-for="item in arealist" :value="item.value" :key="item.value">
                   {{ item.lable }}
                 </Option>
@@ -75,9 +65,9 @@
         <div class="policy-table" style="margin: 0;">
           <Form>
             <FormItem label="" class="mgr">
-              <Select class="degreeSelect">
-                <Option v-for="item in arealist" :value="item.value" :key="item.value">
-                  {{ item.lable }}
+              <Select class="degreeSelect" v-model="outUnit" @on-change="getOutList" clearable>
+                <Option v-for="item in companyList" :value="item.comName" :key="item.uuid">
+                  {{ item.comName }}
                 </Option>
               </Select>
             </FormItem>
@@ -91,8 +81,8 @@
 </template>
 <style lang="less" scoped></style>
 <script>
-import { outStatics, allStatics } from '../../../api/login'
-import { dateFormat } from '../../../libs/tools'
+import { outStatics, allStatics, commanyAll, inStatics } from '../../../api/login'
+import { dateFormat, urlPrefix } from '../../../libs/tools'
 import echarts from 'echarts'
 let that = null
 export default {
@@ -102,7 +92,10 @@ export default {
       date: [],
       activityIndex: 1,
       tabsName: 'degree',
-      day: '',
+      day: 'week',
+      inUnit: '',
+      outUnit: '',
+      companyList: [],
       options: {
         disabledDate(date) {
           return date && date.valueOf() >= new Date()
@@ -197,28 +190,28 @@ export default {
       // 对内打分统计
       inDegreeColums: [
         {
-          title: '日期',
-          key: 'eventName',
+          title: '工单区域',
+          key: 'supportUnit',
           tooltip: true
         },
         {
           title: '90（含）-100',
-          key: 'ip',
+          key: 'ninety',
           tooltip: true
         },
         {
           title: '80（含）-90（不含）',
-          key: 'userAccount',
+          key: 'eighty',
           tooltip: true
         },
         {
           title: '70（含）-80（不含）',
-          key: 'ip',
+          key: 'seventy',
           tooltip: true
         },
         {
           title: '70及以下',
-          key: 'userAccount',
+          key: 'behindseventy',
           tooltip: true
         }
       ],
@@ -255,12 +248,13 @@ export default {
     }
   },
   mounted() {
-    this.date = [this.prevMonth, this.today]
+    // this.date = [this.prevMonth, this.today]
     // this.getEchars()
     this.getAllList()
   },
   created() {
-    this.getToday()
+    this.getCompany()
+    // this.getToday()
   },
   methods: {
     getClass(i) {
@@ -274,9 +268,9 @@ export default {
       this.date[0] = ''
       this.date[1] = ''
       if (this.activityIndex === 1) {
-        this.day = 'month'
-      } else if (this.activityIndex === 2) {
         this.day = 'week'
+      } else if (this.activityIndex === 2) {
+        this.day = 'month'
       } else if (this.activityIndex === 3) {
         this.day = 'month'
       } else {
@@ -285,7 +279,7 @@ export default {
       if (this.tabsName === 'degree') {
         this.getAllList()
       } else if (this.tabsName === 'inDegree') {
-        this.getIncharts()
+        this.getInList()
       } else {
         this.getOutList()
       }
@@ -296,9 +290,26 @@ export default {
       if (this.tabsName === 'degree') {
         this.getAllList()
       } else if (this.tabsName === 'inDegree') {
-        this.getIncharts()
+        // this.getIncharts()
+        this.getInList()
       } else {
         this.getOutList()
+      }
+    },
+    // 获取公司
+    getCompany() {
+      commanyAll().then(res => {
+        this.companyList = res.data
+      })
+    },
+    // 导出数据
+    exportExcel() {
+      if (this.tabsName === 'degree') {
+        window.location.href = `${urlPrefix}/api/statistics/exportSumScore`
+      } else if (this.tabsName === 'inDegree') {
+        window.location.href = `${urlPrefix}/api/statistics/exportInScore`
+      } else {
+        window.location.href = `${urlPrefix}/api /statistics/exportScore`
       }
     },
     tabs(name) {
@@ -308,7 +319,8 @@ export default {
         this.getAllList()
       } else if (name === 'inDegree') {
         this.tabsName = 'inDegree'
-        this.getIncharts()
+        this.getInList()
+        // this.getIncharts()
       } else {
         // this.getOutCharts()
         this.tabsName = 'outDegree'
@@ -336,7 +348,6 @@ export default {
           this.jiu = []
           this.ba = []
           this.qi = []
-          this.overTime = []
           if (this.degreeData.length > 0) {
             this.degreeData.forEach((item, index) => {
               this.time.push(item.date)
@@ -354,7 +365,6 @@ export default {
             this.qi.push(0)
             this.getEchars()
           }
-          // console.log(this.orderData)
         } else {
           this.time.push('')
           this.bai.push(0)
@@ -405,32 +415,92 @@ export default {
         ]
       })
     },
+    // 获取对内打分统计列表数据
+    getInList() {
+      if (typeof this.date[0] === 'object') {
+        this.date[0] = dateFormat('YYYY-mm-dd', this.date[0])
+      }
+      if (typeof this.date[1] === 'object') {
+        this.date[1] = dateFormat('YYYY-mm-dd', this.date[1])
+      }
+      let params = {
+        startTime: this.date[0],
+        endTime: this.date[1],
+        day: this.day,
+        unit: this.inUnit === undefined ? '' : this.inUnit
+      }
+      inStatics(params).then(res => {
+        if (res.state === 1) {
+          this.inDegreeData = res.data
+          this.supportUnit = []
+          this.bai = []
+          this.jiu = []
+          this.ba = []
+          this.qi = []
+          if (this.degreeData.length > 0) {
+            this.degreeData.forEach((item, index) => {
+              this.supportUnit.push(item.supportUnit)
+              this.bai.push(item.ninety)
+              this.jiu.push(item.eighty)
+              this.ba.push(item.seventy)
+              this.qi.push(item.behindseventy)
+              this.getIncharts()
+            })
+          } else {
+            this.supportUnit.push('')
+            this.bai.push(0)
+            this.jiu.push(0)
+            this.ba.push(0)
+            this.qi.push(0)
+            this.getIncharts()
+          }
+        } else {
+          this.supportUnit.push('')
+          this.bai.push(0)
+          this.jiu.push(0)
+          this.ba.push(0)
+          this.qi.push(0)
+          this.getIncharts()
+        }
+      })
+    },
     // 对内打分
     getIncharts() {
       var insideMyChart = echarts.init(document.getElementById('inside'))
       insideMyChart.setOption({
-        color: ['#2db7f5', '#FA7D00', '#00CD70', '#F3C500'],
+        color: ['#20A0FF', '#FA7D00', '#00CD70', '#F3C500'],
         legend: {},
         tooltip: {},
-        dataset: {
-          source: [
-            ['product', '工单总数', '待办', '已办', '超时'],
-            ['2012', 41.1, 30.4, 65.1, 53.3],
-            ['2013', 86.5, 92.1, 85.7, 83.1],
-            ['2014', 24.1, 67.2, 79.5, 86.4],
-            ['2015', 24.1, 67.2, 79.5, 86.4]
-          ]
-        },
-        xAxis: { type: 'category' },
+        xAxis: [{ type: 'category', data: this.supportUnit }],
         yAxis: {},
         grid: {
           height: 300
         },
         series: [
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' },
-          { type: 'bar', barWidth: '20' }
+          {
+            name: '90（含）-100',
+            type: 'bar',
+            barWidth: '20',
+            data: this.bai
+          },
+          {
+            name: '80（含）-90（不含）',
+            type: 'bar',
+            barWidth: '20',
+            data: this.jiu
+          },
+          {
+            name: '70（含）-80（不含）',
+            type: 'bar',
+            barWidth: '20',
+            data: this.ba
+          },
+          {
+            name: '70及以下',
+            type: 'bar',
+            barWidth: '20',
+            data: this.qi
+          }
         ]
       })
     },
@@ -445,7 +515,8 @@ export default {
       let params = {
         startTime: this.date[0],
         endTime: this.date[1],
-        day: this.day
+        day: this.day,
+        unit: this.outUnit === undefined ? '' : this.outUnit
       }
       outStatics(params).then(res => {
         if (res.state === 1) {

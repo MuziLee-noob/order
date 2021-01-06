@@ -57,9 +57,8 @@
             <Input
               v-model="companySearch"
               search
-              @on-search="userRoleList"
+              @on-search="getAllUser"
               style="width: 55%;"
-              clearable
               placeholder="姓名/手机号"
             />
             <span style="float: right;">角色名称：{{ roleName }}</span>
@@ -146,8 +145,7 @@ export default {
         },
         {
           title: '创建时间',
-          key: 'createTime',
-          tooltip: true
+          key: 'createTimeStr'
         },
         {
           title: '操作',
@@ -167,8 +165,7 @@ export default {
         },
         {
           title: '手机号',
-          key: 'telphone',
-          tooltip: true
+          key: 'telphone'
         }
       ],
       assignData: []
@@ -199,7 +196,10 @@ export default {
     },
     // 获取所有用户
     getAllUser: function() {
-      allUser().then(res => {
+      let params = {
+        key: this.companySearch
+      }
+      allUser(params).then(res => {
         if (res.state === '1') {
           this.assignData = res.data
         }
