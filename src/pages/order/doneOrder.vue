@@ -72,7 +72,7 @@
                                     <Option :value="3">超时</Option>
                                 </Select>
                             </Col>
-                            <Col span="2" offset="18"> 
+                            <Col span="2" offset="18">
                                 <Button type="text" @click="del">
                                     <Icon type="ios-trash-outline" size="24"/>
                                 </Button>
@@ -86,7 +86,7 @@
     </div>
     <div class="policy-table">
       <div class="btns">
-        <Button @click="downLoad" class="search">下载</Button>
+        <Button @click="downLoad" class="search">导出</Button>
         <Button @click="del" class="reset">删除</Button>
       </div>
       <Table
@@ -163,7 +163,7 @@ export default {
         },
         {
           title: '状态',
-          key: ''
+          key: 'stateTemp'
         },
         {
           title: '工单标题',
@@ -245,6 +245,9 @@ export default {
     },
     downLoad() {
       //Todo下载已选项
+      let a = document.createElement('a')
+      a.href = `http://api.dispatch-32102.p.onecode.ict.cmcc/api/task/exportRecord?userUuid=${this.$store.state.userUuid}`
+      a.click()
     },
     pageChange(page) {
       this.page = page

@@ -91,7 +91,7 @@ export default {
       axios
         .axios({
           method: 'get',
-          url: 'userinfo/getAllSupport'
+          url: '/api/userinfo/getAllSupport'
         })
         .then(data => {
           console.log(data)

@@ -72,7 +72,7 @@
                                     <Option :value="3">超时</Option>
                                 </Select>
                             </Col>
-                            <Col span="2" offset="18"> 
+                            <Col span="2" offset="18">
                                 <Button type="text" @click="del">
                                     <Icon type="ios-trash-outline" size="24"/>
                                 </Button>
@@ -88,7 +88,7 @@
     </div>
     <div class="policy-table">
       <div class="btns">
-        <Button @click="downLoad" class="search">下载</Button>
+        <Button @click="downLoad" class="search">导出</Button>
         <Button @click="del" class="reset">删除</Button>
       </div>
       <Table
@@ -275,6 +275,34 @@ export default {
     },
     downLoad() {
       //Todo下载已选项
+      let a = document.createElement('a')
+      a.href = `http://api.dispatch-32102.p.onecode.ict.cmcc/api/task/exportRecord?userUuid=${this.$store.state.userUuid}`
+      a.click()
+      /*axios
+        .axios({
+          method: 'get',
+          url: '/api/task/exportRecord',
+          params: {
+            userUuid: this.$store.state.userUuid
+          },
+          headers: { token: localStorage.getItem('token') },
+          responseType: 'blob'
+        })
+        .then(res => {
+          const { data, headers } = res
+          const fileName = headers['content-disposition'].replace(/w+;filename=(.*)/, '$1')
+          const blob = new Blob([data], { type: headers['content-type'] })
+          let dom = document.createElement('a')
+          let url = window.URL.createObjectURL(blob)
+          dom.href = url
+          dom.download = decodeURI(fileName)
+          dom.style.display = 'none'
+          document.body.appendChild(dom)
+          dom.click()
+          dom.parentNode.removeChild(dom)
+          window.URL.revokeObjectURL(url)
+        })
+        .catch(err => {})*/
     },
     pageChange(page) {
       this.page = page
